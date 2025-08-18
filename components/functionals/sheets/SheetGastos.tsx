@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,59 +7,59 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { CircleX, Pen, PlusCircle } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { CircleX, Pen, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useForm, useWatch } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { GastosSchema } from '@/lib/schemas';
+} from "@/components/ui/select";
+import { useForm, useWatch } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { GastosSchema } from "@/lib/schemas";
 
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { InferInput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
+  AreaVentaForSelectGasto,
   FrecuenciasGastos,
   Gasto,
   TiposGastos,
-} from '@/app/(with-layout)/gastos/types';
-import { addGasto, editGasto } from '@/app/(with-layout)/gastos/actions';
-import { AreaVenta } from '@/app/(with-layout)/areas-de-venta/types';
+} from "@/app/(with-layout)/gastos/types";
+import { addGasto, editGasto } from "@/app/(with-layout)/gastos/actions";
 
 export default function SheetGastos({
   data,
   areas,
 }: {
   data?: Gasto;
-  areas: AreaVenta[];
+  areas: AreaVentaForSelectGasto[];
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof GastosSchema>>({
     resolver: valibotResolver(GastosSchema),
     defaultValues: {
-      descripcion: data?.descripcion || '',
-      area_venta: data?.area_venta?.id?.toLocaleString() || '',
-      tipo: data?.tipo || undefined,
+      descripcion: data?.descripcion || "",
+      area_venta: data?.area_venta?.id?.toLocaleString() || "",
+      tipo: data?.tipo,
       frecuencia: data?.frecuencia || undefined,
       cantidad: data?.cantidad || 0,
       dia_mes: data?.dia_mes || undefined,
@@ -67,8 +67,8 @@ export default function SheetGastos({
     },
   });
 
-  const tipo = useWatch({ control: form.control, name: 'tipo' });
-  const frecuencia = useWatch({ control: form.control, name: 'frecuencia' });
+  const tipo = useWatch({ control: form.control, name: "tipo" });
+  const frecuencia = useWatch({ control: form.control, name: "frecuencia" });
 
   const onSubmit = async (
     dataForm: InferInput<typeof GastosSchema>
@@ -81,7 +81,7 @@ export default function SheetGastos({
       setError(error);
     } else {
       form.reset();
-      setError('');
+      setError("");
       toast.success(dataRes);
       setOpen(false);
     }
@@ -105,7 +105,7 @@ export default function SheetGastos({
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[600px] overflow-y-scroll">
         <SheetHeader>
-          <SheetTitle>{data ? 'Editar' : 'Agregar'} gasto</SheetTitle>
+          <SheetTitle>{data ? "Editar" : "Agregar"} gasto</SheetTitle>
           <SheetDescription className="pb-4">
             Especifique el tipo de gasto y la cantidad que desea registrar.
           </SheetDescription>
@@ -177,9 +177,9 @@ export default function SheetGastos({
                     <Select
                       onValueChange={(value) => {
                         if (value === TiposGastos.VARIABLE) {
-                          form.setValue('frecuencia', undefined);
-                          form.setValue('dia_semana', undefined),
-                            form.setValue('dia_mes', undefined);
+                          form.setValue("frecuencia", undefined);
+                          form.setValue("dia_semana", undefined),
+                            form.setValue("dia_mes", undefined);
                         }
                         field.onChange(value);
                       }}
@@ -212,10 +212,10 @@ export default function SheetGastos({
                       <Select
                         onValueChange={(value) => {
                           if (value === FrecuenciasGastos.MENSUAL) {
-                            form.setValue('dia_semana', undefined);
+                            form.setValue("dia_semana", undefined);
                           }
                           if (value === FrecuenciasGastos.SEMANAL) {
-                            form.setValue('dia_mes', undefined);
+                            form.setValue("dia_mes", undefined);
                           }
                           field.onChange(value);
                         }}
@@ -316,7 +316,7 @@ export default function SheetGastos({
               />
 
               <div className="flex justify-end">
-                <Button type="submit">{data ? 'Editar' : 'Agregar'}</Button>
+                <Button type="submit">{data ? "Editar" : "Agregar"}</Button>
               </div>
             </form>
           </Form>

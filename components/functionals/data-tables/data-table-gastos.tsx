@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   getPaginationRowModel,
@@ -11,7 +11,7 @@ import {
   SortingState,
   ColumnFiltersState,
   TableOptions,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -20,15 +20,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { useState } from 'react';
-import { DataTablePagination } from '@/components/ui/data-table-pagination';
-import { Gasto } from '@/app/(with-layout)/gastos/types';
-import { AreaVenta } from '@/app/(with-layout)/areas-de-venta/types';
+import { useState } from "react";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import {
+  AreaVentaForSelectGasto,
+  Gasto,
+} from "@/app/(with-layout)/gastos/types";
 
 export interface CustomTableOptions<T> extends TableOptions<T> {
-  areas: AreaVenta[];
+  areas: AreaVentaForSelectGasto[];
 }
 
 export function DataTable({
@@ -38,7 +40,7 @@ export function DataTable({
 }: {
   columns: ColumnDef<Gasto>[];
   data: Gasto[];
-  areas?: AreaVenta[];
+  areas?: AreaVentaForSelectGasto[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -96,7 +98,7 @@ export function DataTable({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
