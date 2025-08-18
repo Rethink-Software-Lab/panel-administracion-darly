@@ -27,7 +27,10 @@ export async function getGastos(): Promise<{
         tipo: inventarioGastos.tipo,
         cantidad: inventarioGastos.cantidad,
         created_at: inventarioGastos.createdAt,
-        area_venta: inventarioAreaventa.nombre,
+        area_venta: {
+          id: inventarioAreaventa.id,
+          nombre: inventarioAreaventa.nombre,
+        },
         is_cafeteria: inventarioGastos.isCafeteria,
         frecuencia: inventarioGastos.frecuencia,
         usuario: inventarioUser.username,
@@ -35,10 +38,13 @@ export async function getGastos(): Promise<{
         dia_semana: inventarioGastos.diaSemana,
       })
       .from(inventarioGastos)
-      .leftJoin(inventarioUser, eq(inventarioGastos.id, inventarioUser.id))
+      .leftJoin(
+        inventarioUser,
+        eq(inventarioGastos.usuarioId, inventarioUser.id)
+      )
       .leftJoin(
         inventarioAreaventa,
-        eq(inventarioGastos.id, inventarioAreaventa.id)
+        eq(inventarioGastos.areaVentaId, inventarioAreaventa.id)
       )
       .orderBy(desc(inventarioGastos.id));
 

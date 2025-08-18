@@ -11,12 +11,17 @@ export enum FrecuenciasGastos {
   MENSUAL = "MENSUAL",
 }
 
+interface AreaVentaInGasto {
+  id: number;
+  nombre: string;
+}
+
 export interface Gasto {
   id: number;
   descripcion: string;
   created_at: string;
   cantidad: number;
-  area_venta: string | null;
+  area_venta: AreaVentaInGasto | null;
   is_cafeteria: boolean;
   tipo: string;
   frecuencia: string | null;
@@ -25,7 +30,7 @@ export interface Gasto {
   dia_semana: number | null;
 }
 
-type AreaVentaForSelectGasto = Omit<AreaVenta, "color" | "isMesa">;
+export type AreaVentaForSelectGasto = Omit<AreaVenta, "color" | "isMesa">;
 
 export interface ResponseGastos {
   fijos: Gasto[];

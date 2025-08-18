@@ -1,10 +1,10 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { getGastos } from '@/lib/services';
-import { DataTable } from '@/components/functionals/data-tables/data-table-gastos';
-import { columns as columsVariables } from '@/app/(with-layout)/gastos/columns-variables';
-import { columns as columnsFijos } from '@/app/(with-layout)/gastos/columns-fijos';
-import SheetGastos from '@/components/functionals/sheets/SheetGastos';
-import { CloudOff } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { DataTable } from "@/components/functionals/data-tables/data-table-gastos";
+import { columns as columsVariables } from "@/app/(with-layout)/gastos/columns-variables";
+import { columns as columnsFijos } from "@/app/(with-layout)/gastos/columns-fijos";
+import SheetGastos from "@/components/functionals/sheets/SheetGastos";
+import { CloudOff } from "lucide-react";
+import { getGastos } from "./services";
 
 export default async function Gastos() {
   const { data } = await getGastos();
@@ -14,7 +14,7 @@ export default async function Gastos() {
       <div className="flex justify-between items-center px-4 lg:px-6">
         <h1 className="text-lg font-semibold md:text-2xl">Gastos</h1>
 
-        <SheetGastos areas={data?.areas_venta} />
+        <SheetGastos areas={data?.areas_venta || []} />
       </div>
       {data ? (
         <Tabs defaultValue="gastos-variables" className=" h-full">
