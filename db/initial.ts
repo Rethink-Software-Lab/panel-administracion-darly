@@ -10,4 +10,6 @@ export const db =
     ? drizzleNeon(neon(DATABASE_URL), { schema })
     : drizzleNode(DATABASE_URL, { schema });
 
-// export const db = drizzleNeon(neon(DATABASE_URL));
+export type DrizzleTransaction = Parameters<
+  Parameters<typeof db.transaction>[0]
+>[0];

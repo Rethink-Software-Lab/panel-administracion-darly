@@ -3,7 +3,7 @@ import { db } from "@/db/initial";
 import {
   inventarioEntradaalmacen,
   inventarioHistorialpreciocostosalon,
-  inventarioProducto,
+  producto,
   inventarioProductoinfo,
   inventarioProveedor,
 } from "@/db/schema";
@@ -33,7 +33,7 @@ export async function getFactura(
     const productos = await db
       .select({
         descripcion: inventarioProductoinfo.descripcion,
-        cantidad: sql<number>`COUNT(${inventarioProducto.id})`,
+        cantidad: sql<number>`COUNT(${producto.id})`,
         precio_unitario: sql<number>`(
             SELECT precio 
             FROM ${inventarioHistorialpreciocostosalon} 
@@ -41,7 +41,7 @@ export async function getFactura(
             ORDER BY ${inventarioHistorialpreciocostosalon.fechaInicio} DESC 
             LIMIT 1
           )`,
-        importe: sql<number>`COUNT(${inventarioProducto.id}) * (
+        importe: sql<number>`COUNT(${producto.id}) * (
             SELECT precio 
             FROM ${inventarioHistorialpreciocostosalon} 
             WHERE ${inventarioHistorialpreciocostosalon.productoInfoId} = ${inventarioProductoinfo.id}
@@ -49,12 +49,12 @@ export async function getFactura(
             LIMIT 1
           )`,
       })
-      .from(inventarioProducto)
+      .from(producto)
       .innerJoin(
         inventarioProductoinfo,
-        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
+        eq(producto.infoId, inventarioProductoinfo.id)
       )
-      .where(eq(inventarioProducto.entradaId, Number(entrada_id)))
+      .where(eq(producto.entradaId, Number(entrada_id)))
       .groupBy(inventarioProductoinfo.id, inventarioProductoinfo.descripcion);
     return {
       error: null,

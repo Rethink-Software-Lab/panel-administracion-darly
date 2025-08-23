@@ -2,11 +2,10 @@ import { cookies } from "next/headers";
 import { ResponseNoRepresentados, ResponseSearchProducts } from "./types";
 import { db } from "@/db/initial";
 import {
-  inventarioProducto,
   inventarioProductoinfo,
   inventarioProductosCafeteria,
 } from "@/db/schema";
-import { count, eq, gt, isNull, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export async function getNoRepresentados(): Promise<{
   data: ResponseNoRepresentados[] | null;

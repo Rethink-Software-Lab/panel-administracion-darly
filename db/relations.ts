@@ -38,7 +38,7 @@ import {
   inventarioVentas,
   inventarioCuentas,
   inventarioTransferencia,
-  inventarioProducto,
+  producto,
   inventarioTransferenciaProductos,
   authGroup,
   inventarioUserGroups,
@@ -274,7 +274,7 @@ export const inventarioAreaventaRelations = relations(
     }),
     inventarioVentas: many(inventarioVentas),
     inventarioUsers: many(inventarioUser),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
   })
 );
 
@@ -350,7 +350,7 @@ export const inventarioProductoinfoRelations = relations(
       fields: [inventarioProductoinfo.imagenId],
       references: [inventarioImage.id],
     }),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
     inventarioHistorialprecioventasalons: many(
       inventarioHistorialprecioventasalon
     ),
@@ -474,7 +474,7 @@ export const inventarioSalidaalmacenRelations = relations(
       fields: [inventarioSalidaalmacen.usuarioId],
       references: [inventarioUser.id],
     }),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
   })
 );
 
@@ -485,7 +485,7 @@ export const inventarioSalidaalmacenrevoltosaRelations = relations(
       fields: [inventarioSalidaalmacenrevoltosa.usuarioId],
       references: [inventarioUser.id],
     }),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
   })
 );
 
@@ -583,7 +583,7 @@ export const inventarioEntradaalmacenRelations = relations(
   inventarioEntradaalmacen,
   ({ one, many }) => ({
     inventarioTransacciones: many(inventarioTransacciones),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
     inventarioProveedor: one(inventarioProveedor, {
       fields: [inventarioEntradaalmacen.proveedorId],
       references: [inventarioProveedor.id],
@@ -624,7 +624,7 @@ export const inventarioVentasRelations = relations(
       fields: [inventarioVentas.usuarioId],
       references: [inventarioUser.id],
     }),
-    inventarioProductos: many(inventarioProducto),
+    inventarioProductos: many(producto),
   })
 );
 
@@ -659,9 +659,9 @@ export const inventarioTransferenciaRelations = relations(
 export const inventarioTransferenciaProductosRelations = relations(
   inventarioTransferenciaProductos,
   ({ one }) => ({
-    inventarioProducto: one(inventarioProducto, {
+    producto: one(producto, {
       fields: [inventarioTransferenciaProductos.productoId],
-      references: [inventarioProducto.id],
+      references: [producto.id],
     }),
     inventarioTransferencia: one(inventarioTransferencia, {
       fields: [inventarioTransferenciaProductos.transferenciaId],
@@ -671,34 +671,34 @@ export const inventarioTransferenciaProductosRelations = relations(
 );
 
 export const inventarioProductoRelations = relations(
-  inventarioProducto,
+  producto,
   ({ one, many }) => ({
     inventarioTransferenciaProductos: many(inventarioTransferenciaProductos),
     inventarioAjusteinventarioProductos: many(
       inventarioAjusteinventarioProductos
     ),
     inventarioAreaventa: one(inventarioAreaventa, {
-      fields: [inventarioProducto.areaVentaId],
+      fields: [producto.areaVentaId],
       references: [inventarioAreaventa.id],
     }),
     inventarioEntradaalmacen: one(inventarioEntradaalmacen, {
-      fields: [inventarioProducto.entradaId],
+      fields: [producto.entradaId],
       references: [inventarioEntradaalmacen.id],
     }),
     inventarioProductoinfo: one(inventarioProductoinfo, {
-      fields: [inventarioProducto.infoId],
+      fields: [producto.infoId],
       references: [inventarioProductoinfo.id],
     }),
     inventarioSalidaalmacen: one(inventarioSalidaalmacen, {
-      fields: [inventarioProducto.salidaId],
+      fields: [producto.salidaId],
       references: [inventarioSalidaalmacen.id],
     }),
     inventarioSalidaalmacenrevoltosa: one(inventarioSalidaalmacenrevoltosa, {
-      fields: [inventarioProducto.salidaRevoltosaId],
+      fields: [producto.salidaRevoltosaId],
       references: [inventarioSalidaalmacenrevoltosa.id],
     }),
     inventarioVenta: one(inventarioVentas, {
-      fields: [inventarioProducto.ventaId],
+      fields: [producto.ventaId],
       references: [inventarioVentas.id],
     }),
   })
@@ -788,9 +788,9 @@ export const inventarioAjusteinventarioProductosRelations = relations(
       fields: [inventarioAjusteinventarioProductos.ajusteinventarioId],
       references: [inventarioAjusteinventario.id],
     }),
-    inventarioProducto: one(inventarioProducto, {
+    producto: one(producto, {
       fields: [inventarioAjusteinventarioProductos.productoId],
-      references: [inventarioProducto.id],
+      references: [producto.id],
     }),
   })
 );

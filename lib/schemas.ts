@@ -129,64 +129,6 @@ export const SalidaRevoltosaSchema = object({
   ),
 });
 
-export const VentasSchema = pipe(
-  object({
-    metodoPago: enum_(
-      METODOS_PAGO,
-      "Método requerido: Efectivo o transferencia"
-    ),
-    efectivo: optional(
-      pipe(
-        number("El efectivo debe ser un número"),
-        integer("El efectivo debe ser un número entero"),
-        minValue(1, "El efectivo debe ser mayor que 0")
-      )
-    ),
-
-    transferencia: optional(
-      pipe(
-        number("La transferencia debe ser un número"),
-        integer("La transferencia debe ser un número entero"),
-        minValue(1, "La transferencia debe ser mayor que 0")
-      )
-    ),
-
-    tarjeta: optional(string("El producto es requerido.")),
-
-    zapatos_id: optional(
-      pipe(
-        array(
-          object({ id: string(), value: number() }),
-          "Productos no puede estar vacio"
-        ),
-        minLength(1, "Productos no puede estar vacio")
-      )
-    ),
-    cantidad: optional(pipe(number(), integer(), minValue(1))),
-    producto_info: pipe(
-      string("El producto es requerido."),
-      nonEmpty("El producto es requerido.")
-    ),
-  }),
-  forward(
-    partialCheck(
-      [["tarjeta"], ["metodoPago"]],
-      (input) => {
-        if (
-          (input.metodoPago === METODOS_PAGO.MIXTO ||
-            input.metodoPago === METODOS_PAGO.TRANSFERENCIA) &&
-          !input.tarjeta
-        ) {
-          return false;
-        }
-        return true;
-      },
-      "Debe ingresar una tarjeta."
-    ),
-    ["tarjeta"]
-  )
-);
-
 export const SearchSchema = pipe(
   object({
     codigo: string("Ingresa un código"),

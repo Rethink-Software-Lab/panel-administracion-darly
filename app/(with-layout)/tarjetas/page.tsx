@@ -9,7 +9,7 @@ import { GetTarjetas } from "./services";
 import { CloudOff, EllipsisVertical } from "lucide-react";
 import SheetTarjetas from "@/components/functionals/sheets/SheetTarjetas";
 import { cn } from "@/lib/utils";
-import { Banco, Transferenciastarjetas } from "./types";
+import { Banco, TipoCuenta, Transferenciastarjetas } from "./types";
 import DataTable from "@/components/functionals/data-tables/data-table-general";
 import { columns } from "./columns";
 
@@ -46,7 +46,7 @@ export default async function Tarjetas() {
         )}
       </div>
       <div
-        className="w-full h-full max-h-[14rem] flex overflow-x-auto p-4 scroll-p-4 gap-4"
+        className="w-full h-full max-h-[14rem] flex overflow-x-auto p-4 scroll-p-4 gap-4 md:contain-strict"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {data?.tarjetas?.map((tarjeta) => (
@@ -54,7 +54,7 @@ export default async function Tarjetas() {
             key={tarjeta.id}
             style={{ flex: "0 0 auto", scrollSnapAlign: "start" }}
             className={cn(
-              "bg-gradient-to-br  text-white aspect-video",
+              "w-80 bg-gradient-to-br  text-white aspect-video from-blue-600 to-blue-800",
               tarjeta.banco === Banco.BANDEC && "from-[#6c0207] to-[#bc1f26]",
               tarjeta.banco === Banco.BPA && "from-[#1d6156] to-[#1d6156]"
             )}
@@ -81,27 +81,31 @@ export default async function Tarjetas() {
               </p>
             </CardContent>
             <CardFooter>
-              <div className="w-full">
-                <p className="text-xs text-right">
-                  {Intl.NumberFormat("es-ES", {
-                    style: "decimal",
-                    maximumFractionDigits: 2,
-                  }).format(tarjeta.total_transferencias_mes)}
-                  /{MAX_TRANF_MES}
-                </p>
-                <Progress
-                  className={cn(
-                    "[&>div]:bg-white mt-2",
-                    (tarjeta.total_transferencias_mes * 100) / MAX_TRANF_MES >=
-                      60 && "[&>div]:bg-yellow-400",
-                    (tarjeta.total_transferencias_mes * 100) / MAX_TRANF_MES >=
-                      80 && "[&>div]:bg-red-600"
-                  )}
-                  value={
-                    (tarjeta.total_transferencias_mes * 100) / MAX_TRANF_MES
-                  }
-                />
-              </div>
+              {tarjeta.banco && (
+                <div className="w-full">
+                  <p className="text-xs text-right">
+                    {Intl.NumberFormat("es-ES", {
+                      style: "decimal",
+                      maximumFractionDigits: 2,
+                    }).format(tarjeta.total_transferencias_mes)}
+                    /{MAX_TRANF_MES}
+                  </p>
+                  <Progress
+                    className={cn(
+                      "[&>div]:bg-white mt-2",
+                      (tarjeta.total_transferencias_mes * 100) /
+                        MAX_TRANF_MES >=
+                        60 && "[&>div]:bg-yellow-400",
+                      (tarjeta.total_transferencias_mes * 100) /
+                        MAX_TRANF_MES >=
+                        80 && "[&>div]:bg-red-600"
+                    )}
+                    value={
+                      (tarjeta.total_transferencias_mes * 100) / MAX_TRANF_MES
+                    }
+                  />
+                </div>
+              )}
             </CardFooter>
           </Card>
         ))}

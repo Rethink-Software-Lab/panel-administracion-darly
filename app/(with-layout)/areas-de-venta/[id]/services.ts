@@ -6,7 +6,7 @@ import {
   inventarioCategorias,
   inventarioCuentas,
   inventarioHistorialprecioventasalon,
-  inventarioProducto,
+  producto,
   inventarioProductoinfo,
   inventarioTransacciones,
   inventarioUser,
@@ -20,7 +20,11 @@ export async function getAreaVenta(
 ): Promise<{ data: EndpointOneAreaVenta | null; error: string | null }> {
   try {
     const areaVenta = await db
-      .select()
+      .select({
+        id: inventarioAreaventa.id,
+        nombre: inventarioAreaventa.nombre,
+        isMesa: inventarioAreaventa.isMesa,
+      })
       .from(inventarioAreaventa)
       .where(eq(inventarioAreaventa.id, id))
       .limit(1);
@@ -40,30 +44,24 @@ export async function getAreaVenta(
           ORDER BY ${inventarioHistorialprecioventasalon.fechaInicio} DESC 
           LIMIT 1
         )`,
-        cantidad: count(inventarioProducto.id),
+        cantidad: count(producto.id),
         categoria_nombre: inventarioCategorias.nombre,
       })
       .from(inventarioProductoinfo)
-      .innerJoin(
-        inventarioProducto,
-        eq(inventarioProductoinfo.id, inventarioProducto.infoId)
-      )
+      .innerJoin(producto, eq(inventarioProductoinfo.id, producto.infoId))
       .leftJoin(
         inventarioCategorias,
         eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(
-          inventarioProducto.id,
-          inventarioAjusteinventarioProductos.productoId
-        )
+        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
       )
       .where(
         and(
-          isNull(inventarioProducto.ventaId),
+          isNull(producto.ventaId),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId),
-          eq(inventarioProducto.areaVentaId, Number(id))
+          eq(producto.areaVentaId, Number(id))
         )
       )
       .groupBy(inventarioProductoinfo.id, inventarioCategorias.nombre)
@@ -73,15 +71,15 @@ export async function getAreaVenta(
 
     const zapatos = await db
       .select({
-        id: inventarioProducto.id,
+        id: producto.id,
         descripcion: inventarioProductoinfo.descripcion,
-        color: inventarioProducto.color,
-        numero: inventarioProducto.numero,
+        color: producto.color,
+        numero: producto.numero,
       })
-      .from(inventarioProducto)
+      .from(producto)
       .innerJoin(
         inventarioProductoinfo,
-        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
+        eq(producto.infoId, inventarioProductoinfo.id)
       )
       .innerJoin(
         inventarioCategorias,
@@ -89,54 +87,45 @@ export async function getAreaVenta(
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(
-          inventarioProducto.id,
-          inventarioAjusteinventarioProductos.productoId
-        )
+        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
       )
       .where(
         and(
           eq(inventarioCategorias.nombre, "Zapatos"),
-          isNull(inventarioProducto.ventaId),
-          eq(inventarioProducto.areaVentaId, Number(id)),
+          isNull(producto.ventaId),
+          eq(producto.areaVentaId, Number(id)),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId)
         )
       )
-      .orderBy(desc(inventarioProducto.id));
+      .orderBy(desc(producto.id));
 
     const allProductos = await db
       .select({
         id: inventarioProductoinfo.id,
         descripcion: inventarioProductoinfo.descripcion,
-        categoria: inventarioCategorias.nombre,
+        isZapato: sql<boolean>`CASE WHEN ${inventarioCategorias.nombre} = 'Zapatos' THEN TRUE ELSE FALSE END`,
       })
       .from(inventarioProductoinfo)
       .innerJoin(
         inventarioCategorias,
         eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
       )
-      .innerJoin(
-        inventarioProducto,
-        eq(inventarioProductoinfo.id, inventarioProducto.infoId)
-      )
+      .innerJoin(producto, eq(inventarioProductoinfo.id, producto.infoId))
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(
-          inventarioProducto.id,
-          inventarioAjusteinventarioProductos.productoId
-        )
+        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
       )
       .where(
         and(
-          eq(inventarioProducto.areaVentaId, Number(id)),
-          isNull(inventarioProducto.ventaId),
+          eq(producto.areaVentaId, Number(id)),
+          isNull(producto.ventaId),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId)
         )
       )
       .groupBy(
         inventarioProductoinfo.id,
         inventarioProductoinfo.descripcion,
-        inventarioCategorias.nombre
+        inventarioCategorias.id
       );
 
     const categorias = await db.select().from(inventarioCategorias);
@@ -154,17 +143,14 @@ export async function getAreaVenta(
         metodo_pago: inventarioVentas.metodoPago,
         usuario: { id: inventarioUser.id, username: inventarioUser.username },
         descripcion: inventarioProductoinfo.descripcion,
-        cantidad: count(inventarioProducto.id),
+        cantidad: count(producto.id),
         id: inventarioVentas.id,
       })
       .from(inventarioVentas)
-      .innerJoin(
-        inventarioProducto,
-        eq(inventarioVentas.id, inventarioProducto.ventaId)
-      )
+      .innerJoin(producto, eq(inventarioVentas.id, producto.ventaId))
       .innerJoin(
         inventarioProductoinfo,
-        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
+        eq(producto.infoId, inventarioProductoinfo.id)
       )
       .innerJoin(
         inventarioUser,
@@ -188,7 +174,7 @@ export async function getAreaVenta(
       .orderBy(desc(inventarioVentas.createdAt));
 
     const currentMonth = new Date().getMonth() + 1;
-    const tarjetas = await db
+    const cuentas_bancarias = await db
       .select({
         id: inventarioCuentas.id,
         nombre: inventarioCuentas.nombre,
@@ -212,9 +198,9 @@ export async function getAreaVenta(
           categorias,
         },
         ventas,
-        area_venta: areaVenta?.[0]?.nombre,
+        area_venta: areaVenta?.[0],
         all_productos: allProductos,
-        tarjetas,
+        cuentas_bancarias,
       },
     };
   } catch (e) {
