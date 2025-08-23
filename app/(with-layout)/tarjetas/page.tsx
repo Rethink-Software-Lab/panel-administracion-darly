@@ -77,7 +77,7 @@ export default async function Tarjetas() {
                 {Intl.NumberFormat("es-ES", {
                   style: "currency",
                   currency: "CUP",
-                }).format(tarjeta.saldo)}
+                }).format(Number(tarjeta.saldo))}
               </p>
             </CardContent>
             <CardFooter>
