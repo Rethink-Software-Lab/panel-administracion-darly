@@ -7,7 +7,7 @@ import { SalidaSchema } from "./schema";
 import { db } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
-  inventarioProducto,
+  producto,
   inventarioSalidaalmacen,
 } from "@/db/schema";
 import { getSession } from "@/lib/getSession";
@@ -30,33 +30,30 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
       })
       .returning();
 
-    for (const producto of data.productos) {
-      if (producto.esZapato) {
-        const idsZapatos = producto
+    for (const producto_info of data.productos) {
+      if (producto_info.esZapato) {
+        const idsZapatos = producto_info
           .zapatos_id!.split(",")
           .map((s: string) => Number(s.trim()));
 
         const productosZapatos = await db
           .select({
-            id: inventarioProducto.id,
+            id: producto.id,
           })
-          .from(inventarioProducto)
+          .from(producto)
           .leftJoin(
             inventarioAjusteinventarioProductos,
-            eq(
-              inventarioAjusteinventarioProductos.productoId,
-              inventarioProducto.id
-            )
+            eq(inventarioAjusteinventarioProductos.productoId, producto.id)
           )
           .where(
             and(
-              inArray(inventarioProducto.id, idsZapatos),
-              eq(inventarioProducto.infoId, Number(producto.id)),
-              eq(inventarioProducto.almacenRevoltosa, false),
-              isNull(inventarioProducto.areaVentaId),
-              isNull(inventarioProducto.ventaId),
-              isNull(inventarioProducto.salidaId),
-              isNull(inventarioProducto.salidaRevoltosaId),
+              inArray(producto.id, idsZapatos),
+              eq(producto.infoId, Number(producto.id)),
+              eq(producto.almacenRevoltosa, false),
+              isNull(producto.areaVentaId),
+              isNull(producto.ventaId),
+              isNull(producto.salidaId),
+              isNull(producto.salidaRevoltosaId),
               isNull(inventarioAjusteinventarioProductos.id)
             )
           );
@@ -69,40 +66,37 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
         }
 
         await db
-          .update(inventarioProducto)
+          .update(producto)
           .set({
             salidaId: salidaInsertada[0].id,
             areaVentaId: areaVentaId,
             almacenRevoltosa: esAlmacenRevoltosa,
           })
-          .where(inArray(inventarioProducto.id, idsZapatos));
+          .where(inArray(producto.id, idsZapatos));
       } else {
         const productos_en_almacen = await db
           .select({
-            id: inventarioProducto.id,
+            id: producto.id,
           })
-          .from(inventarioProducto)
+          .from(producto)
           .leftJoin(
             inventarioAjusteinventarioProductos,
-            eq(
-              inventarioAjusteinventarioProductos.productoId,
-              inventarioProducto.id
-            )
+            eq(inventarioAjusteinventarioProductos.productoId, producto.id)
           )
           .where(
             and(
-              eq(inventarioProducto.infoId, Number(producto.id)),
-              eq(inventarioProducto.almacenRevoltosa, false),
-              isNull(inventarioProducto.areaVentaId),
-              isNull(inventarioProducto.ventaId),
-              isNull(inventarioProducto.salidaId),
-              isNull(inventarioProducto.salidaRevoltosaId),
+              eq(producto.infoId, Number(producto.id)),
+              eq(producto.almacenRevoltosa, false),
+              isNull(producto.areaVentaId),
+              isNull(producto.ventaId),
+              isNull(producto.salidaId),
+              isNull(producto.salidaRevoltosaId),
               isNull(inventarioAjusteinventarioProductos.id)
             )
           )
-          .limit(Number(producto.cantidad));
+          .limit(Number(producto_info.cantidad));
 
-        if (productos_en_almacen.length < Number(producto.cantidad)) {
+        if (productos_en_almacen.length < Number(producto_info.cantidad)) {
           return {
             data: null,
             error: `No hay productos suficientes en el almacen.`,
@@ -112,13 +106,13 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
         const idsAActualizar = productos_en_almacen.map((p) => p.id);
 
         await db
-          .update(inventarioProducto)
+          .update(producto)
           .set({
             salidaId: salidaInsertada[0].id,
             areaVentaId: areaVentaId,
             almacenRevoltosa: esAlmacenRevoltosa,
           })
-          .where(inArray(inventarioProducto.id, idsAActualizar));
+          .where(inArray(producto.id, idsAActualizar));
       }
     }
     revalidatePath("/salidas");
@@ -143,34 +137,34 @@ interface ProductoSchemaSalida {
 }
 
 async function procesarZapatos(
-  producto: ProductoSchemaSalida,
+  producto_info: ProductoSchemaSalida,
   salidaId: number,
   areaVentaId: number | null,
   esAlmacenRevoltosa: boolean
 ) {
-  const idsZapatos = producto
+  const idsZapatos = producto_info
     .zapatos_id!.split(",")
     .map((s: string) => Number(s.trim()));
 
   const productosZapatos = await db
     .select({
-      id: inventarioProducto.id,
+      id: producto.id,
     })
-    .from(inventarioProducto)
+    .from(producto)
     .leftJoin(
       inventarioAjusteinventarioProductos,
-      eq(inventarioAjusteinventarioProductos.productoId, inventarioProducto.id)
+      eq(inventarioAjusteinventarioProductos.productoId, producto.id)
     )
     .where(
       and(
-        eq(inventarioProducto.salidaId, salidaId),
-        eq(inventarioProducto.infoId, Number(producto.id)),
+        eq(producto.salidaId, salidaId),
+        eq(producto.infoId, Number(producto_info.id)),
         areaVentaId
-          ? eq(inventarioProducto.areaVentaId, areaVentaId)
-          : isNull(inventarioProducto.areaVentaId),
-        eq(inventarioProducto.almacenRevoltosa, esAlmacenRevoltosa),
-        isNull(inventarioProducto.ventaId),
-        isNull(inventarioProducto.salidaRevoltosaId),
+          ? eq(producto.areaVentaId, areaVentaId)
+          : isNull(producto.areaVentaId),
+        eq(producto.almacenRevoltosa, esAlmacenRevoltosa),
+        isNull(producto.ventaId),
+        isNull(producto.salidaRevoltosaId),
         isNull(inventarioAjusteinventarioProductos.id)
       )
     );
@@ -183,24 +177,21 @@ async function procesarZapatos(
   if (agregados.length > 0) {
     const validatedProducts = await db
       .select({
-        id: inventarioProducto.id,
+        id: producto.id,
       })
-      .from(inventarioProducto)
+      .from(producto)
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(
-          inventarioAjusteinventarioProductos.productoId,
-          inventarioProducto.id
-        )
+        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
       )
       .where(
         and(
-          inArray(inventarioProducto.id, agregados),
-          eq(inventarioProducto.infoId, Number(producto.id)),
-          eq(inventarioProducto.almacenRevoltosa, false),
-          isNull(inventarioProducto.ventaId),
-          isNull(inventarioProducto.salidaId),
-          isNull(inventarioProducto.salidaRevoltosaId),
+          inArray(producto.id, agregados),
+          eq(producto.infoId, Number(producto.id)),
+          eq(producto.almacenRevoltosa, false),
+          isNull(producto.ventaId),
+          isNull(producto.salidaId),
+          isNull(producto.salidaRevoltosaId),
           isNull(inventarioAjusteinventarioProductos.id)
         )
       );
@@ -212,79 +203,76 @@ async function procesarZapatos(
     }
 
     await db
-      .update(inventarioProducto)
+      .update(producto)
       .set({
         salidaId,
         areaVentaId,
         almacenRevoltosa: esAlmacenRevoltosa,
       })
-      .where(inArray(inventarioProducto.id, agregados));
+      .where(inArray(producto.id, agregados));
   }
 
   if (eliminados.length > 0) {
     await db
-      .update(inventarioProducto)
+      .update(producto)
       .set({
         salidaId: null,
         areaVentaId: null,
         almacenRevoltosa: false,
       })
-      .where(inArray(inventarioProducto.id, eliminados));
+      .where(inArray(producto.id, eliminados));
   }
 }
 
 async function procesarProducto(
-  producto: ProductoSchemaSalida,
+  producto_info: ProductoSchemaSalida,
   salidaId: number,
   areaVentaId: number | null,
   esAlmacenRevoltosa: boolean
 ) {
   const productos = await db
     .select({
-      id: inventarioProducto.id,
+      id: producto.id,
     })
-    .from(inventarioProducto)
+    .from(producto)
     .leftJoin(
       inventarioAjusteinventarioProductos,
-      eq(inventarioAjusteinventarioProductos.productoId, inventarioProducto.id)
+      eq(inventarioAjusteinventarioProductos.productoId, producto.id)
     )
     .where(
       and(
-        eq(inventarioProducto.salidaId, salidaId),
-        eq(inventarioProducto.infoId, Number(producto.id)),
+        eq(producto.salidaId, salidaId),
+        eq(producto.infoId, Number(producto.id)),
         areaVentaId
-          ? eq(inventarioProducto.areaVentaId, areaVentaId)
-          : isNull(inventarioProducto.areaVentaId),
-        eq(inventarioProducto.almacenRevoltosa, esAlmacenRevoltosa),
-        isNull(inventarioProducto.ventaId),
-        isNull(inventarioProducto.salidaRevoltosaId),
+          ? eq(producto.areaVentaId, areaVentaId)
+          : isNull(producto.areaVentaId),
+        eq(producto.almacenRevoltosa, esAlmacenRevoltosa),
+        isNull(producto.ventaId),
+        isNull(producto.salidaRevoltosaId),
         isNull(inventarioAjusteinventarioProductos.id)
       )
     );
-  const cantidad = producto.cantidad || 0;
+  const cantidad = producto_info.cantidad || 0;
   const diferencia = productos.length - cantidad;
 
   if (cantidad > productos.length) {
     // Los del almacen
     const productosParaActualizar = await db
       .select({
-        id: inventarioProducto.id,
+        id: producto.id,
       })
-      .from(inventarioProducto)
+      .from(producto)
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(
-          inventarioAjusteinventarioProductos.productoId,
-          inventarioProducto.id
-        )
+        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
       )
       .where(
         and(
-          eq(inventarioProducto.infoId, Number(producto.id)),
-          eq(inventarioProducto.almacenRevoltosa, false),
-          isNull(inventarioProducto.ventaId),
-          isNull(inventarioProducto.salidaId),
-          isNull(inventarioProducto.salidaRevoltosaId),
+          eq(producto.infoId, Number(producto.id)),
+          eq(producto.almacenRevoltosa, false),
+          isNull(producto.ventaId),
+          isNull(producto.salidaId),
+          isNull(producto.salidaRevoltosaId),
           isNull(inventarioAjusteinventarioProductos.id)
         )
       )
@@ -295,7 +283,7 @@ async function procesarProducto(
     }
 
     await db
-      .update(inventarioProducto)
+      .update(producto)
       .set({
         salidaId,
         areaVentaId,
@@ -303,7 +291,7 @@ async function procesarProducto(
       })
       .where(
         inArray(
-          inventarioProducto.id,
+          producto.id,
           productosParaActualizar.map((p) => p.id)
         )
       );
@@ -316,7 +304,7 @@ async function procesarProducto(
     }
 
     await db
-      .update(inventarioProducto)
+      .update(producto)
       .set({
         salidaId: null,
         areaVentaId: null,
@@ -324,7 +312,7 @@ async function procesarProducto(
       })
       .where(
         inArray(
-          inventarioProducto.id,
+          producto.id,
           productosParaActualizar.map((p) => p.id)
         )
       );

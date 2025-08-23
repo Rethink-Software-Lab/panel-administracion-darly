@@ -1,4 +1,5 @@
 import { Categoria } from "../../categorias/types";
+import { AreaVenta } from "../types";
 
 export interface Zapatos {
   id: number;
@@ -35,7 +36,7 @@ export interface Ventas {
   cantidad: number;
 }
 
-export interface Tarjetas {
+export interface CuentasBancarias {
   id: number;
   nombre: string;
   banco: string | null;
@@ -45,13 +46,15 @@ export interface Tarjetas {
 export interface AllProductos {
   id: number;
   descripcion: string;
-  categoria: string;
+  isZapato: boolean;
 }
+
+export type AreaVentaInResponseOneAreaVenta = Omit<AreaVenta, "color">;
 
 export interface EndpointOneAreaVenta {
   inventario: Inventario;
   ventas: Ventas[];
-  area_venta: string;
+  area_venta: AreaVentaInResponseOneAreaVenta;
   all_productos: AllProductos[];
-  tarjetas: Tarjetas[];
+  cuentas_bancarias: CuentasBancarias[];
 }

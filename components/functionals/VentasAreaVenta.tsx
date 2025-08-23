@@ -1,31 +1,32 @@
-import { CloudOff, FileText, PackagePlus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CloudOff, FileText, PackagePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-import ModalVentas from '@/components/functionals/ModalVentas';
+import ModalVentas from "@/components/functionals/ModalVentas";
 
-import { DataTable } from '../ui/data-table-ventas';
-import { columns } from '@/app/(with-layout)/areas-de-venta/[id]/columns-ventas';
+import { DataTable } from "../ui/data-table-ventas";
+import { columns } from "@/app/(with-layout)/areas-de-venta/[id]/columns-ventas";
 
-import Link from 'next/link';
+import Link from "next/link";
 import {
   AllProductos,
-  Tarjetas,
+  AreaVentaInResponseOneAreaVenta,
+  CuentasBancarias,
   Ventas,
-} from '@/app/(with-layout)/areas-de-venta/[id]/types';
-import { getSession } from '@/lib/getSession';
+} from "@/app/(with-layout)/areas-de-venta/[id]/types";
+import { getSession } from "@/lib/getSession";
 
 interface Props {
-  id: string;
+  areaVenta: AreaVentaInResponseOneAreaVenta;
   ventas: Ventas[];
   productos: AllProductos[];
-  tarjetas: Tarjetas[];
+  cuentasBancarias: CuentasBancarias[];
 }
 
 export default async function VentasAreaVenta({
-  id,
+  areaVenta,
   ventas,
   productos,
-  tarjetas,
+  cuentasBancarias,
 }: Props) {
   const { isStaff, userId } = getSession();
 
@@ -36,10 +37,10 @@ export default async function VentasAreaVenta({
         <div className="flex items-center gap-2">
           <Link
             href={{
-              pathname: '/reportes',
+              pathname: "/reportes",
               query: {
-                type: 'ventas',
-                area: id,
+                type: "ventas",
+                area: areaVenta.id,
               },
             }}
           >
@@ -48,9 +49,9 @@ export default async function VentasAreaVenta({
             </Button>
           </Link>
           <ModalVentas
-            idPunto={Number(id)}
+            areaVenta={areaVenta}
             productosInfo={productos}
-            tarjetas={tarjetas}
+            cuentasBancarias={cuentasBancarias}
             trigger={
               <Button className="gap-1 items-center">
                 <PackagePlus size={18} />
@@ -67,7 +68,7 @@ export default async function VentasAreaVenta({
         <DataTable
           columns={columns}
           data={ventas}
-          id={id}
+          id={areaVenta.id}
           userId={parseInt(userId!)}
           isStaff={isStaff}
         />

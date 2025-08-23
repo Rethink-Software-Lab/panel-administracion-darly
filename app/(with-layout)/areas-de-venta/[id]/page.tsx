@@ -1,12 +1,12 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import InventarioAreaVenta from '@/components/functionals/InventarioAreaVenta';
-import dynamic from 'next/dynamic';
-import { getAreaVenta } from './services';
-import { CloudOff } from 'lucide-react';
+import InventarioAreaVenta from "@/components/functionals/InventarioAreaVenta";
+import dynamic from "next/dynamic";
+import { getAreaVenta } from "./services";
+import { CloudOff } from "lucide-react";
 
 const VentasAreaVenta = dynamic(
-  () => import('@/components/functionals/VentasAreaVenta'),
+  () => import("@/components/functionals/VentasAreaVenta"),
   {
     loading: () => <p>Cargando...</p>,
   }
@@ -34,8 +34,8 @@ export default async function AreaVenta({ params }: { params: Params }) {
             <VentasAreaVenta
               ventas={data?.ventas}
               productos={data?.all_productos}
-              tarjetas={data?.tarjetas}
-              id={params?.id}
+              cuentasBancarias={data?.cuentas_bancarias}
+              areaVenta={data.area_venta}
             />
           </TabsContent>
         </Tabs>

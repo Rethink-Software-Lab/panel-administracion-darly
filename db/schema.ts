@@ -1191,7 +1191,7 @@ export const inventarioTransferenciaProductos = pgTable(
     ),
     foreignKey({
       columns: [table.productoId],
-      foreignColumns: [inventarioProducto.id],
+      foreignColumns: [producto.id],
       name: "inventario_transfere_producto_id_58fac46a_fk_inventari",
     }),
     foreignKey({
@@ -1626,7 +1626,7 @@ export const inventarioAjusteinventarioProductos = pgTable(
     }),
     foreignKey({
       columns: [table.productoId],
-      foreignColumns: [inventarioProducto.id],
+      foreignColumns: [producto.id],
       name: "inventario_ajusteinv_producto_id_1303305a_fk_inventari",
     }),
     unique(
@@ -1635,10 +1635,9 @@ export const inventarioAjusteinventarioProductos = pgTable(
   ]
 );
 
-export const inventarioProducto = pgTable(
+export const producto = pgTable(
   "inventario_producto",
   {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
       name: "inventario_producto_id_seq",
       startWith: 1,
@@ -1649,19 +1648,31 @@ export const inventarioProducto = pgTable(
     }),
     color: varchar({ length: 100 }),
     numero: numeric({ precision: 3, scale: 1 }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    areaVentaId: bigint("area_venta_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    entradaId: bigint("entrada_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    infoId: bigint("info_id", { mode: "number" }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    ventaId: bigint("venta_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    salidaId: bigint("salida_id", { mode: "number" }),
+    areaVentaId: bigint("area_venta_id", { mode: "number" }).references(
+      () => inventarioAreaventa.id,
+      { onDelete: "set null" }
+    ),
+    entradaId: bigint("entrada_id", { mode: "number" }).references(
+      () => inventarioEntradaalmacen.id,
+      { onDelete: "cascade" }
+    ),
+    infoId: bigint("info_id", { mode: "number" })
+      .notNull()
+      .references(() => inventarioProductoinfo.id, { onDelete: "cascade" }),
+    ventaId: bigint("venta_id", { mode: "number" }).references(
+      () => inventarioVentas.id,
+      { onDelete: "set null" }
+    ),
+    salidaId: bigint("salida_id", { mode: "number" }).references(
+      () => inventarioSalidaalmacen.id,
+      { onDelete: "set null" }
+    ),
     almacenRevoltosa: boolean("almacen_revoltosa").notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    salidaRevoltosaId: bigint("salida_revoltosa_id", { mode: "number" }),
+    salidaRevoltosaId: bigint("salida_revoltosa_id", {
+      mode: "number",
+    }).references(() => inventarioSalidaalmacenrevoltosa.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [
     index("inventario_producto_area_venta_id_3503cefd").using(
@@ -1688,36 +1699,6 @@ export const inventarioProducto = pgTable(
       "btree",
       table.ventaId.asc().nullsLast().op("int8_ops")
     ),
-    foreignKey({
-      columns: [table.areaVentaId],
-      foreignColumns: [inventarioAreaventa.id],
-      name: "inventario_producto_area_venta_id_3503cefd_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.entradaId],
-      foreignColumns: [inventarioEntradaalmacen.id],
-      name: "inventario_producto_entrada_id_54105bf9_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.infoId],
-      foreignColumns: [inventarioProductoinfo.id],
-      name: "inventario_producto_info_id_25d764ab_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.salidaId],
-      foreignColumns: [inventarioSalidaalmacen.id],
-      name: "inventario_producto_salida_id_c9d9731a_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.salidaRevoltosaId],
-      foreignColumns: [inventarioSalidaalmacenrevoltosa.id],
-      name: "inventario_producto_salida_revoltosa_id_99a3c049_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventaId],
-      foreignColumns: [inventarioVentas.id],
-      name: "inventario_producto_venta_id_83ddd82d_fk_inventario_ventas_id",
-    }),
   ]
 );
 

@@ -1,34 +1,36 @@
-'use client';
+"use client";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
 import {
-  DialogFooter,
-  DialogClose,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckIcon, X, PlusCircle, ChevronDown } from 'lucide-react';
+} from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CheckIcon, X, PlusCircle, ChevronDown } from "lucide-react";
 
-import { cn } from '@/lib/utils';
+import { CAJA_MESAS, CAJA_SALON, cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -36,109 +38,88 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { VentasSchema } from '@/lib/schemas';
-import {
-  safeParse,
-  pipe,
-  integer,
-  minValue,
-  string,
-  transform,
-  InferInput,
-} from 'valibot';
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/schema";
+import { InferOutput } from "valibot";
 
-import { toast } from 'sonner';
-import { CircleX, LoaderCircle } from 'lucide-react';
-import { ReactNode, useRef, useState } from 'react';
+import { toast } from "sonner";
+import { CircleX, LoaderCircle } from "lucide-react";
+import { Fragment, ReactNode, useRef, useState } from "react";
 
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { METODOS_PAGO } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
-import { Banco } from '@/app/(with-layout)/tarjetas/types';
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/tarjetas/types";
 import {
   AllProductos,
-  Tarjetas,
-} from '@/app/(with-layout)/areas-de-venta/[id]/types';
-import { addVenta } from '@/app/(with-layout)/areas-de-venta/[id]/actions';
+  AreaVentaInResponseOneAreaVenta,
+  CuentasBancarias,
+} from "@/app/(with-layout)/areas-de-venta/[id]/types";
+import { addVenta } from "@/app/(with-layout)/areas-de-venta/[id]/actions";
+import { Tag, TagInput } from "emblor";
 
 export default function ModalVentas({
   trigger,
-  idPunto,
+  areaVenta,
   productosInfo,
-  tarjetas,
+  cuentasBancarias,
 }: {
-  idPunto: number;
+  areaVenta: AreaVentaInResponseOneAreaVenta;
   productosInfo: AllProductos[];
-  tarjetas: Tarjetas[];
+  cuentasBancarias: CuentasBancarias[];
   trigger: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const ref = useRef<HTMLInputElement | null>(null);
+
+  const [openPopovers, setOpenPopovers] = useState<Record<number, boolean>>({});
+
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const form = useForm<InferInput<typeof VentasSchema>>({
+  const form = useForm<InferOutput<typeof VentasSchema>>({
     resolver: valibotResolver(VentasSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: fieldsCuentas,
+    append: appendCuenta,
+    remove: removeCuenta,
+  } = useFieldArray({
     control: form.control,
-    name: 'zapatos_id',
-  });
-
-  const zapatos_id = useWatch({
-    control: form.control,
-    name: 'zapatos_id',
+    name: "cuentas",
   });
 
   const info_producto = useWatch({
     control: form.control,
-    name: 'producto_info',
+    name: "producto_info",
   });
 
-  const metodo = useWatch({
+  const metodoWatch = useWatch({
     control: form.control,
-    name: 'metodoPago',
+    name: "metodoPago",
   });
-
-  const IdArraySchema = pipe(
-    string(),
-    transform((input) => parseInt(input)),
-    integer(),
-    minValue(1)
-  );
-
-  const handleNewProducts = () => {
-    if (!ref.current) return;
-    const { success } = safeParse(IdArraySchema, ref.current.value);
-    if (success) {
-      append({
-        id: Math.random().toString(36).substr(2, 9),
-        value: parseInt(ref.current.value),
-      });
-      ref.current.value = '';
-    }
-  };
 
   const onSubmit = async (
-    dataForm: InferInput<typeof VentasSchema>
+    dataForm: InferOutput<typeof VentasSchema>
   ): Promise<void> => {
     setIsLoading(true);
     const { data: dataRes, error } = await addVenta({
       ...dataForm,
-      zapatos_id: dataForm.zapatos_id?.map((item) => item.value),
-      areaVenta: idPunto,
+      zapatos_id: dataForm.zapatos_id?.map((item) => item.text),
+      areaVenta,
     });
     setIsLoading(false);
     if (!error) {
@@ -149,14 +130,49 @@ export default function ModalVentas({
     setError(error);
   };
 
+  const handlePopoverOpenChange = (index: number, open: boolean) => {
+    setOpenPopovers((prev) => ({ ...prev, [index]: open }));
+  };
+
+  const getColors = (selectedValue: string): string | undefined => {
+    const { banco } =
+      cuentasBancarias?.find(
+        (cuenta) => cuenta?.id.toString() === selectedValue
+      ) || {};
+
+    if (selectedValue === CAJA_SALON || selectedValue === CAJA_MESAS) {
+      return "from-blue-500 to-blue-700";
+    } else {
+      switch (banco) {
+        case Banco.BANDEC:
+          return "from-[#6c0207] to-[#bc1f26]";
+        case Banco.BPA:
+          return "from-[#1d6156] to-[#1d6156]";
+      }
+    }
+  };
+
+  const getNombreCuenta = (id: string) => {
+    if (id === CAJA_SALON) {
+      return "Caja Salón";
+    } else if (id === CAJA_MESAS) {
+      return "Caja Mesas";
+    } else {
+      const cuenta = cuentasBancarias?.find(
+        (cuenta) => cuenta?.id.toString() === id
+      );
+      return cuenta?.nombre || "Selecciona una cuenta";
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Agregar Venta</DialogTitle>
-        </DialogHeader>
-        <DialogDescription>Todos los campos son requeridos</DialogDescription>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetContent className="w-full sm:max-w-[500px] overflow-y-scroll space-y-4">
+        <SheetHeader className="space-y-0">
+          <SheetTitle>Agregar Venta</SheetTitle>
+          <SheetDescription>Todos los campos son requeridos</SheetDescription>
+        </SheetHeader>
         {error && (
           <Alert variant="destructive">
             <CircleX className="h-5 w-5" />
@@ -179,14 +195,43 @@ export default function ModalVentas({
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
-                      if (value === 'MIXTO') {
-                        form.setValue('efectivo', 0);
-                        form.setValue('transferencia', 0);
-                      } else if (value === METODOS_PAGO.EFECTIVO) {
-                        form.setValue('tarjeta', undefined);
-                      } else {
-                        form.setValue('efectivo', undefined);
-                        form.setValue('transferencia', undefined);
+                      switch (value) {
+                        case METODOS_PAGO.EFECTIVO:
+                          form.setValue("cuentas", [
+                            {
+                              cuenta: areaVenta.isMesa
+                                ? CAJA_MESAS
+                                : CAJA_SALON,
+                              cantidad: undefined,
+                              tipo: TipoCuenta.EFECTIVO,
+                            },
+                          ]);
+                          break;
+                        case METODOS_PAGO.TRANSFERENCIA:
+                          form.setValue("cuentas", [
+                            {
+                              cuenta: "",
+                              cantidad: undefined,
+                              tipo: TipoCuenta.BANCARIA,
+                            },
+                          ]);
+                          break;
+                        case METODOS_PAGO.MIXTO:
+                          form.setValue("cuentas", [
+                            {
+                              cuenta: areaVenta.isMesa
+                                ? CAJA_MESAS
+                                : CAJA_SALON,
+                              cantidad: 0,
+                              tipo: TipoCuenta.EFECTIVO,
+                            },
+                            {
+                              cuenta: "",
+                              cantidad: 0,
+                              tipo: TipoCuenta.BANCARIA,
+                            },
+                          ]);
+                          break;
                       }
                     }}
                     defaultValue={field.value}
@@ -195,7 +240,7 @@ export default function ModalVentas({
                       <SelectTrigger
                         className={cn(
                           form.formState.errors?.metodoPago &&
-                            'border-destructive'
+                            "border-destructive"
                         )}
                       >
                         <SelectValue placeholder="Selecciona un método de pago" />
@@ -214,102 +259,243 @@ export default function ModalVentas({
               )}
             />
 
-            {metodo === 'MIXTO' && (
-              <div className="grid grid-cols-2 gap-2">
-                <FormField
-                  control={form.control}
-                  name="efectivo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label>Efectivo</Label>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          step="0.01"
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+            {metodoWatch && metodoWatch !== METODOS_PAGO.EFECTIVO && (
+              <>
+                <div
+                  className={cn(
+                    "grid [&>span]:pl-2 mb-2 [&>span]:text-muted-foreground border-b border-muted",
+                    form.getValues("cuentas").length > 1 && "grid-cols-2"
                   )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="transferencia"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label>Transferencia</Label>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          step="0.01"
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                >
+                  <span>Cuenta</span>
+                  {form.getValues("cuentas").length > 1 && (
+                    <span>Cantidad</span>
                   )}
-                />
-              </div>
-            )}
-
-            {metodo === METODOS_PAGO.TRANSFERENCIA ||
-            metodo === METODOS_PAGO.MIXTO ? (
-              <FormField
-                control={form.control}
-                name="tarjeta"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label>Tarjeta</Label>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger
-                          className={cn(
-                            form.formState.errors?.metodoPago &&
-                              'border-destructive'
-                          )}
-                        >
-                          <SelectValue placeholder="Selecciona una tarjeta" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {tarjetas?.map((tarjeta) => (
-                          <SelectItem
-                            key={tarjeta.id}
-                            value={tarjeta.id.toString()}
-                            disabled={!tarjeta.disponible}
+                </div>
+                <div className="grid gap-2 grid-cols-2">
+                  {fieldsCuentas.map((cuenta, index, row) => (
+                    <Fragment key={cuenta.id}>
+                      <FormField
+                        control={form.control}
+                        name={`cuentas.${index}.cuenta`}
+                        render={({ field }) => (
+                          <FormItem
+                            className={cn(
+                              "flex flex-col",
+                              row.length < 2 && "col-span-2"
+                            )}
                           >
-                            <div className="flex gap-2 items-center ">
-                              <div
-                                className={cn(
-                                  'w-6 aspect-square rounded-full bg-gradient-to-br',
-                                  tarjeta.banco === Banco.BANDEC &&
-                                    'from-[#6c0207] to-[#bc1f26]',
-                                  tarjeta.banco === Banco.BPA &&
-                                    'from-[#1d6156] to-[#1d6156]'
-                                )}
-                              ></div>
-                              <p>{tarjeta.nombre}</p>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : null}
+                            <Popover
+                              open={openPopovers[index] ?? false}
+                              onOpenChange={(open) =>
+                                handlePopoverOpenChange(index, open)
+                              }
+                            >
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      "justify-between contain-strict",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                    disabled={
+                                      field.value === CAJA_SALON ||
+                                      field.value === CAJA_MESAS
+                                    }
+                                  >
+                                    <div className="flex">
+                                      {field.value && (
+                                        <div
+                                          className={cn(
+                                            "hidden md:block w-6 aspect-square rounded-full bg-gradient-to-br mr-2 shrink-0",
+                                            getColors(field.value)
+                                          )}
+                                        />
+                                      )}
+
+                                      {getNombreCuenta(field.value)}
+                                    </div>
+
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                containerRef={formRef}
+                                className="w-[320px] p-0"
+                              >
+                                <Command className="rounded-lg border shadow-md">
+                                  <CommandInput placeholder="Escribe un código..." />
+                                  <CommandList>
+                                    <CommandEmpty>
+                                      Ningún resultado encontrado.
+                                    </CommandEmpty>
+                                    <CommandGroup heading="Sugerencias">
+                                      {cuentasBancarias
+                                        ?.filter((c) => {
+                                          const cuentasSeleccionadas = form
+                                            .getValues("cuentas")
+                                            .map(
+                                              (cuentaObj, i) =>
+                                                i !== index && cuentaObj.cuenta
+                                            )
+                                            .filter(Boolean);
+
+                                          const yaSeleccionada =
+                                            cuentasSeleccionadas.includes(
+                                              c.id.toString()
+                                            );
+                                          if (yaSeleccionada) return false;
+
+                                          if (
+                                            !metodoWatch ||
+                                            metodoWatch === METODOS_PAGO.MIXTO
+                                          ) {
+                                            return true;
+                                          }
+
+                                          return !!c.banco;
+                                        })
+                                        .map((cuenta) => (
+                                          <CommandItem
+                                            key={cuenta.id}
+                                            value={cuenta.id.toString()}
+                                            keywords={[cuenta.nombre]}
+                                            onSelect={(currentValue) => {
+                                              field.onChange(
+                                                currentValue === field.value
+                                                  ? ""
+                                                  : currentValue
+                                              );
+                                              form.setValue(
+                                                `cuentas.${index}.tipo`,
+                                                TipoCuenta.BANCARIA
+                                              );
+                                              handlePopoverOpenChange(
+                                                index,
+                                                false
+                                              );
+                                            }}
+                                          >
+                                            <div className="flex gap-2 items-center ">
+                                              <div
+                                                className={cn(
+                                                  "w-6 aspect-square rounded-full bg-gradient-to-br",
+                                                  getColors(
+                                                    cuenta.id.toString()
+                                                  )
+                                                )}
+                                              ></div>
+                                              <p>{cuenta.nombre}</p>
+                                            </div>
+                                            <CheckIcon
+                                              className={cn(
+                                                "ml-auto h-4 w-4",
+                                                cuenta.id.toString() ===
+                                                  field.value
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                          </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {row.length > 1 && (
+                        <div className="flex md:gap-1">
+                          <div className="w-full">
+                            <FormField
+                              control={form.control}
+                              name={`cuentas.${index}.cantidad`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      type="number"
+                                      step={0.01}
+                                      onChange={(e) => {
+                                        const value = parseFloat(
+                                          e.target.value
+                                        );
+                                        field.onChange(
+                                          isNaN(value) ? 0 : value
+                                        );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          {index > 0 && (
+                            <Button
+                              onClick={() => {
+                                form.getValues("cuentas").length === 2 &&
+                                  form.setValue("cuentas", [
+                                    {
+                                      cuenta:
+                                        form.getValues("cuentas")?.[0]?.cuenta,
+                                      cantidad: undefined,
+                                      tipo: form.getValues("cuentas")?.[0]
+                                        ?.tipo,
+                                    },
+                                  ]),
+                                  removeCuenta(index);
+                              }}
+                              size="icon"
+                              variant="ghost"
+                              className="gap-1"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </Fragment>
+                  ))}
+                </div>
+
+                <div className="col-span-2 text-center">
+                  <Button
+                    onClick={() => {
+                      form.getValues("cuentas").length === 1 &&
+                        form.setValue("cuentas", [
+                          {
+                            cuenta: form.getValues("cuentas")?.[0]?.cuenta,
+                            cantidad: 0,
+                            tipo: form.getValues("cuentas")?.[0]?.tipo,
+                          },
+                        ]),
+                        appendCuenta({
+                          cuenta: "",
+                          cantidad: 0,
+                          tipo: "",
+                        });
+                    }}
+                    size="sm"
+                    variant="ghost"
+                    className="gap-1"
+                  >
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="hidden md:inline">Añadir </span>
+                    <span>cuenta</span>
+                  </Button>
+                </div>
+              </>
+            )}
 
             <FormField
               control={form.control}
@@ -324,16 +510,15 @@ export default function ModalVentas({
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            'justify-between',
-                            !field.value && 'text-muted-foreground'
+                            "justify-between",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value
                             ? productosInfo?.find(
-                                (producto) =>
-                                  producto?.id?.toString() === field.value
+                                (producto) => producto?.id === field.value.id
                               )?.descripcion
-                            : 'Selecciona un producto'}
+                            : "Selecciona un producto"}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -355,22 +540,24 @@ export default function ModalVentas({
                                 value={producto.id?.toString()}
                                 keywords={[producto.descripcion]}
                                 onSelect={(currentValue) => {
-                                  const esZapato =
-                                    productosInfo?.find(
-                                      (e) => e.id.toString() === currentValue
-                                    )?.categoria === 'Zapatos';
+                                  const esZapato = productosInfo?.find(
+                                    (e) => e.id === Number(currentValue)
+                                  )?.isZapato;
 
                                   if (esZapato) {
-                                    form.setValue('cantidad', undefined);
-                                    form.setValue('zapatos_id', []);
+                                    form.setValue("cantidad", undefined);
+                                    form.setValue("zapatos_id", []);
                                   } else {
-                                    form.setValue('zapatos_id', undefined);
-                                    form.setValue('cantidad', 0);
+                                    form.setValue("zapatos_id", undefined);
+                                    form.setValue("cantidad", 0);
                                   }
                                   field.onChange(
-                                    currentValue === field.value
-                                      ? ''
-                                      : currentValue
+                                    Number(currentValue) === field.value?.id
+                                      ? ""
+                                      : {
+                                          id: Number(currentValue),
+                                          isZapato: esZapato,
+                                        }
                                   );
                                   setOpen(false);
                                 }}
@@ -378,10 +565,10 @@ export default function ModalVentas({
                                 {producto.descripcion}
                                 <CheckIcon
                                   className={cn(
-                                    'ml-auto h-4 w-4',
-                                    producto.id?.toString() === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
+                                    "ml-auto h-4 w-4",
+                                    producto.id === field.value?.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
                                   )}
                                 />
                               </CommandItem>
@@ -395,74 +582,79 @@ export default function ModalVentas({
                 </FormItem>
               )}
             />
+            {info_producto && info_producto.isZapato && (
+              <FormField
+                control={form.control}
+                name="zapatos_id"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start">
+                    <Label className="text-left">Ids</Label>
+                    <FormControl>
+                      <TagInput
+                        {...field}
+                        value={field.value?.map((item) => ({
+                          id: item.id,
+                          text: item.text.toString(),
+                        }))}
+                        placeholder="Ids de zapatos"
+                        tags={tags}
+                        styleClasses={{
+                          inlineTagsContainer:
+                            "border-input rounded-md bg-background shadow-xs transition-[color,box-shadow] outline-none p-1 gap-1",
+                          input: "w-full min-w-[80px] shadow-none px-2 h-7",
+                          tag: {
+                            body: "h-7 relative bg-background border border-input hover:bg-background rounded-md font-medium text-xs ps-2 pe-7",
+                            closeButton:
+                              "absolute -inset-y-px -end-px p-0 rounded-e-md flex size-7 transition-[color,box-shadow] outline-none text-muted-foreground/80 hover:text-foreground",
+                          },
+                        }}
+                        setTags={(newTags) => {
+                          setTags(newTags);
+                          const tagsArray = Array.isArray(newTags)
+                            ? newTags
+                            : newTags([]);
+                          form.setValue(
+                            "zapatos_id",
+                            tagsArray.map((tag) => ({
+                              id: tag.id,
+                              text: Number(tag.text),
+                            }))
+                          );
+                        }}
+                        validateTag={(tag) => !!Number(tag)}
+                        activeTagIndex={activeTagIndex}
+                        setActiveTagIndex={setActiveTagIndex}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Agregue los ids separandolos por coma o enter
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
-            {info_producto &&
-              productosInfo?.find((p) => p.id.toString() === info_producto)
-                ?.categoria === 'Zapatos' && (
-                <div className="space-y-2">
-                  <Label>Productos</Label>
-
-                  {zapatos_id && zapatos_id?.length > 0 && (
-                    <ul
-                      className={cn(
-                        'overflow-y-auto flex gap-2 p-2 max-h-[328px] flex-col items-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 shadow-sm bg-accent hover:text-accent-foreground rounded-md px-3 text-xs border-dashed ',
-                        form?.formState?.errors?.zapatos_id &&
-                          'border-destructive'
-                      )}
-                    >
-                      {fields?.map((p, index) => (
-                        <li
-                          key={p.id}
-                          className="flex w-full p-2 px-4 justify-between items-center bg-background rounded-md"
-                        >
-                          <span>{p.value}</span>
-                          <X
-                            className="ml-2 cursor-pointer"
-                            onClick={() => remove(index)}
-                            size={16}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <div className="flex gap-2">
-                    <Input
-                      ref={ref}
-                      type="number"
-                      placeholder="Introduzca Id"
-                    />
-                    <Button type="button" onClick={handleNewProducts}>
-                      <PlusCircle className="w-5 h-5" />
-                    </Button>
-                  </div>
-                  <p className="text-[0.8rem] font-medium text-destructive">
-                    {form.formState.errors?.zapatos_id?.message}
-                  </p>
-                </div>
-              )}
-
-            {info_producto &&
-              productosInfo?.find((p) => p.id.toString() === info_producto)
-                ?.categoria !== 'Zapatos' && (
-                <div className="space-y-2">
-                  <Label>Cantidad</Label>
-                  <Input
-                    {...form.register('cantidad', { valueAsNumber: true })}
-                    type="number"
-                  />
-                  <p className="text-[0.8rem] font-medium text-destructive">
-                    {form.formState.errors?.cantidad?.message}
-                  </p>
-                </div>
-              )}
+            {info_producto && !info_producto.isZapato && (
+              <div className="space-y-2">
+                <Label>Cantidad</Label>
+                <Input
+                  {...form.register("cantidad", { valueAsNumber: true })}
+                  type="number"
+                />
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {form.formState.errors?.cantidad?.message}
+                </p>
+              </div>
+            )}
 
             <div className="grid gap-4">
-              <DialogFooter className="w-full flex gap-2 mt-2">
-                <DialogClose asChild>
+              <SheetFooter className="w-full flex gap-2 mt-2">
+                <SheetClose asChild>
                   <Button type="button" className="w-full" variant="secondary">
                     Cancelar
                   </Button>
-                </DialogClose>
+                </SheetClose>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <>
@@ -470,14 +662,14 @@ export default function ModalVentas({
                       Agregando...
                     </>
                   ) : (
-                    'Agregar'
+                    "Agregar"
                   )}
                 </Button>
-              </DialogFooter>
+              </SheetFooter>
             </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
