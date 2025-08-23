@@ -1,34 +1,34 @@
-'use client';
-import TableDeleteV2 from '@/components/functionals/TableDeleteV2';
-import { deleteTransferenciaTarjeta } from './actions';
-import { DateTime } from 'luxon';
-import { ColumnDef } from '@tanstack/react-table';
+"use client";
+import TableDeleteV2 from "@/components/functionals/TableDeleteV2";
+import { deleteTransferenciaTarjeta } from "./actions";
+import { DateTime } from "luxon";
+import { ColumnDef } from "@tanstack/react-table";
 
-import { TipoTransferencia, Transferenciastarjetas } from './types';
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { TipoTransferencia, Transferenciastarjetas } from "./types";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<Transferenciastarjetas>[] = [
   {
-    accessorKey: 'created_at',
-    header: 'Fecha',
+    accessorKey: "createdAt",
+    header: "Fecha",
     cell: ({ row }) =>
-      DateTime.fromISO(row.getValue('created_at')).toLocaleString(
+      DateTime.fromSQL(row.getValue("createdAt")).toLocaleString(
         DateTime.DATETIME_MED,
-        { locale: 'es' }
+        { locale: "es" }
       ),
   },
   {
-    accessorKey: 'tipo',
-    header: 'Tipo',
+    accessorKey: "tipo",
+    header: "Tipo",
     cell: ({ row }) => {
-      const tipo = row.getValue('tipo');
+      const tipo = row.getValue("tipo");
 
       if (tipo === TipoTransferencia.INGRESO) {
         return (
@@ -56,29 +56,29 @@ export const columns: ColumnDef<Transferenciastarjetas>[] = [
     },
   },
   {
-    accessorKey: 'cantidad',
-    header: 'Valor',
+    accessorKey: "cantidad",
+    header: "Valor",
     cell: ({ row }) =>
-      Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'CUP',
-      }).format(row.getValue('cantidad')),
+      Intl.NumberFormat("es-ES", {
+        style: "currency",
+        currency: "CUP",
+      }).format(row.getValue("cantidad")),
   },
   {
-    accessorKey: 'descripcion',
-    header: 'Descripción',
+    accessorKey: "descripcion",
+    header: "Descripción",
     size: 200,
   },
   {
-    accessorKey: 'cuenta.nombre',
-    header: 'Tarjeta',
+    accessorKey: "cuenta",
+    header: "Cuenta",
   },
 
   {
-    accessorKey: 'usuario.username',
-    header: 'Usuario',
+    accessorKey: "usuario",
+    header: "Usuario",
     cell: ({ row }) => {
-      const username = row.original.usuario?.username;
+      const username = row.original.usuario;
       if (username) {
         return username;
       } else {
@@ -88,9 +88,9 @@ export const columns: ColumnDef<Transferenciastarjetas>[] = [
   },
 
   {
-    header: ' ',
+    header: " ",
     cell: ({ row }) => {
-      if (!row.original.venta && !row.original.venta_cafeteria) {
+      if (row.original.canDelete) {
         return (
           <TableDeleteV2
             id={row.original.id}

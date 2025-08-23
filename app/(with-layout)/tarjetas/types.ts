@@ -1,39 +1,38 @@
-import { Usuario } from '../users/types';
+import { Usuario } from "../users/types";
 
 export enum Banco {
-  BPA = 'BPA',
-  BANDEC = 'BANDEC',
+  BPA = "BPA",
+  BANDEC = "BANDEC",
 }
 
 export enum TipoTransferencia {
-  INGRESO = 'INGRESO',
-  EGRESO = 'EGRESO',
+  INGRESO = "INGRESO",
+  EGRESO = "EGRESO",
 }
 
 export enum TipoCuenta {
-  EFECTIVO = 'EFECTIVO',
-  BANCARIA = 'BANCARIA',
+  EFECTIVO = "EFECTIVO",
+  BANCARIA = "BANCARIA",
 }
 
 export interface Tarjetas {
   id: number;
   nombre: string;
-  tipo: TipoCuenta;
-  banco: Banco;
-  saldo: number;
+  tipo: string;
+  banco: string | null;
+  saldo: string;
   total_transferencias_mes: number;
 }
 
 export interface Transferenciastarjetas {
   id: number;
-  cantidad: number;
+  cantidad: string;
   descripcion: string;
-  created_at: string;
-  cuenta: Tarjetas;
-  tipo: TipoTransferencia;
-  usuario: Usuario;
-  venta: number | null;
-  venta_cafeteria: number | null;
+  createdAt: string;
+  cuenta: string;
+  tipo: string;
+  usuario: string | null;
+  canDelete: boolean;
 }
 
 export interface ResponseTarjetas {
