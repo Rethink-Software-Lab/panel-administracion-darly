@@ -195,6 +195,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     .where(and(...whereCondition));
 
   let productos_en_area;
+  consomé.log(zapatos_id)
 
   if (producto_info.isZapato && zapatos_id) {
     whereCondition.push(inArray(producto.id, zapatos_id));
@@ -207,7 +208,6 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
 
   if (
     producto_info.isZapato &&
-    zapatos_id &&
     productos_en_area.length !== zapatos_id.length
   ) {
     throw new ValidationError(
