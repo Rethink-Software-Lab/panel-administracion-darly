@@ -195,7 +195,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     .where(and(...whereCondition));
 
   let productos_en_area;
-  consomé.log(zapatos_id)
+  console.log(zapatos_id)
 
   if (producto_info.isZapato && zapatos_id) {
     whereCondition.push(inArray(producto.id, zapatos_id));
