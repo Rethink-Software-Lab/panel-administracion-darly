@@ -373,7 +373,7 @@ async function rebajar_de_las_cuentas({
 
         await tx.insert(inventarioTransacciones).values({
           createdAt: new Date().toISOString(),
-          descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto}`,
+          descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
           cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
           ventaId: venta[0].id,
           tipo: TipoTransferencia.EGRESO,
@@ -434,7 +434,7 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
-    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto}`,
+    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
     cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
     ventaId: venta[0].id,
     tipo: TipoTransferencia.EGRESO,
