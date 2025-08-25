@@ -182,7 +182,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     eq(producto.areaVentaId, areaVenta),
     eq(producto.almacenRevoltosa, false),
     isNull(producto.ventaId),
-    isNull(inventarioAjusteinventarioProductos),
+    isNull(inventarioAjusteinventarioProductos.id),
   ];
 
   const baseQuery = db
