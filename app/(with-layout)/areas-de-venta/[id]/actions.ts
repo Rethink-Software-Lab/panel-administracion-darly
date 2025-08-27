@@ -1,4 +1,4 @@
-"use server";
+i"use server";
 
 import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/schema";
 import { db, DrizzleTransaction } from "@/db/initial";
@@ -209,7 +209,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
   }
 
   if (
-    producto_info.isZapato &&
+    producto_info.isZapato && zapatos_id &&
     productos_en_area.length !== zapatos_id.length
   ) {
     throw new ValidationError(
