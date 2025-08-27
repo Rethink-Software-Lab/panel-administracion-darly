@@ -1,4 +1,4 @@
-i"use server";
+"use server";
 
 import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/schema";
 import { db, DrizzleTransaction } from "@/db/initial";
