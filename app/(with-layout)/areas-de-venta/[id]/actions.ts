@@ -182,8 +182,12 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     eq(producto.areaVentaId, areaVenta),
     eq(producto.almacenRevoltosa, false),
     isNull(producto.ventaId),
-    isNull(inventarioAjusteinventarioProductos.id),
+    isNull(inventarioAjusteinventarioProductos),
   ];
+
+  if (producto_info.isZapato && zapatos_id) {
+    whereCondition.push(inArray(producto.id, zapatos_id));
+  }
 
   const baseQuery = db
     .select({ id: producto.id })
@@ -195,10 +199,8 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     .where(and(...whereCondition));
 
   let productos_en_area;
-  console.log(zapatos_id)
 
   if (producto_info.isZapato && zapatos_id) {
-    whereCondition.push(inArray(producto.id, zapatos_id));
     productos_en_area = await baseQuery;
   } else if (!producto_info.isZapato && cantidad) {
     productos_en_area = await baseQuery.limit(cantidad);
