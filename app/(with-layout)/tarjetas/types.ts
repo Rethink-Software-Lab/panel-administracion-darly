@@ -24,7 +24,12 @@ export interface Tarjetas {
   total_transferencias_mes: number;
 }
 
-export interface Transferenciastarjetas {
+export interface ResponseTarjetas {
+  tarjetas: Tarjetas[];
+  total_balance: number;
+}
+
+export interface Transacciones {
   id: number;
   cantidad: string;
   descripcion: string;
@@ -35,8 +40,34 @@ export interface Transferenciastarjetas {
   canDelete: boolean;
 }
 
-export interface ResponseTarjetas {
-  tarjetas: Tarjetas[];
-  transferencias: Transferenciastarjetas[];
-  total_balance: number;
+export interface Meta {
+  nextCursor: number | null;
+  prevCursor: number | null;
+  pageCount: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 }
+
+export interface CuentasInTransaccionesCompanent {
+  id: number;
+  nombre: string;
+  tipo: string;
+  banco: string | null;
+}
+
+interface DataInResponseTransacciones {
+  transacciones: Transacciones[];
+  cuentas: CuentasInTransaccionesCompanent[];
+}
+
+export type ResponseTransacciones =
+  | {
+      data: DataInResponseTransacciones;
+      meta: Meta;
+      error: null;
+    }
+  | {
+      data: null;
+      meta: null;
+      error: string;
+    };

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,27 +7,27 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { ArrowDownLeft, ArrowUpRight, CircleX, PlusCircle } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { ArrowDownLeft, ArrowUpRight, CircleX, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { useForm } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { TransferenciasTarjetas } from '@/lib/schemas';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { TransferenciasTarjetas } from "@/lib/schemas";
 
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { InferInput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import {
   Select,
@@ -35,30 +35,31 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Banco,
+  CuentasInTransaccionesCompanent,
   Tarjetas,
   TipoTransferencia,
-} from '@/app/(with-layout)/tarjetas/types';
-import { addTransferenciaTarjeta } from '@/app/(with-layout)/tarjetas/actions';
-import { cn } from '@/lib/utils';
+} from "@/app/(with-layout)/tarjetas/types";
+import { addTransferenciaTarjeta } from "@/app/(with-layout)/tarjetas/actions";
+import { cn } from "@/lib/utils";
 
 export default function SheetTransferenciasTarjetas({
   tarjetas,
 }: {
-  tarjetas: Tarjetas[] | undefined;
+  tarjetas: CuentasInTransaccionesCompanent[] | undefined;
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof TransferenciasTarjetas>>({
     resolver: valibotResolver(TransferenciasTarjetas),
     defaultValues: {
-      descripcion: '',
+      descripcion: "",
       tipo: undefined,
-      cantidad: '0',
+      cantidad: "0",
       cuenta: undefined,
     },
   });
@@ -72,7 +73,7 @@ export default function SheetTransferenciasTarjetas({
       setError(error);
     } else {
       form.reset();
-      setError('');
+      setError("");
       toast.success(dataRes);
       setOpen(false);
     }
@@ -147,14 +148,14 @@ export default function SheetTransferenciasTarjetas({
                 name="cuenta"
                 render={({ field }) => (
                   <FormItem className="w-full text-left">
-                    <Label>Tarjeta</Label>
+                    <Label>Cuenta</Label>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una tarjeta" />
+                          <SelectValue placeholder="Seleccione una cuenta" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -166,11 +167,11 @@ export default function SheetTransferenciasTarjetas({
                             <div className="flex gap-2 items-center ">
                               <div
                                 className={cn(
-                                  'w-6 aspect-square rounded-full bg-gradient-to-br',
+                                  "w-6 aspect-square rounded-full bg-gradient-to-br",
                                   tarjeta.banco === Banco.BANDEC &&
-                                    'from-[#6c0207] to-[#bc1f26]',
+                                    "from-[#6c0207] to-[#bc1f26]",
                                   tarjeta.banco === Banco.BPA &&
-                                    'from-[#1d6156] to-[#1d6156]'
+                                    "from-[#1d6156] to-[#1d6156]"
                                 )}
                               ></div>
                               <p>{tarjeta.nombre}</p>

@@ -6,12 +6,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GetTarjetas } from "./services";
-import { CloudOff, EllipsisVertical } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import SheetTarjetas from "@/components/functionals/sheets/SheetTarjetas";
 import { cn } from "@/lib/utils";
-import { Banco, TipoCuenta, Transferenciastarjetas } from "./types";
-import DataTable from "@/components/functionals/data-tables/data-table-general";
-import { columns } from "./columns";
+import { Banco, TipoCuenta } from "./types";
 
 import {
   DropdownMenu,
@@ -20,19 +18,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import SheetTransferenciasTarjetas from "@/components/functionals/sheets/SheetTransferenciasTarjetas";
 import Delete from "./client";
 import { Progress } from "@/components/ui/progress";
+import { TableTransacciones } from "@/components/functionals/TableTransacciones";
+import { Suspense } from "react";
 
 const MAX_TRANF_MES = 120000;
 
-export default async function Tarjetas() {
+interface SearchParams {
+  c?: string;
+  d?: string;
+  l?: string;
+}
+
+export default async function Tarjetas({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const { data, error } = await GetTarjetas();
 
   return (
     <main className="flex flex-1 flex-col gap-4 py-4 lg:gap-6 lg:py-6 h-full">
       <div className="flex justify-between items-center px-6">
-        <h1 className="text-lg font-semibold md:text-2xl">Tarjetas</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Cuentas</h1>
         {data?.total_balance && (
           <div className="flex gap-1 items-center">
             <p className="text-sm">Saldo total:</p>
@@ -46,7 +55,7 @@ export default async function Tarjetas() {
         )}
       </div>
       <div
-        className="w-full h-full max-h-[14rem] flex overflow-x-auto p-4 scroll-p-4 gap-4 md:contain-strict"
+        className="w-full h-[18rem] md:h-[16rem] flex overflow-x-auto p-4 scroll-p-4 gap-4 md:contain-strict"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {data?.tarjetas?.map((tarjeta) => (
@@ -81,7 +90,7 @@ export default async function Tarjetas() {
               </p>
             </CardContent>
             <CardFooter>
-              {tarjeta.banco && (
+              {tarjeta.tipo === TipoCuenta.BANCARIA && (
                 <div className="w-full">
                   <p className="text-xs text-right">
                     {Intl.NumberFormat("es-ES", {
@@ -109,33 +118,12 @@ export default async function Tarjetas() {
             </CardFooter>
           </Card>
         ))}
+
         <SheetTarjetas isError={!!error} />
       </div>
-      <div className="p-4 m-0 bg-muted/40 h-full border-t-2 border-muted">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-lg font-semibold md:text-xl">Transferencias</h1>
-          <SheetTransferenciasTarjetas tarjetas={data?.tarjetas} />
-        </div>
-        {data ? (
-          <DataTable<Transferenciastarjetas>
-            columns={columns}
-            data={data?.transferencias}
-          />
-        ) : (
-          <div className="flex py-40 flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-            <div className="flex flex-col items-center gap-1 text-center">
-              <CloudOff size={72} className="inline-flex mb-4" />
-              <h3 className="text-2xl font-bold tracking-tight">
-                Error de conexión
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Comprueba tu conexión a internet!, si el problema persiste
-                contacta con soporte.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <TableTransacciones {...searchParams} />
+      </Suspense>
     </main>
   );
 }

@@ -4,7 +4,7 @@ import { deleteTransferenciaTarjeta } from "./actions";
 import { DateTime } from "luxon";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { TipoTransferencia, Transferenciastarjetas } from "./types";
+import { TipoTransferencia, Transacciones } from "./types";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import {
   Tooltip,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 
-export const columns: ColumnDef<Transferenciastarjetas>[] = [
+export const columns: ColumnDef<Transacciones>[] = [
   {
     accessorKey: "createdAt",
     header: "Fecha",
