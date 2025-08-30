@@ -48,7 +48,7 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
           .where(
             and(
               inArray(producto.id, idsZapatos),
-              eq(producto.infoId, Number(producto.id)),
+              eq(producto.infoId, Number(producto_info.id)),
               eq(producto.almacenRevoltosa, false),
               isNull(producto.areaVentaId),
               isNull(producto.ventaId),
@@ -85,7 +85,7 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
           )
           .where(
             and(
-              eq(producto.infoId, Number(producto.id)),
+              eq(producto.infoId, Number(producto_info.id)),
               eq(producto.almacenRevoltosa, false),
               isNull(producto.areaVentaId),
               isNull(producto.ventaId),
@@ -187,7 +187,7 @@ async function procesarZapatos(
       .where(
         and(
           inArray(producto.id, agregados),
-          eq(producto.infoId, Number(producto.id)),
+          eq(producto.infoId, Number(producto_info.id)),
           eq(producto.almacenRevoltosa, false),
           isNull(producto.ventaId),
           isNull(producto.salidaId),
@@ -242,7 +242,7 @@ async function procesarProducto(
     .where(
       and(
         eq(producto.salidaId, salidaId),
-        eq(producto.infoId, Number(producto.id)),
+        eq(producto.infoId, Number(producto_info.id)),
         areaVentaId
           ? eq(producto.areaVentaId, areaVentaId)
           : isNull(producto.areaVentaId),
@@ -268,7 +268,7 @@ async function procesarProducto(
       )
       .where(
         and(
-          eq(producto.infoId, Number(producto.id)),
+          eq(producto.infoId, Number(producto_info.id)),
           eq(producto.almacenRevoltosa, false),
           isNull(producto.ventaId),
           isNull(producto.salidaId),

@@ -185,6 +185,10 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
     isNull(inventarioAjusteinventarioProductos),
   ];
 
+  if (producto_info.isZapato && zapatos_id) {
+    whereCondition.push(inArray(producto.id, zapatos_id));
+  }
+
   const baseQuery = db
     .select({ id: producto.id })
     .from(producto)
@@ -197,7 +201,6 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
   let productos_en_area;
 
   if (producto_info.isZapato && zapatos_id) {
-    whereCondition.push(inArray(producto.id, zapatos_id));
     productos_en_area = await baseQuery;
   } else if (!producto_info.isZapato && cantidad) {
     productos_en_area = await baseQuery.limit(cantidad);
@@ -206,8 +209,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
   }
 
   if (
-    producto_info.isZapato &&
-    zapatos_id &&
+    producto_info.isZapato && zapatos_id &&
     productos_en_area.length !== zapatos_id.length
   ) {
     throw new ValidationError(
@@ -373,7 +375,7 @@ async function rebajar_de_las_cuentas({
 
         await tx.insert(inventarioTransacciones).values({
           createdAt: new Date().toISOString(),
-          descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto}`,
+          descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
           cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
           ventaId: venta[0].id,
           tipo: TipoTransferencia.EGRESO,
@@ -434,7 +436,7 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
-    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto}`,
+    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
     cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
     ventaId: venta[0].id,
     tipo: TipoTransferencia.EGRESO,

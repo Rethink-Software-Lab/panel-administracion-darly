@@ -7,7 +7,7 @@ const DATABASE_URL = process.env.DATABASE_URL!;
 
 export const db =
   process.env.NODE_ENV === "production"
-    ? drizzleNeon(neon(DATABASE_URL), { schema })
+    ? drizzleNode(DATABASE_URL, { schema })
     : drizzleNode(DATABASE_URL, { schema });
 
 export type DrizzleTransaction = Parameters<
