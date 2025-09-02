@@ -10,6 +10,7 @@ import { DropdownMenuLabel, DropdownMenuSeparator } from "../ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 export async function NoRepresentados() {
   const { data } = await getNoRepresentados();
@@ -50,16 +51,18 @@ export async function NoRepresentados() {
                 <Link
                   key={p.id}
                   href={{
-                    pathname: `/search/}`,
+                    pathname: `/search`,
                     query: { id: p.id.toString() },
                   }}
                 >
-                  <Button
-                    variant="ghost"
-                    className="justify-start font-normal w-full"
-                  >
-                    {p.nombre}
-                  </Button>
+                  <PopoverClose asChild>
+                    <Button
+                      variant="ghost"
+                      className="justify-start font-normal w-full"
+                    >
+                      {p.nombre}
+                    </Button>
+                  </PopoverClose>
                 </Link>
               ))}
             </div>
