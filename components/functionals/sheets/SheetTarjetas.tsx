@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,49 +7,49 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { CircleX, PlusSquare } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { CircleX, PlusSquare } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { useForm } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { TarjetasSchema } from '@/lib/schemas';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { TarjetasSchema } from "@/lib/schemas";
 
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { InferInput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Banco } from '@/app/(with-layout)/tarjetas/types';
-import { addTarjeta } from '@/app/(with-layout)/tarjetas/actions';
+} from "@/components/ui/select";
+import { Banco } from "@/app/(with-layout)/cuentas/types";
+import { addTarjeta } from "@/app/(with-layout)/cuentas/actions";
 
 export default function SheetTarjetas({ isError }: { isError: boolean }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof TarjetasSchema>>({
     resolver: valibotResolver(TarjetasSchema),
     defaultValues: {
-      nombre: '',
+      nombre: "",
       banco: undefined,
-      saldo_inicial: '0',
+      saldo_inicial: "0",
     },
   });
 
@@ -62,7 +62,7 @@ export default function SheetTarjetas({ isError }: { isError: boolean }) {
       setError(error);
     } else {
       form.reset();
-      setError('');
+      setError("");
       toast.success(dataRes);
       setOpen(false);
     }
@@ -71,7 +71,7 @@ export default function SheetTarjetas({ isError }: { isError: boolean }) {
     <Sheet open={open} onOpenChange={setOpen} modal={true}>
       <SheetTrigger disabled={isError}>
         <Card
-          style={{ flex: '0 0 auto', scrollSnapAlign: 'start' }}
+          style={{ flex: "0 0 auto", scrollSnapAlign: "start" }}
           className="aspect-video h-full cursor-pointer"
         >
           <CardContent className="text-black/40 h-full p-8 flex flex-col gap-2 justify-center items-center">

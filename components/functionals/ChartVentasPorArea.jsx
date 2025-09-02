@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
-import { DateTime } from 'luxon';
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { DateTime } from "luxon";
 
 import {
   Card,
@@ -9,32 +9,32 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart';
-import { BookX } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/chart";
+import { BookX } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const today = DateTime.local().setLocale('es');
-const inicioSemana = today.startOf('week');
-const finSemana = today.endOf('week');
+const today = DateTime.local().setLocale("es");
+const inicioSemana = today.startOf("week");
+const finSemana = today.endOf("week");
 
-const formatoDia = (fecha) => fecha.toFormat('d');
-const formatoMes = (fecha) => fecha.toFormat('MMMM');
+const formatoDia = (fecha) => fecha.toFormat("d");
+const formatoMes = (fecha) => fecha.toFormat("MMMM");
 
 const rangoSemana = `${formatoDia(inicioSemana)} - ${formatoDia(
   finSemana
 )} de ${formatoMes(finSemana)}`;
 
 function obtenerNombresAreas(ventasPorDia) {
-  if (ventasPorDia?.length === 0) return [];
+  if (!ventasPorDia || ventasPorDia.length === 0) return [];
 
   const primerDia = ventasPorDia[0];
   const nombresAreas = Object.keys(primerDia).filter(
-    (clave) => clave !== 'dia'
+    (clave) => clave !== "dia"
   );
 
   return nombresAreas.map((area) => ({
@@ -45,13 +45,22 @@ function obtenerNombresAreas(ventasPorDia) {
 
 export default function ChartVentasPorArea({ data }) {
   const nombresAreas = obtenerNombresAreas(data);
+
+  const dataTransformada = data?.map((dia) => {
+    const nuevoDia = { dia: dia.dia };
+    nombresAreas.forEach(({ nombre }) => {
+      nuevoDia[nombre] = dia[nombre].ventas;
+    });
+    return nuevoDia;
+  });
+
   return (
     <Card className="col-span-3 md:col-span-2">
       <CardHeader>
         <CardTitle>Ventas por área</CardTitle>
         <CardDescription>{data?.length > 0 && rangoSemana}</CardDescription>
       </CardHeader>
-      <CardContent className={cn(data?.length < 1 && 'h-80')}>
+      <CardContent className={cn(data?.length < 1 && "h-80")}>
         {data?.length < 1 ? (
           <div className="flex justify-center items-center h-full">
             <div className="flex flex-col items-center space-y-2">
@@ -65,7 +74,7 @@ export default function ChartVentasPorArea({ data }) {
           <ChartContainer config={{}} className="max-h-80 w-full">
             <LineChart
               accessibilityLayer
-              data={data}
+              data={dataTransformada}
               margin={{
                 left: 12,
                 right: 12,
@@ -86,7 +95,7 @@ export default function ChartVentasPorArea({ data }) {
                 <Line
                   key={nombre}
                   name={nombre}
-                  dataKey={(data) => data[nombre].ventas}
+                  dataKey={nombre}
                   type="monotone"
                   stroke={color}
                   strokeWidth={2}

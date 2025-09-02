@@ -15,7 +15,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
 
 export async function addSalida(data: InferInput<typeof SalidaSchema>) {
-  const { userId } = getSession();
+  const { userId } = await getSession();
   try {
     const esAlmacenRevoltosa = data.destino === "almacen-revoltosa";
     const areaVentaId = esAlmacenRevoltosa ? null : Number(data.destino);
@@ -385,7 +385,7 @@ export async function updateSalida(
 }
 
 export async function deleteSalida({ id }: { id: number }) {
-  const token = cookies().get("session")?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + "/salidas/" + id + "/", {
     method: "DELETE",
     headers: {

@@ -4,11 +4,12 @@ import { getHistorialCafeteria } from './services';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CloudOff } from 'lucide-react';
 
-export default async function HistorialPrecios({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function HistorialPrecios(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const { data } = await getHistorialCafeteria(params.id);
 
   return (

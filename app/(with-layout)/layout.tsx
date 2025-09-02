@@ -9,12 +9,8 @@ import { BrainCircuit, Facebook } from "lucide-react";
 import Link from "next/link";
 import { getAreasVentas } from "./areas-de-venta/services";
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = getSession();
+export default async function RootLayout(props: LayoutProps<"/">) {
+  const session = await getSession();
   const { data } = await getAreasVentas();
 
   return (
@@ -23,7 +19,7 @@ export default async function RootLayout({
         <SideBar areasVenta={data || []} session={session} />
         <div className="flex flex-col w-full">
           <TopBar session={session} areasVenta={data || []} />
-          {children}
+          {props.children}
         </div>
       </div>
       <footer className="py-6 md:px-8 md:py-0 col-span-2 border">

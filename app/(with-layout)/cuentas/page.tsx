@@ -31,11 +31,12 @@ interface SearchParams {
   l?: string;
 }
 
-export default async function Tarjetas({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+export default async function Tarjetas(
+  props: {
+    searchParams: Promise<SearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const { data, error } = await GetTarjetas();
 
   return (

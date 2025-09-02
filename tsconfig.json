@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,8 +22,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": [
+        "./*"
+      ]
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -35,7 +42,10 @@
     "components/functionals/DocPdf.js",
     "components/functionals/EspecialWarningDelete.jsx",
     "app/(with-layout)/products/page.tsx",
-    "components/ui/data-table-areas.jsx"
-, "components/ui/data-table-salidas.jsx"  ],
-  "exclude": ["node_modules"]
+    "components/ui/data-table-areas.jsx",
+    "components/ui/data-table-salidas.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

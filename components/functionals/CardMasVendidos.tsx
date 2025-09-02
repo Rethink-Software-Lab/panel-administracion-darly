@@ -1,7 +1,7 @@
-import { FileX, FolderXIcon } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import Image from 'next/image';
-import { Categoria } from '@/app/(with-layout)/categorias/types';
+import { FileX, FolderXIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Image from "next/image";
+import { Categoria } from "@/app/(with-layout)/categorias/types";
 
 interface Imagen {
   public_id: string;
@@ -45,7 +45,7 @@ export default async function CardMasVendidos({ data }: { data: Props[] }) {
             <ul className="flex flex-col gap-2">
               {data?.map((prod: Props) => (
                 <li
-                  key={prod.producto?.codigo}
+                  key={prod.producto?.id}
                   className="flex items-center justify-between hover:bg-muted transition-all px-3 py-2  rounded-lg "
                 >
                   <div className="flex items-center gap-2">

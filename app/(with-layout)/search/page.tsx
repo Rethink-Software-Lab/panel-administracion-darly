@@ -18,12 +18,11 @@ interface SearchParams {
   isCafeteria?: boolean;
 }
 
-export default async function Search({
-  searchParams,
-}: {
-  searchParams: SearchParams;
+export default async function Search(props: {
+  searchParams: Promise<SearchParams>;
 }) {
-  const { isStaff } = getSession();
+  const searchParams = await props.searchParams;
+  const { isStaff } = await getSession();
   const { data, error } = await (searchParams.isCafeteria!!
     ? searchCafeteriaProducto(Number(searchParams.id))
     : searchProduct(searchParams.id));

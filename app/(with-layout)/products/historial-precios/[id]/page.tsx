@@ -5,11 +5,12 @@ import SheetHistorial from '@/components/functionals/sheets/SheetHistorial';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CloudOff } from 'lucide-react';
 
-export default async function HistorialPrecios({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function HistorialPrecios(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const { data } = await getHistorial(params.id);
 
   return (

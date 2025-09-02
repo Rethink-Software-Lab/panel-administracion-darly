@@ -23,7 +23,7 @@ import {
 
 import { useState } from "react";
 import { DataTablePaginatonCursor } from "../data-table-pagination-server-cursor";
-import { Transacciones } from "@/app/(with-layout)/tarjetas/types";
+import { Transacciones } from "@/app/(with-layout)/cuentas/types";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];

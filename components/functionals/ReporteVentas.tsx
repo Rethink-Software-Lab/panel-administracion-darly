@@ -5,12 +5,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { DateTime } from 'luxon';
-import { ClipboardX, FolderSearch } from 'lucide-react';
-import styles from '@/styles/reportes.module.css';
-import { getSession } from '@/lib/getSession';
+import { DateTime } from "luxon";
+import { ClipboardX, FolderSearch } from "lucide-react";
+import styles from "@/styles/reportes.module.css";
+import { getSession } from "@/lib/getSession";
 
 interface Producto {
   id: number;
@@ -54,7 +54,7 @@ export default async function ReporteVentas({
   desde: string;
   hasta: string;
 }) {
-  const { isAdmin } = getSession();
+  const { isAdmin } = await getSession();
   if (!data && !error) {
     return (
       <div className="bg-muted h-full">
@@ -84,24 +84,24 @@ export default async function ReporteVentas({
               {desde && hasta
                 ? desde === hasta
                   ? DateTime.fromISO(desde).toLocaleString(DateTime.DATE_FULL, {
-                      locale: 'es',
+                      locale: "es",
                     })
                   : `${DateTime.fromISO(desde).toLocaleString(
                       DateTime.DATE_FULL,
                       {
-                        locale: 'es',
+                        locale: "es",
                       }
                     )} - ${DateTime.fromISO(hasta).toLocaleString(
                       DateTime.DATE_FULL,
-                      { locale: 'es' }
+                      { locale: "es" }
                     )}`
                 : DateTime.fromISO(new Date().toISOString()).toLocaleString(
                     DateTime.DATE_FULL,
-                    { locale: 'es' }
+                    { locale: "es" }
                   )}
             </p>
           </div>
-          <p className="font-bold">{data.area || 'General'}</p>
+          <p className="font-bold">{data.area || "General"}</p>
         </div>
 
         <h3 className="text-lg font-semibold pl-2 print:pl-0  pb-2">
@@ -125,8 +125,8 @@ export default async function ReporteVentas({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.productos.map((p: Producto) => (
-              <TableRow key={p.id}>
+            {data.productos.map((p: Producto, index: number) => (
+              <TableRow key={`${p.id}-${index}`}>
                 <TableCell className="font-medium border-b border-gray-300 px-4 print:px-0">
                   {p.cantidad}
                 </TableCell>
@@ -162,9 +162,9 @@ export default async function ReporteVentas({
                 Subtotal
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.general)}
               </TableCell>
             </TableRow>
@@ -173,9 +173,9 @@ export default async function ReporteVentas({
                 Gastos Fijos
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(
                   data.gastos_fijos.reduce(
                     (acc, curr) => acc + curr.cantidad,
@@ -189,9 +189,9 @@ export default async function ReporteVentas({
                 Gastos Variables
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(
                   data.gastos_variables.reduce(
                     (acc, curr) => acc + curr.cantidad,
@@ -206,9 +206,9 @@ export default async function ReporteVentas({
                 Total
               </TableCell>
               <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.general)}
               </TableCell>
             </TableRow>
@@ -218,9 +218,9 @@ export default async function ReporteVentas({
                   Ganancia
                 </TableCell>
                 <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
-                  {Intl.NumberFormat('es-CU', {
-                    style: 'currency',
-                    currency: 'CUP',
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(data.ganancia)}
                 </TableCell>
               </TableRow>
@@ -246,9 +246,9 @@ export default async function ReporteVentas({
                 Efectivo
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.efectivo)}
               </TableCell>
             </TableRow>
@@ -257,9 +257,9 @@ export default async function ReporteVentas({
                 Transferencia
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.transferencia)}
               </TableCell>
             </TableRow>
@@ -284,14 +284,14 @@ export default async function ReporteVentas({
               </TableHeader>
               <TableBody>
                 {data.gastos_fijos.map((gasto_fijo, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={`${gasto_fijo.descripcion}-${index}`}>
                     <TableCell className="px-4 border-t border-gray-300 print:px-0">
                       {gasto_fijo.descripcion}
                     </TableCell>
                     <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat('es-CU', {
-                        style: 'currency',
-                        currency: 'CUP',
+                      {Intl.NumberFormat("es-CU", {
+                        style: "currency",
+                        currency: "CUP",
                       }).format(gasto_fijo.cantidad)}
                     </TableCell>
                   </TableRow>
@@ -323,9 +323,9 @@ export default async function ReporteVentas({
                     Pago trabajador
                   </TableCell>
                   <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                    {Intl.NumberFormat('es-CU', {
-                      style: 'currency',
-                      currency: 'CUP',
+                    {Intl.NumberFormat("es-CU", {
+                      style: "currency",
+                      currency: "CUP",
                     }).format(data.pago_trabajador)}
                   </TableCell>
                 </TableRow>
@@ -334,15 +334,18 @@ export default async function ReporteVentas({
                     <div className={styles.subrowGroup}>
                       <div className={styles.verticalLine} />
                       {Object.keys(data.ventas_por_usuario).map(
-                        (usuario, index) => (
-                          <div className="pl-4 relative " key={index}>
+                        (usuario, index: number) => (
+                          <div
+                            className="pl-4 relative "
+                            key={`${usuario}-${index}`}
+                          >
                             <div className={styles.branchLine} />
                             <div className="flex justify-between items-center px-2 py-1">
                               <p>{usuario}</p>
                               <p>
-                                {Intl.NumberFormat('es-CU', {
-                                  style: 'currency',
-                                  currency: 'CUP',
+                                {Intl.NumberFormat("es-CU", {
+                                  style: "currency",
+                                  currency: "CUP",
                                 }).format(data.ventas_por_usuario[usuario])}
                               </p>
                             </div>
@@ -354,14 +357,14 @@ export default async function ReporteVentas({
                 </TableRow>
 
                 {data.gastos_variables.map((gasto_variable, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={`${gasto_variable.descripcion}-${index}`}>
                     <TableCell className="px-4 border-t border-gray-300 print:px-0 print:border-t print:border-gray-300">
                       {gasto_variable.descripcion}
                     </TableCell>
                     <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat('es-CU', {
-                        style: 'currency',
-                        currency: 'CUP',
+                      {Intl.NumberFormat("es-CU", {
+                        style: "currency",
+                        currency: "CUP",
                       }).format(gasto_variable.cantidad)}
                     </TableCell>
                   </TableRow>
@@ -389,9 +392,9 @@ export default async function ReporteVentas({
                 Efectivo
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.efectivo)}
               </TableCell>
             </TableRow>
@@ -400,9 +403,9 @@ export default async function ReporteVentas({
                 Transferencia
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.transferencia)}
               </TableCell>
             </TableRow>

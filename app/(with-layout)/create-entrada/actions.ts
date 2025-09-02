@@ -9,7 +9,7 @@ import { ResponseCreateEntrada } from "./types";
 export async function createEntrada(
   data: InferInput<typeof EntradaSchema>
 ): Promise<ResponseCreateEntrada> {
-  const token = cookies().get("session")?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + "/entradas/", {
     method: "POST",
     headers: {

@@ -28,7 +28,7 @@ export default async function VentasAreaVenta({
   productos,
   cuentasBancarias,
 }: Props) {
-  const { isStaff, userId } = getSession();
+  const { isStaff, userId } = await getSession();
 
   return (
     <main className="flex flex-1 flex-col gap-4 pb-4 lg:gap-6 lg:pb-6 px-4 h-full">

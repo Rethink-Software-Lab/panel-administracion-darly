@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
-import { ALMACENES, ROLES } from '@/app/(with-layout)/users/types';
+import { NextRequest, NextResponse } from "next/server";
+import { verifyAuth } from "@/lib/auth";
+import { ALMACENES, ROLES } from "@/app/(with-layout)/users/types";
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('session')?.value;
+  const token = request.cookies.get("session")?.value;
 
   const verifyToken =
     token &&
@@ -12,30 +12,30 @@ export async function middleware(request: NextRequest) {
     }));
 
   if (!verifyToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const requestHeaders = new Headers(request.headers);
   const encodedRole = encodeURIComponent(verifyToken?.rol as string);
-  requestHeaders.set('x-user-id', verifyToken?.id as string);
-  requestHeaders.set('x-user-rol', encodedRole);
-  requestHeaders.set('x-user-area-venta', verifyToken?.area_venta as string);
-  requestHeaders.set('x-user-almacen', verifyToken?.almacen as string);
+  requestHeaders.set("x-user-id", verifyToken?.id as string);
+  requestHeaders.set("x-user-rol", encodedRole);
+  requestHeaders.set("x-user-area-venta", verifyToken?.area_venta as string);
+  requestHeaders.set("x-user-almacen", verifyToken?.almacen as string);
 
-  if (verifyToken?.rol !== ROLES.ADMIN && request.nextUrl.pathname == '/') {
+  if (verifyToken?.rol !== ROLES.ADMIN && request.nextUrl.pathname == "/") {
     if (verifyToken?.rol === ROLES.SUPERVISOR) {
-      return NextResponse.redirect(new URL('/tarjetas', request.url));
+      return NextResponse.redirect(new URL("/cuentas", request.url));
     }
     if (
       verifyToken?.rol === ROLES.ALMACENERO &&
       verifyToken?.almacen === ALMACENES.CAFETERIA
     ) {
       return NextResponse.redirect(
-        new URL('/inventario-cafeteria', request.url)
+        new URL("/inventario-cafeteria", request.url)
       );
     }
     if (verifyToken?.rol === ROLES.VENDEDOR_CAFETERIA) {
-      return NextResponse.redirect(new URL('/cafeteria', request.url));
+      return NextResponse.redirect(new URL("/cafeteria", request.url));
     }
   }
 
@@ -48,6 +48,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|placeholder.svg|login).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|placeholder.svg|login).*)",
   ],
 };

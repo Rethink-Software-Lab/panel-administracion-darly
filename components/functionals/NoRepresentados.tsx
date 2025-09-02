@@ -1,15 +1,15 @@
-import { CircleOff, ThumbsUp } from 'lucide-react';
-import { Button } from '../ui/button';
+import { CircleOff, ThumbsUp } from "lucide-react";
+import { Button } from "../ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { getNoRepresentados } from '@/app/(with-layout)/services';
-import { DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '../ui/badge';
-import Link from 'next/link';
+} from "@/components/ui/popover";
+import { getNoRepresentados } from "@/app/(with-layout)/services";
+import { DropdownMenuLabel, DropdownMenuSeparator } from "../ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "../ui/badge";
+import Link from "next/link";
 
 export async function NoRepresentados() {
   const { data } = await getNoRepresentados();
@@ -47,7 +47,13 @@ export async function NoRepresentados() {
           <ScrollArea className="h-[300px] pb-2">
             <div className="flex flex-col gap-2">
               {data?.map((p) => (
-                <Link key={p.id} href={`/search/?id=${p.id}`}>
+                <Link
+                  key={p.id}
+                  href={{
+                    pathname: `/search/}`,
+                    query: { id: p.id.toString() },
+                  }}
+                >
                   <Button
                     variant="ghost"
                     className="justify-start font-normal w-full"

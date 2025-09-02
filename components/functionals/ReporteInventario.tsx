@@ -2,19 +2,19 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { DateTime } from 'luxon';
-import { ArchiveX } from 'lucide-react';
+import { DateTime } from "luxon";
+import { ArchiveX } from "lucide-react";
 
 interface Producto {
   id: number;
   descripcion: string;
   cantidad: string;
+  precio_venta: string;
 }
 
 interface Params {
@@ -41,17 +41,20 @@ export default async function ReporteInventario({
             <p>
               {DateTime.fromISO(new Date().toISOString()).toLocaleString(
                 DateTime.DATE_FULL,
-                { locale: 'es' }
+                { locale: "es" }
               )}
             </p>
           </div>
-          <p className="font-bold">{data.area || 'General'}</p>
+          <p className="font-bold">{data.area || "General"}</p>
         </div>
         <Table className="whitespace-nowrap bg-background border-separate border-spacing-0 border print:border-none border-gray-300 rounded-lg overflow-hidden">
           <TableHeader>
             <TableRow>
               <TableHead className="border-b border-gray-300 px-4 print:px-0">
                 Descripción
+              </TableHead>
+              <TableHead className="border-b border-gray-300 px-4 print:px-0">
+                Precio de venta
               </TableHead>
               <TableHead className="text-right border-b border-gray-300 px-4 print:px-0">
                 Cantidad
@@ -60,9 +63,15 @@ export default async function ReporteInventario({
           </TableHeader>
           <TableBody>
             {data?.productos?.map((p: Producto, index: number) => (
-              <TableRow key={p.id}>
+              <TableRow key={`${p.id}-${index}`}>
                 <TableCell className="border-b border-gray-300 px-4 print:px-0">
                   {p.descripcion}
+                </TableCell>
+                <TableCell className="font-medium border-b border-gray-300 px-4 print:px-0">
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
+                  }).format(Number(p.precio_venta))}
                 </TableCell>
                 <TableCell className="text-right font-medium border-b border-gray-300 px-4 print:px-0">
                   {p.cantidad}

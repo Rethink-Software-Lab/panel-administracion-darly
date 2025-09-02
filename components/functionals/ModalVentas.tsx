@@ -57,7 +57,7 @@ import { Fragment, ReactNode, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/tarjetas/types";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import {
   AllProductos,
   AreaVentaInResponseOneAreaVenta,

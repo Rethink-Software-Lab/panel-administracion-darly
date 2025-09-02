@@ -41,8 +41,8 @@ import {
   CuentasInTransaccionesCompanent,
   Tarjetas,
   TipoTransferencia,
-} from "@/app/(with-layout)/tarjetas/types";
-import { addTransferenciaTarjeta } from "@/app/(with-layout)/tarjetas/actions";
+} from "@/app/(with-layout)/cuentas/types";
+import { addTransferenciaTarjeta } from "@/app/(with-layout)/cuentas/actions";
 import { cn } from "@/lib/utils";
 
 export default function SheetTransferenciasTarjetas({

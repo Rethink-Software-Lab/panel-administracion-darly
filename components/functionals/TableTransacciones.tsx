@@ -1,8 +1,8 @@
 import { CloudOff } from "lucide-react";
 import SheetTransferenciasTarjetas from "./sheets/SheetTransferenciasTarjetas";
-import { getTransacciones } from "@/app/(with-layout)/tarjetas/services";
+import { getTransacciones } from "@/app/(with-layout)/cuentas/services";
 import DataTable from "@/components/functionals/data-tables/data-table-general";
-import { columns } from "@/app/(with-layout)/tarjetas/columns";
+import { columns } from "@/app/(with-layout)/cuentas/columns";
 import DataTableTransacciones from "./data-tables/data-table-transacciones";
 
 export async function TableTransacciones(searchParams: {

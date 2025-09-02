@@ -15,7 +15,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { Table } from "@tanstack/react-table";
-import { Transacciones } from "@/app/(with-layout)/tarjetas/types";
+import { Transacciones } from "@/app/(with-layout)/cuentas/types";
 
 export function DataTablePaginatonCursor({
   table,

@@ -15,11 +15,12 @@ export interface ReportesSearchParams {
   categoria?: string;
 }
 
-export default async function Reportes({
-  searchParams,
-}: {
-  searchParams: ReportesSearchParams;
-}) {
+export default async function Reportes(
+  props: {
+    searchParams: Promise<ReportesSearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const area = searchParams?.area || '';
   const type = searchParams?.type || '';
 

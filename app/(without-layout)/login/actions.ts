@@ -21,7 +21,7 @@ export async function login(data: InferInput<typeof LoginSchema>) {
   }
   const res = await response.json();
 
-  cookies().set("session", res.token, {
+  (await cookies()).set("session", res.token, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
