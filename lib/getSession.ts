@@ -1,5 +1,5 @@
 import { ROLES } from '@/app/(with-layout)/users/types';
-import { headers } from 'next/headers';
+import { headers, type UnsafeUnwrappedHeaders } from 'next/headers';
 
 export interface Session {
   rol: string | null;
@@ -14,7 +14,7 @@ export interface Session {
 }
 
 export function getSession() {
-  const headersList = headers();
+  const headersList = (headers() as unknown as UnsafeUnwrappedHeaders);
   const rol = decodeURIComponent(headersList.get('x-user-rol') as string);
   const userId = headersList.get('x-user-id');
   const area_venta = headersList.get('x-user-area-venta');

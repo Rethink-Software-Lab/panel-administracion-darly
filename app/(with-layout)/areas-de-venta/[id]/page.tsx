@@ -16,7 +16,8 @@ interface Params {
   id: string;
 }
 
-export default async function AreaVenta({ params }: { params: Params }) {
+export default async function AreaVenta(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const { data, error } = await getAreaVenta(Number(params.id));
 
   return (

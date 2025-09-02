@@ -11,11 +11,12 @@ import { getFactura } from "./services";
 import { DateTime } from "luxon";
 import ButtonPrint from "@/components/functionals/ButtonPrint";
 
-export default async function Factura({
-  params,
-}: {
-  params: { entrada_id: string };
-}) {
+export default async function Factura(
+  props: {
+    params: Promise<{ entrada_id: string }>;
+  }
+) {
+  const params = await props.params;
   const { data, error } = await getFactura(params.entrada_id);
 
   if (error) {

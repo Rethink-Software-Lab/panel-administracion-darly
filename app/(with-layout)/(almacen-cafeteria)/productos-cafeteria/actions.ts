@@ -8,7 +8,7 @@ import { InferInput } from 'valibot';
 export async function addProductoCafeteria(
   producto: InferInput<typeof ProductosCafeteriaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/cafeteria/productos/',
     {
@@ -53,7 +53,7 @@ export async function editProductoCafeteria(
   producto: InferInput<typeof ProductosCafeteriaSchema>,
   id: number
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/cafeteria/productos/' + id + '/',
     {
@@ -95,7 +95,7 @@ export async function editProductoCafeteria(
 }
 
 export async function deleteProductoCafeteria({ id }: { id: number }) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/cafeteria/productos/' + id + '/',
     {

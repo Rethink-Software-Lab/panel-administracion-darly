@@ -1,13 +1,13 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 
 import { InferInput } from 'valibot';
 import { TarjetasSchema, TransferenciasTarjetas } from '@/lib/schemas';
 import { TipoCuenta } from './types';
 
-const token = cookies().get('session')?.value;
+const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('session')?.value;
 
 export async function addTarjeta(
   data: InferInput<typeof TarjetasSchema>

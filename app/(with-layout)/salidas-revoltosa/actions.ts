@@ -1,11 +1,11 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 
 import { CreateSalidaRevoltosa } from './types';
 
-const token = cookies().get('session')?.value;
+const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('session')?.value;
 
 export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
   const res = await fetch(process.env.BACKEND_URL_V2 + '/salidas-revoltosa/', {

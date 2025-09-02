@@ -8,7 +8,7 @@ import { InferInput } from 'valibot';
 export async function addCuentaCasa(
   cuenta_casa: InferInput<typeof CuentaCasaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/cuenta-casa/', {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export async function deleteCuentaCasa({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/cuenta-casa/' + id + '/',
     {

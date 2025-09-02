@@ -8,7 +8,7 @@ import { EntradaCafeteriaSchema } from './schema';
 export async function addEntradaCafeteria(
   entrada: InferInput<typeof EntradaCafeteriaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/almacen-cafeteria/entradas/',
     {
@@ -51,7 +51,7 @@ export async function addEntradaCafeteria(
 }
 
 export async function deleteEntradaCafeteria(id: number) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/almacen-cafeteria/entradas/' + id + '/',
     {

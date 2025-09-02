@@ -385,7 +385,7 @@ export async function updateSalida(
 }
 
 export async function deleteSalida({ id }: { id: number }) {
-  const token = cookies().get("session")?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + "/salidas/" + id + "/", {
     method: "DELETE",
     headers: {

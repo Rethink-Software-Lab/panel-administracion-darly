@@ -5,7 +5,7 @@ export async function getEntradasCafeteria(): Promise<{
   data: EndpointEntradasCafeteria | null;
   error: string | null;
 }> {
-  const token = cookies().get('session')?.value;
+  const token = (await cookies()).get('session')?.value;
   try {
     const res = await fetch(
       process.env.BACKEND_URL_V2 + '/almacen-cafeteria/entradas/',

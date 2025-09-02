@@ -3,11 +3,12 @@ import { columns } from '@/lib/columnsHistorialesPrecios';
 import { CloudOff } from 'lucide-react';
 import { getHistorialPrecioElaboracion } from '../../services';
 
-export default async function HistorialPrecioElaboracion({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function HistorialPrecioElaboracion(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const { data } = await getHistorialPrecioElaboracion(params.id);
 
   return (

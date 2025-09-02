@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
 export async function addProducto(formData: FormData) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/productos', {
     method: 'POST',
     headers: {
@@ -42,7 +42,7 @@ export async function addProducto(formData: FormData) {
 }
 
 export async function updateProducto(formData: FormData, id: string) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/productos/' + id + '/',
     {
@@ -88,7 +88,7 @@ export async function updateProducto(formData: FormData, id: string) {
 }
 
 export async function deleteProducto(id: number) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/productos/' + id, {
     method: 'DELETE',
     headers: {

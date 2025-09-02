@@ -8,7 +8,7 @@ import { InferInput } from 'valibot';
 export async function addAjuste(
   ajuste: InferInput<typeof AjusteSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/ajuste-inventario/', {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export async function deleteAjuste({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/ajuste-inventario/' + id + '/',
     {

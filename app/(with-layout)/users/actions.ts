@@ -16,7 +16,7 @@ interface UserUpdate extends User {
 }
 
 export async function addUsuario(data: User) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/usuarios/', {
     method: 'POST',
     headers: {
@@ -61,7 +61,7 @@ export async function addUsuario(data: User) {
 }
 
 export async function updateUsuario(data: UserUpdate) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/usuarios/' + data?.id + '/',
     {
@@ -98,7 +98,7 @@ export async function updateUsuario(data: UserUpdate) {
 }
 
 export async function deleteUsuario({ id }: { id: number }) {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/usuarios/' + id, {
     method: 'DELETE',
     headers: {

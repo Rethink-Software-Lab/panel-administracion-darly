@@ -14,7 +14,7 @@ export async function GetElaboraciones(): Promise<{
   data: Data | null;
   error: string | null;
 }> {
-  const token = cookies().get('session')?.value;
+  const token = (await cookies()).get('session')?.value;
   try {
     const res = await fetch(
       process.env.BACKEND_URL_V2 + '/cafeteria/elaboraciones/',

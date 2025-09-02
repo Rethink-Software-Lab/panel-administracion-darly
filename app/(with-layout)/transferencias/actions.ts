@@ -8,7 +8,7 @@ import { InferInput } from 'valibot';
 export async function addTransferencia(
   transferencia: InferInput<typeof TransferenciaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(process.env.BACKEND_URL_V2 + '/transferencias/', {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export async function deleteTransferencia({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = cookies().get('session')?.value || null;
+  const token = (await cookies()).get('session')?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + '/transferencias/' + id + '/',
     {

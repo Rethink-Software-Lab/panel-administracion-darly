@@ -42,7 +42,7 @@ export async function getReporteCafeteria(params: ReportesSearchParams) {
       data: null,
       error: null,
     };
-  const token = cookies().get("session")?.value;
+  const token = (await cookies()).get("session")?.value;
   const baseUrl = process.env.BACKEND_URL_V2 + "/cafeteria/reportes/";
   const url = new URL(baseUrl);
   Object.entries(params).forEach(([key, value]) =>
