@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,39 +7,39 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { CirclePlus, CircleX, MinusCircle, PlusCircle } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { CirclePlus, CircleX, MinusCircle, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
+} from "@/components/ui/select";
+import { useFieldArray, useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { InferInput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { addEntradaCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/actions';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { addEntradaCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/actions";
 
 import {
   METODOS_PAGO,
   ProductoEntrada,
-} from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
+} from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
 import {
   Table,
   TableBody,
@@ -48,13 +48,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import SelectProductoEntradaCafeteria from '../SelectProductoEntradaCafeteria';
-import { Banco, Tarjetas } from '@/app/(with-layout)/tarjetas/types';
-import { cn } from '@/lib/utils';
-import ComboboxProveedorCafeteria from '../combobox-proveedor-cafeteria';
-import { Proveedor } from '@/app/(with-layout)/proveedores/types';
-import { EntradaCafeteriaSchema } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/schema';
+} from "@/components/ui/table";
+import SelectProductoEntradaCafeteria from "../SelectProductoEntradaCafeteria";
+import { Banco, Tarjetas } from "@/app/(with-layout)/cuentas/types";
+import { cn } from "@/lib/utils";
+import ComboboxProveedorCafeteria from "../combobox-proveedor-cafeteria";
+import { Proveedor } from "@/app/(with-layout)/proveedores/types";
+import { EntradaCafeteriaSchema } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/schema";
 
 export default function SheetEntradasCafeteria({
   productos,
@@ -63,28 +63,28 @@ export default function SheetEntradasCafeteria({
 }: {
   productos: ProductoEntrada[];
   cuentas: Tarjetas[];
-  proveedores: Pick<Proveedor, 'id' | 'nombre'>[];
+  proveedores: Pick<Proveedor, "id" | "nombre">[];
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isManual, setIsManual] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof EntradaCafeteriaSchema>>({
     resolver: valibotResolver(EntradaCafeteriaSchema),
     defaultValues: {
-      proveedor: '',
-      comprador: '',
+      proveedor: "",
+      comprador: "",
       metodo_pago: undefined,
       productos: [
-        { producto: '', cantidad: '0', precio_costo: '0', precio_venta: '0' },
+        { producto: "", cantidad: "0", precio_costo: "0", precio_venta: "0" },
       ],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'productos',
+    name: "productos",
   });
 
   const onSubmit = async (
@@ -96,7 +96,7 @@ export default function SheetEntradasCafeteria({
       setError(error);
     } else {
       form.reset();
-      setError('');
+      setError("");
       toast.success(dataRes);
       setOpen(false);
     }
@@ -285,7 +285,7 @@ export default function SheetEntradasCafeteria({
                         <SelectTrigger
                           className={cn(
                             form.formState.errors?.cuenta &&
-                              'border-destructive'
+                              "border-destructive"
                           )}
                         >
                           <SelectValue placeholder="Selecciona una tarjeta" />
@@ -301,11 +301,11 @@ export default function SheetEntradasCafeteria({
                             <div className="flex gap-2 items-center ">
                               <div
                                 className={cn(
-                                  'w-6 aspect-square rounded-full bg-gradient-to-br',
+                                  "w-6 aspect-square rounded-full bg-gradient-to-br",
                                   cuenta.banco === Banco.BANDEC &&
-                                    'from-[#6c0207] to-[#bc1f26]',
+                                    "from-[#6c0207] to-[#bc1f26]",
                                   cuenta.banco === Banco.BPA &&
-                                    'from-[#1d6156] to-[#1d6156]'
+                                    "from-[#1d6156] to-[#1d6156]"
                                 )}
                               ></div>
                               <p>{cuenta.nombre}</p>
@@ -419,8 +419,8 @@ export default function SheetEntradasCafeteria({
                     className="gap-1"
                     onClick={() =>
                       append({
-                        producto: '',
-                        cantidad: '0',
+                        producto: "",
+                        cantidad: "0",
                       })
                     }
                     variant="outline"

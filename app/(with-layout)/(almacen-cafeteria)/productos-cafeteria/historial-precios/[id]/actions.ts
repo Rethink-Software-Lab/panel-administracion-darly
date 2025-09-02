@@ -1,22 +1,22 @@
-'use server';
+"use server";
 
-import { db } from '@/db/initial';
+import { db } from "@/db/initial";
 import {
   inventarioHistorialpreciocostocafeteria,
   inventarioHistorialprecioventacafeteria,
-} from '@/db/schema';
-import { InferInput } from 'valibot';
-import { HistorialPreciosSchema } from './schema';
-import { TipoPrecio } from './types';
-import { getSession } from '@/lib/getSession';
-import { DateTime } from 'luxon';
-import { revalidatePath } from 'next/cache';
+} from "@/db/schema";
+import { InferInput } from "valibot";
+import { HistorialPreciosSchema } from "./schema";
+import { TipoPrecio } from "./types";
+import { getSession } from "@/lib/getSession";
+import { DateTime } from "luxon";
+import { revalidatePath } from "next/cache";
 
 export async function addHistorialPrecio(
   data: InferInput<typeof HistorialPreciosSchema>,
   id: number
 ) {
-  const { userId } = getSession();
+  const { userId } = await getSession();
 
   const now = DateTime.now().toSQL();
 
@@ -38,14 +38,14 @@ export async function addHistorialPrecio(
     revalidatePath(`/productos-cafeteria/historial-precios/${id}`);
 
     return {
-      data: 'Precio agregado con éxito.',
+      data: "Precio agregado con éxito.",
       error: null,
     };
   } catch (e) {
     console.error(e);
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }

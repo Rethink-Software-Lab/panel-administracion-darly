@@ -1,15 +1,16 @@
-'use server';
+"use server";
 
-import { revalidateTag } from 'next/cache';
-import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
+import { revalidateTag } from "next/cache";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
-import { CreateSalidaRevoltosa } from './types';
-
-const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('session')?.value;
+import { CreateSalidaRevoltosa } from "./types";
 
 export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/salidas-revoltosa/', {
-    method: 'POST',
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/salidas-revoltosa/", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -19,7 +20,7 @@ export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
 
     if (res.status === 400) {
@@ -32,10 +33,10 @@ export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
 
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('salidas-revoltosa');
+  revalidateTag("salidas-revoltosa");
   const response = await res.json();
   return {
     error: null,
@@ -44,10 +45,13 @@ export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
 }
 
 export async function deleteSalidaRevoltosa({ id }: { id: number }) {
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/salidas-revoltosa/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/salidas-revoltosa/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -57,26 +61,26 @@ export async function deleteSalidaRevoltosa({ id }: { id: number }) {
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 400)
       return {
         data: null,
-        error: 'Algunos productos ya han sido vendidos',
+        error: "Algunos productos ya han sido vendidos",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Salida no encontrada',
+        error: "Salida no encontrada",
       };
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('salidas-revoltosa');
+  revalidateTag("salidas-revoltosa");
   return {
-    data: 'Salida eliminada con éxito.',
+    data: "Salida eliminada con éxito.",
     error: null,
   };
 }

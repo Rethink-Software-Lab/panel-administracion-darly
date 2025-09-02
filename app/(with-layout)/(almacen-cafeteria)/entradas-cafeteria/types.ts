@@ -1,11 +1,11 @@
-import { Usuario } from '../../users/types';
-import { Tarjetas } from '../../tarjetas/types';
-import { Proveedor } from '../../proveedores/types';
+import { Usuario } from "../../users/types";
+import { Tarjetas } from "../../cuentas/types";
+import { Proveedor } from "../../proveedores/types";
 
 export enum METODOS_PAGO {
-  EFECTIVO = 'EFECTIVO',
-  TRANSFERENCIA = 'TRANSFERENCIA',
-  MIXTO = 'MIXTO',
+  EFECTIVO = "EFECTIVO",
+  TRANSFERENCIA = "TRANSFERENCIA",
+  MIXTO = "MIXTO",
 }
 
 export interface ProductoEntrada {
@@ -41,5 +41,5 @@ export interface EndpointEntradasCafeteria {
   productos: ProductoEntrada[];
   entradas: EntradaCafeteria[];
   cuentas: Tarjetas[];
-  proveedores: Pick<Proveedor, 'id' | 'nombre'>[];
+  proveedores: Pick<Proveedor, "id" | "nombre">[];
 }

@@ -110,8 +110,6 @@ export async function getTransferencias(): Promise<{
         .orderBy(desc(inventarioProductoinfo.id)),
     ]);
 
-    revalidatePath("/transferencias");
-
     return {
       error: null,
       data: {

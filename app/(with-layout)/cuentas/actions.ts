@@ -1,19 +1,20 @@
-'use server';
+"use server";
 
-import { revalidateTag } from 'next/cache';
-import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
+import { revalidateTag } from "next/cache";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
-import { InferInput } from 'valibot';
-import { TarjetasSchema, TransferenciasTarjetas } from '@/lib/schemas';
-import { TipoCuenta } from './types';
-
-const token = (cookies() as unknown as UnsafeUnwrappedCookies).get('session')?.value;
+import { InferInput } from "valibot";
+import { TarjetasSchema, TransferenciasTarjetas } from "@/lib/schemas";
+import { TipoCuenta } from "./types";
 
 export async function addTarjeta(
   data: InferInput<typeof TarjetasSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/tarjetas/', {
-    method: 'POST',
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/tarjetas/", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -23,7 +24,7 @@ export async function addTarjeta(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
 
     if (res.status === 400) {
@@ -36,21 +37,24 @@ export async function addTarjeta(
 
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('tarjetas');
+  revalidateTag("tarjetas");
   return {
     error: null,
-    data: 'Tarjeta agregada con éxito.',
+    data: "Tarjeta agregada con éxito.",
   };
 }
 
 export async function deleteTarjeta(id: number) {
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/tarjetas/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/tarjetas/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -60,7 +64,7 @@ export async function deleteTarjeta(id: number) {
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 400) {
       const json = await res.json();
@@ -72,16 +76,16 @@ export async function deleteTarjeta(id: number) {
     if (res.status === 404)
       return {
         data: null,
-        error: 'Tarjeta no encontrada',
+        error: "Tarjeta no encontrada",
       };
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('tarjetas');
+  revalidateTag("tarjetas");
   return {
-    data: 'Tarjeta eliminada con éxito.',
+    data: "Tarjeta eliminada con éxito.",
     error: null,
   };
 }
@@ -89,10 +93,13 @@ export async function deleteTarjeta(id: number) {
 export async function addTransferenciaTarjeta(
   data: InferInput<typeof TransferenciasTarjetas>
 ): Promise<{ data: string | null; error: string | null }> {
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/tarjetas/add/transferencia/',
+    process.env.BACKEND_URL_V2 + "/tarjetas/add/transferencia/",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -103,7 +110,7 @@ export async function addTransferenciaTarjeta(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
 
     if (res.status === 400) {
@@ -116,21 +123,24 @@ export async function addTransferenciaTarjeta(
 
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('tarjetas');
+  revalidateTag("tarjetas");
   return {
     error: null,
-    data: 'Transferencia agregada con éxito.',
+    data: "Transferencia agregada con éxito.",
   };
 }
 
 export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
+  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
+    "session"
+  )?.value;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/tarjetas/transferencia/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/tarjetas/transferencia/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -140,7 +150,7 @@ export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 400) {
       const json = await res.json();
@@ -152,16 +162,16 @@ export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
     if (res.status === 404)
       return {
         data: null,
-        error: 'Transferencia no encontrada',
+        error: "Transferencia no encontrada",
       };
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('tarjetas');
+  revalidateTag("tarjetas");
   return {
-    data: 'Transferencia eliminada con éxito.',
+    data: "Transferencia eliminada con éxito.",
     error: null,
   };
 }

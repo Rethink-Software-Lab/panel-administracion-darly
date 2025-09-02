@@ -15,7 +15,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
 
 export async function addSalida(data: InferInput<typeof SalidaSchema>) {
-  const { userId } = getSession();
+  const { userId } = await getSession();
   try {
     const esAlmacenRevoltosa = data.destino === "almacen-revoltosa";
     const areaVentaId = esAlmacenRevoltosa ? null : Number(data.destino);

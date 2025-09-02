@@ -5,14 +5,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { DateTime } from 'luxon';
-import { ClipboardX, FolderSearch } from 'lucide-react';
+import { DateTime } from "luxon";
+import { ClipboardX, FolderSearch } from "lucide-react";
 
-import { ProductoCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/inventario-cafeteria/types';
-import { Elaboraciones } from '@/app/(with-layout)/(almacen-cafeteria)/elaboraciones/types';
-import { getSession } from '@/lib/getSession';
+import { ProductoCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/inventario-cafeteria/types";
+import { Elaboraciones } from "@/app/(with-layout)/(almacen-cafeteria)/elaboraciones/types";
+import { getSession } from "@/lib/getSession";
 
 interface Producto extends ProductoCafeteria {
   cantidad: string;
@@ -68,7 +68,7 @@ export default async function ReporteVentasCafeteria({
   desde: string;
   hasta: string;
 }) {
-  const { isAdmin } = getSession();
+  const { isAdmin } = await getSession();
   if (!data && !error) {
     return (
       <div className="bg-muted h-full">
@@ -101,20 +101,20 @@ export default async function ReporteVentasCafeteria({
               {desde && hasta
                 ? desde === hasta
                   ? DateTime.fromISO(desde).toLocaleString(DateTime.DATE_FULL, {
-                      locale: 'es',
+                      locale: "es",
                     })
                   : `${DateTime.fromISO(desde).toLocaleString(
                       DateTime.DATE_FULL,
                       {
-                        locale: 'es',
+                        locale: "es",
                       }
                     )} - ${DateTime.fromISO(hasta).toLocaleString(
                       DateTime.DATE_FULL,
-                      { locale: 'es' }
+                      { locale: "es" }
                     )}`
                 : DateTime.fromISO(new Date().toISOString()).toLocaleString(
                     DateTime.DATE_FULL,
-                    { locale: 'es' }
+                    { locale: "es" }
                   )}
             </p>
           </div>
@@ -154,9 +154,9 @@ export default async function ReporteVentasCafeteria({
                   ${p.precio_unitario}
                 </TableCell>
                 <TableCell className="text-right border-b border-gray-300 px-4 print:px-0">
-                  {Intl.NumberFormat('es-CU', {
-                    style: 'currency',
-                    currency: 'CUP',
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(p.importe)}
                 </TableCell>
               </TableRow>
@@ -170,15 +170,15 @@ export default async function ReporteVentasCafeteria({
                   {p.nombre}
                 </TableCell>
                 <TableCell className="border-b border-gray-300 px-4 print:px-0">
-                  {Intl.NumberFormat('es-CU', {
-                    style: 'currency',
-                    currency: 'CUP',
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(p.precio_venta)}
                 </TableCell>
                 <TableCell className="text-right border-b border-gray-300 px-4 print:px-0">
-                  {Intl.NumberFormat('es-CU', {
-                    style: 'currency',
-                    currency: 'CUP',
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(p.importe)}
                 </TableCell>
               </TableRow>
@@ -204,9 +204,9 @@ export default async function ReporteVentasCafeteria({
                 Subtotal
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.general)}
               </TableCell>
             </TableRow>
@@ -215,9 +215,9 @@ export default async function ReporteVentasCafeteria({
                 Gastos Fijos
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(
                   data.gastos_fijos.reduce(
                     (acc, curr) => acc + curr.cantidad,
@@ -231,9 +231,9 @@ export default async function ReporteVentasCafeteria({
                 Gastos Variables
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(
                   data.gastos_variables.reduce(
                     (acc, curr) => acc + curr.cantidad,
@@ -247,9 +247,9 @@ export default async function ReporteVentasCafeteria({
                 Total
               </TableCell>
               <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.general)}
               </TableCell>
             </TableRow>
@@ -259,9 +259,9 @@ export default async function ReporteVentasCafeteria({
                   Ganancia
                 </TableCell>
                 <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
-                  {Intl.NumberFormat('es-CU', {
-                    style: 'currency',
-                    currency: 'CUP',
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(data.ganancia)}
                 </TableCell>
               </TableRow>
@@ -287,9 +287,9 @@ export default async function ReporteVentasCafeteria({
                 Efectivo
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.efectivo)}
               </TableCell>
             </TableRow>
@@ -298,9 +298,9 @@ export default async function ReporteVentasCafeteria({
                 Transferencia
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.subtotal.transferencia)}
               </TableCell>
             </TableRow>
@@ -330,9 +330,9 @@ export default async function ReporteVentasCafeteria({
                       {gasto_fijo.descripcion}
                     </TableCell>
                     <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat('es-CU', {
-                        style: 'currency',
-                        currency: 'CUP',
+                      {Intl.NumberFormat("es-CU", {
+                        style: "currency",
+                        currency: "CUP",
                       }).format(gasto_fijo.cantidad)}
                     </TableCell>
                   </TableRow>
@@ -364,9 +364,9 @@ export default async function ReporteVentasCafeteria({
                     Mano de obra
                   </TableCell>
                   <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                    {Intl.NumberFormat('es-CU', {
-                      style: 'currency',
-                      currency: 'CUP',
+                    {Intl.NumberFormat("es-CU", {
+                      style: "currency",
+                      currency: "CUP",
                     }).format(data.mano_obra)}
                   </TableCell>
                 </TableRow>
@@ -377,9 +377,9 @@ export default async function ReporteVentasCafeteria({
                       {gasto_variable.descripcion}
                     </TableCell>
                     <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat('es-CU', {
-                        style: 'currency',
-                        currency: 'CUP',
+                      {Intl.NumberFormat("es-CU", {
+                        style: "currency",
+                        currency: "CUP",
                       }).format(gasto_variable.cantidad)}
                     </TableCell>
                   </TableRow>
@@ -407,9 +407,9 @@ export default async function ReporteVentasCafeteria({
                 Efectivo
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.efectivo)}
               </TableCell>
             </TableRow>
@@ -418,9 +418,9 @@ export default async function ReporteVentasCafeteria({
                 Transferencia
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
                 }).format(data.total.transferencia)}
               </TableCell>
             </TableRow>

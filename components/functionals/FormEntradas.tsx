@@ -82,7 +82,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/tarjetas/types";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
 import {

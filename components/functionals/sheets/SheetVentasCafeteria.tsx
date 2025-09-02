@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,21 +7,21 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { CirclePlus, CircleX, MinusCircle, PlusCircle } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { CirclePlus, CircleX, MinusCircle, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { VentasCafeteriaSchema } from '@/lib/schemas';
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { VentasCafeteriaSchema } from "@/lib/schemas";
 import {
   Table,
   TableBody,
@@ -30,30 +30,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { InferInput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import { METODOS_PAGO } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
+import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import { Banco } from '@/app/(with-layout)/tarjetas/types';
-import SelectProductoVentaCafeteria from '../SelectProductoVentasCafeteria';
-import { addVentaCafeteria } from '@/app/(with-layout)/cafeteria/actions';
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Banco } from "@/app/(with-layout)/cuentas/types";
+import SelectProductoVentaCafeteria from "../SelectProductoVentasCafeteria";
+import { addVentaCafeteria } from "@/app/(with-layout)/cafeteria/actions";
 import {
   Productos_Elaboraciones,
   TarjetasVentas,
-} from '@/app/(with-layout)/cafeteria/types';
+} from "@/app/(with-layout)/cafeteria/types";
 
 export default function SheetVentasCafeteria({
   productos,
@@ -63,7 +63,7 @@ export default function SheetVentasCafeteria({
   tarjetas?: TarjetasVentas[];
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof VentasCafeteriaSchema>>({
@@ -72,19 +72,19 @@ export default function SheetVentasCafeteria({
       metodo_pago: undefined,
       efectivo: undefined,
       transferencia: undefined,
-      tarjeta: '',
-      productos: [{ producto: '', cantidad: '0', isElaboracion: false }],
+      tarjeta: "",
+      productos: [{ producto: "", cantidad: "0", isElaboracion: false }],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'productos',
+    name: "productos",
   });
 
   const metodo = useWatch({
     control: form.control,
-    name: 'metodo_pago',
+    name: "metodo_pago",
   });
 
   const onSubmit = async (
@@ -97,7 +97,7 @@ export default function SheetVentasCafeteria({
       form.reset();
       toast.success(dataRes);
       setOpen(false);
-      setError('');
+      setError("");
     }
   };
   return (
@@ -147,14 +147,14 @@ export default function SheetVentasCafeteria({
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        if (value === 'MIXTO') {
-                          form.setValue('efectivo', '0');
-                          form.setValue('transferencia', '0');
+                        if (value === "MIXTO") {
+                          form.setValue("efectivo", "0");
+                          form.setValue("transferencia", "0");
                         } else if (value === METODOS_PAGO.EFECTIVO) {
-                          form.setValue('tarjeta', undefined);
+                          form.setValue("tarjeta", undefined);
                         } else {
-                          form.setValue('efectivo', undefined);
-                          form.setValue('transferencia', undefined);
+                          form.setValue("efectivo", undefined);
+                          form.setValue("transferencia", undefined);
                         }
                       }}
                       defaultValue={field.value}
@@ -163,7 +163,7 @@ export default function SheetVentasCafeteria({
                         <SelectTrigger
                           className={cn(
                             form.formState.errors?.metodo_pago &&
-                              'border-destructive'
+                              "border-destructive"
                           )}
                         >
                           <SelectValue placeholder="Selecciona un método de pago" />
@@ -182,7 +182,7 @@ export default function SheetVentasCafeteria({
                 )}
               />
 
-              {metodo === 'MIXTO' && (
+              {metodo === "MIXTO" && (
                 <div className="grid grid-cols-2 gap-2">
                   <FormField
                     control={form.control}
@@ -242,7 +242,7 @@ export default function SheetVentasCafeteria({
                           <SelectTrigger
                             className={cn(
                               form.formState.errors?.tarjeta &&
-                                'border-destructive'
+                                "border-destructive"
                             )}
                           >
                             <SelectValue placeholder="Selecciona una tarjeta" />
@@ -258,11 +258,11 @@ export default function SheetVentasCafeteria({
                               <div className="flex gap-2 items-center ">
                                 <div
                                   className={cn(
-                                    'w-6 aspect-square rounded-full bg-gradient-to-br',
+                                    "w-6 aspect-square rounded-full bg-gradient-to-br",
                                     tarjeta.banco === Banco.BANDEC &&
-                                      'from-[#6c0207] to-[#bc1f26]',
+                                      "from-[#6c0207] to-[#bc1f26]",
                                     tarjeta.banco === Banco.BPA &&
-                                      'from-[#1d6156] to-[#1d6156]'
+                                      "from-[#1d6156] to-[#1d6156]"
                                   )}
                                 ></div>
                                 <p>{tarjeta.nombre}</p>
@@ -336,8 +336,8 @@ export default function SheetVentasCafeteria({
                     className="gap-1"
                     onClick={() =>
                       append({
-                        producto: '',
-                        cantidad: '0',
+                        producto: "",
+                        cantidad: "0",
                         isElaboracion: false,
                       })
                     }

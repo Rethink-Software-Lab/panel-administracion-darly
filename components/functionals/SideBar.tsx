@@ -197,14 +197,14 @@ export default function SideBar({ areasVenta, session }: Props) {
             )}
             {(session.isAdmin || session.isSupervisor) && (
               <Link
-                href="/tarjetas"
+                href="/cuentas"
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  path === "/tarjetas" && "bg-muted text-primary"
+                  path === "/cuentas" && "bg-muted text-primary"
                 )}
               >
                 <CreditCard className="h-4 w-4" />
-                Tarjetas
+                Cuentas
               </Link>
             )}
             {session.isAdmin && (

@@ -50,15 +50,14 @@ export function SearchCommand({
         <CommandList>
           <CommandEmpty>No se encontraron resultados.</CommandEmpty>
           <CommandGroup heading="Sugerencias">
-            {productos.map((p) => (
+            {productos.map((p, index) => (
               <CommandItem
-                key={p.id}
+                key={`p.id-${index}`}
                 onSelect={() => {
-                  router.push(
-                    `/search/?id=${p.id}${
-                      p.isCafeteria ? "&isCafeteria=true" : " "
-                    }`
-                  );
+                  const params = new URLSearchParams({ id: p.id.toString() });
+                  if (p.isCafeteria) params.append("isCafeteria", "true");
+
+                  router.push(`/search?${params.toString()}`);
                   setOpen(false);
                 }}
                 className="gap-2 cursor-pointer"

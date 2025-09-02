@@ -23,7 +23,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { InferInput, InferOutput } from "valibot";
 import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types";
-import { TipoCuenta, TipoTransferencia } from "../../tarjetas/types";
+import { TipoCuenta, TipoTransferencia } from "../../cuentas/types";
 import { getSession } from "@/lib/getSession";
 import { AuthorizationError, ValidationError } from "@/lib/errors";
 import { CAJA_MESAS, CAJA_SALON } from "@/lib/utils";
@@ -37,7 +37,7 @@ interface DataVenta
 }
 
 export async function addVenta(data: DataVenta): Promise<ResultPattern> {
-  const { userId } = getSession();
+  const { userId } = await getSession();
 
   if (!userId) throw new Error("No autorizado");
 
@@ -209,7 +209,8 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
   }
 
   if (
-    producto_info.isZapato && zapatos_id &&
+    producto_info.isZapato &&
+    zapatos_id &&
     productos_en_area.length !== zapatos_id.length
   ) {
     throw new ValidationError(
@@ -375,7 +376,9 @@ async function rebajar_de_las_cuentas({
 
         await tx.insert(inventarioTransacciones).values({
           createdAt: new Date().toISOString(),
-          descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
+          descripcion: `[PAGO TRABAJADOR] ${
+            ids.length
+          }x ${descripcion_producto.slice(0, 15)}`,
           cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
           ventaId: venta[0].id,
           tipo: TipoTransferencia.EGRESO,
@@ -436,7 +439,10 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
-    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(0,15)}`,
+    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(
+      0,
+      15
+    )}`,
     cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
     ventaId: venta[0].id,
     tipo: TipoTransferencia.EGRESO,
@@ -511,7 +517,7 @@ export async function deleteVenta({
       .where(eq(inventarioVentas.id, id))
       .limit(1);
 
-    validaciones_eliminar_venta({ venta });
+    await validaciones_eliminar_venta({ venta });
 
     const cuentasConTransacciones = await db
       .select({
@@ -567,7 +573,7 @@ export async function deleteVenta({
   }
 }
 
-function validaciones_eliminar_venta({
+async function validaciones_eliminar_venta({
   venta,
 }: {
   venta: Pick<
@@ -575,7 +581,7 @@ function validaciones_eliminar_venta({
     "id" | "usuarioId" | "createdAt"
   >[];
 }) {
-  const { userId, isAdmin } = getSession();
+  const { userId, isAdmin } = await getSession();
 
   if (venta.length < 1) throw new ValidationError("Venta no encontrada");
   if (venta[0].usuarioId !== Number(userId) && !isAdmin)

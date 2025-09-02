@@ -1,9 +1,9 @@
 import {
   METODOS_PAGO,
   ProductoEntrada,
-} from '../(almacen-cafeteria)/entradas-cafeteria/types';
-import { Banco } from '../tarjetas/types';
-import { Usuario } from '../users/types';
+} from "../(almacen-cafeteria)/entradas-cafeteria/types";
+import { Banco } from "../cuentas/types";
+import { Usuario } from "../users/types";
 
 interface InventarioCafeteria {
   id: number;
