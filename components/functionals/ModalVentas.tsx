@@ -28,7 +28,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckIcon, X, PlusCircle, ChevronDown } from "lucide-react";
+import {
+  CheckIcon,
+  X,
+  PlusCircle,
+  ChevronDown,
+  PackagePlus,
+} from "lucide-react";
 
 import { CAJA_MESAS, CAJA_SALON, cn } from "@/lib/utils";
 import {
@@ -67,7 +73,6 @@ import { addVenta } from "@/app/(with-layout)/areas-de-venta/[id]/actions";
 import { Tag, TagInput } from "emblor";
 
 export default function ModalVentas({
-  trigger,
   areaVenta,
   productosInfo,
   cuentasBancarias,
@@ -75,7 +80,6 @@ export default function ModalVentas({
   areaVenta: AreaVentaInResponseOneAreaVenta;
   productosInfo: AllProductos[];
   cuentasBancarias: CuentasBancarias[];
-  trigger: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -167,7 +171,14 @@ export default function ModalVentas({
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetTrigger asChild>
+        <Button className="gap-1 items-center">
+          <PackagePlus size={18} />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            Agregar
+          </span>
+        </Button>
+      </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[500px] overflow-y-scroll space-y-4">
         <SheetHeader className="space-y-0">
           <SheetTitle>Agregar Venta</SheetTitle>
