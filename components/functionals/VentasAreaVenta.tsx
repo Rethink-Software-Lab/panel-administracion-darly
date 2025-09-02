@@ -52,14 +52,6 @@ export default async function VentasAreaVenta({
             areaVenta={areaVenta}
             productosInfo={productos}
             cuentasBancarias={cuentasBancarias}
-            trigger={
-              <Button className="gap-1 items-center">
-                <PackagePlus size={18} />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Agregar
-                </span>
-              </Button>
-            }
           />
         </div>
       </div>
