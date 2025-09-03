@@ -1,14 +1,16 @@
 import { CloudOff } from "lucide-react";
 import SheetTransferenciasTarjetas from "./sheets/SheetTransferenciasTarjetas";
 import { getTransacciones } from "@/app/(with-layout)/cuentas/services";
-import DataTable from "@/components/functionals/data-tables/data-table-general";
 import { columns } from "@/app/(with-layout)/cuentas/columns";
-import DataTableTransacciones from "./data-tables/data-table-transacciones";
+import DataTableTransacciones from "./data-tables/transacciones/data-table-transacciones";
 
 export async function TableTransacciones(searchParams: {
   c?: string;
   d?: string;
   l?: string;
+  from?: string;
+  to?: string;
+  type?: string;
 }) {
   const parseComoEntero = (data: string | undefined) => {
     if (data) {
@@ -24,6 +26,9 @@ export async function TableTransacciones(searchParams: {
     cursor: parseComoEntero(searchParams.c),
     direction: searchParams.d,
     limit: parseComoEntero(searchParams.l),
+    from: searchParams.from,
+    to: searchParams.to,
+    type: searchParams.type,
   });
 
   return (
@@ -42,12 +47,10 @@ export async function TableTransacciones(searchParams: {
         <div className="flex py-40 flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
           <div className="flex flex-col items-center gap-1 text-center">
             <CloudOff size={72} className="inline-flex mb-4" />
-            <h3 className="text-2xl font-bold tracking-tight">
-              Error de conexión
-            </h3>
+            <h3 className="text-2xl font-bold tracking-tight">{error}</h3>
             <p className="text-sm text-muted-foreground">
-              Comprueba tu conexión a internet!, si el problema persiste
-              contacta con soporte.
+              Estamos presentando un error, por favor intente nuevamente. Si el
+              problema persiste, contacta con soporte.
             </p>
           </div>
         </div>
