@@ -22,20 +22,11 @@ import Delete from "./client";
 import { Progress } from "@/components/ui/progress";
 import { TableTransacciones } from "@/components/functionals/TableTransacciones";
 import { Suspense } from "react";
+import { SkeletonTransacciones } from "@/components/functionals/data-tables/transacciones/skeleton";
 
 const MAX_TRANF_MES = 120000;
 
-interface SearchParams {
-  c?: string;
-  d?: string;
-  l?: string;
-}
-
-export default async function Tarjetas(
-  props: {
-    searchParams: Promise<SearchParams>;
-  }
-) {
+export default async function Tarjetas(props: PageProps<"/cuentas">) {
   const searchParams = await props.searchParams;
   const { data, error } = await GetTarjetas();
 
@@ -122,7 +113,7 @@ export default async function Tarjetas(
 
         <SheetTarjetas isError={!!error} />
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<SkeletonTransacciones />}>
         <TableTransacciones {...searchParams} />
       </Suspense>
     </main>

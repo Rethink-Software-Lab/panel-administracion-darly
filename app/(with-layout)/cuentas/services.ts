@@ -9,7 +9,8 @@ import {
   inventarioTransacciones,
   inventarioUser,
 } from "@/db/schema";
-import { and, asc, desc, eq, gt, gte, lt, sql } from "drizzle-orm";
+import { ValidationError } from "@/lib/errors";
+import { and, asc, desc, eq, gt, gte, lt, lte, sql } from "drizzle-orm";
 
 export async function GetTarjetas(): Promise<{
   data: ResponseTarjetas | null;
@@ -64,27 +65,56 @@ export async function getTransacciones({
   cursor,
   direction = "next",
   limit = 10,
+  from,
+  to,
+  type,
 }: {
   cursor?: number;
   direction?: string;
   limit?: number;
+  from?: string;
+  to?: string;
+  type?: string;
 }): Promise<ResponseTransacciones> {
   try {
-    let whereCondition;
+    const filterConditions = [];
+    if (from && to) {
+      filterConditions.push(
+        gte(inventarioTransacciones.createdAt, from),
+        lte(inventarioTransacciones.createdAt, to)
+      );
+    }
+
+    if (type) {
+      if (
+        type !== TipoTransferencia.INGRESO &&
+        type !== TipoTransferencia.EGRESO
+      ) {
+        throw new ValidationError("Tipo de transferencia no válido");
+      }
+      filterConditions.push(eq(inventarioTransacciones.tipo, type));
+    }
+
+    const countWhereCondition =
+      filterConditions.length > 0 ? and(...filterConditions) : undefined;
+
+    const queryConditions = [...filterConditions];
     let orderBy;
 
     if (cursor) {
       if (direction === "next") {
-        whereCondition = lt(inventarioTransacciones.id, cursor);
+        queryConditions.push(lt(inventarioTransacciones.id, cursor));
         orderBy = desc(inventarioTransacciones.id);
       } else {
-        whereCondition = gt(inventarioTransacciones.id, cursor);
+        queryConditions.push(gt(inventarioTransacciones.id, cursor));
         orderBy = asc(inventarioTransacciones.id);
       }
     } else {
-      whereCondition = undefined;
       orderBy = desc(inventarioTransacciones.id);
     }
+
+    const whereCondition =
+      queryConditions.length > 0 ? and(...queryConditions) : undefined;
 
     const query = db
       .select({
@@ -143,7 +173,7 @@ export async function getTransacciones({
       : null;
     const prevCursor = hasPrevPage ? result[0]?.id ?? null : null;
 
-    const count = await db.$count(inventarioTransacciones);
+    const count = await db.$count(inventarioTransacciones, countWhereCondition);
     const pageCount = Math.ceil(count / limit);
 
     const cuentas = await db
@@ -171,6 +201,13 @@ export async function getTransacciones({
     };
   } catch (e) {
     console.error(e);
+    if (e instanceof ValidationError) {
+      return {
+        data: null,
+        meta: null,
+        error: e.message,
+      };
+    }
     return {
       data: null,
       meta: null,
