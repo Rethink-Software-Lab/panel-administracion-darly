@@ -3,33 +3,10 @@ import SheetTransferenciasTarjetas from "./sheets/SheetTransferenciasTarjetas";
 import { getTransacciones } from "@/app/(with-layout)/cuentas/services";
 import { columns } from "@/app/(with-layout)/cuentas/columns";
 import DataTableTransacciones from "./data-tables/transacciones/data-table-transacciones";
+import { Tarjetas } from "@/app/(with-layout)/cuentas/types";
 
-export async function TableTransacciones(searchParams: {
-  c?: string;
-  d?: string;
-  l?: string;
-  from?: string;
-  to?: string;
-  type?: string;
-}) {
-  const parseComoEntero = (data: string | undefined) => {
-    if (data) {
-      if (isNaN(parseInt(data))) {
-        console.error("Error al parsear los searchParams");
-        return undefined;
-      } else {
-        return parseInt(data);
-      }
-    }
-  };
-  const { data, error, meta } = await getTransacciones({
-    cursor: parseComoEntero(searchParams.c),
-    direction: searchParams.d,
-    limit: parseComoEntero(searchParams.l),
-    from: searchParams.from,
-    to: searchParams.to,
-    type: searchParams.type,
-  });
+export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
+  const { data, error, meta } = await getTransacciones();
 
   return (
     <div className="p-4 m-0 bg-muted/40 h-full border-t-2 border-muted">
@@ -41,6 +18,7 @@ export async function TableTransacciones(searchParams: {
         <DataTableTransacciones
           columns={columns}
           data={data.transacciones}
+          cuentas={cuentas}
           {...meta}
         />
       ) : (

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BrainCircuit, Facebook } from "lucide-react";
 import Link from "next/link";
 import { getAreasVentas } from "./areas-de-venta/services";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export default async function RootLayout(props: LayoutProps<"/">) {
   const session = await getSession();
@@ -19,7 +20,7 @@ export default async function RootLayout(props: LayoutProps<"/">) {
         <SideBar areasVenta={data || []} session={session} />
         <div className="flex flex-col w-full">
           <TopBar session={session} areasVenta={data || []} />
-          {props.children}
+          <NuqsAdapter>{props.children}</NuqsAdapter>
         </div>
       </div>
       <footer className="py-6 md:px-8 md:py-0 col-span-2 border">

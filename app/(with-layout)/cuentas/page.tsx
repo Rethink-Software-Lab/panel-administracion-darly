@@ -23,11 +23,12 @@ import { Progress } from "@/components/ui/progress";
 import { TableTransacciones } from "@/components/functionals/TableTransacciones";
 import { Suspense } from "react";
 import { SkeletonTransacciones } from "@/components/functionals/data-tables/transacciones/skeleton";
+import { searchParamsCache } from "./searchParams";
 
 const MAX_TRANF_MES = 120000;
 
 export default async function Tarjetas(props: PageProps<"/cuentas">) {
-  const searchParams = await props.searchParams;
+  await searchParamsCache.parse(props.searchParams);
   const { data, error } = await GetTarjetas();
 
   return (
@@ -114,7 +115,7 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
         <SheetTarjetas isError={!!error} />
       </div>
       <Suspense fallback={<SkeletonTransacciones />}>
-        <TableTransacciones {...searchParams} />
+        <TableTransacciones cuentas={data?.tarjetas || []} />
       </Suspense>
     </main>
   );

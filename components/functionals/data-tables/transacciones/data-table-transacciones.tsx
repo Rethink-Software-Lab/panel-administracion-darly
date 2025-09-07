@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 
 import { DataTablePaginatonCursor } from "../../data-table-pagination-server-cursor";
-import { Transacciones } from "@/app/(with-layout)/cuentas/types";
+import { Tarjetas, Transacciones } from "@/app/(with-layout)/cuentas/types";
 import { FiltersTransacciones } from "./filters";
 
 interface DataTableProps<TData> {
@@ -29,6 +29,7 @@ interface DataTableProps<TData> {
   pageCount: number;
   hasNext: boolean;
   hasPrev: boolean;
+  cuentas: Tarjetas[];
 }
 
 export default function DataTableTransacciones<TData>({
@@ -39,6 +40,7 @@ export default function DataTableTransacciones<TData>({
   pageCount,
   hasNext,
   hasPrev,
+  cuentas,
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
@@ -60,7 +62,7 @@ export default function DataTableTransacciones<TData>({
 
   return (
     <div className="p-2 rounded-md border bg-white">
-      <FiltersTransacciones />
+      <FiltersTransacciones cuentas={cuentas} />
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

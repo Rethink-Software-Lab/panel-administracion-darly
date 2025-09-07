@@ -10,7 +10,19 @@ import {
   inventarioUser,
 } from "@/db/schema";
 import { ValidationError } from "@/lib/errors";
-import { and, asc, desc, eq, gt, gte, lt, lte, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  lt,
+  lte,
+  sql,
+} from "drizzle-orm";
+import { searchParamsCache } from "./searchParams";
 
 export async function GetTarjetas(): Promise<{
   data: ResponseTarjetas | null;
@@ -61,27 +73,22 @@ export async function GetTarjetas(): Promise<{
   }
 }
 
-export async function getTransacciones({
-  cursor,
-  direction = "next",
-  limit = 10,
-  from,
-  to,
-  type,
-}: {
-  cursor?: number;
-  direction?: string;
-  limit?: number;
-  from?: string;
-  to?: string;
-  type?: string;
-}): Promise<ResponseTransacciones> {
+export async function getTransacciones(): Promise<ResponseTransacciones> {
+  const {
+    c: cursor,
+    d: direction,
+    l: limit,
+    from,
+    to,
+    type,
+    accounts,
+  } = searchParamsCache.all();
   try {
     const filterConditions = [];
     if (from && to) {
       filterConditions.push(
-        gte(inventarioTransacciones.createdAt, from),
-        lte(inventarioTransacciones.createdAt, to)
+        gte(inventarioTransacciones.createdAt, from.toISOString()),
+        lte(inventarioTransacciones.createdAt, to.toISOString())
       );
     }
 
@@ -93,6 +100,15 @@ export async function getTransacciones({
         throw new ValidationError("Tipo de transferencia no válido");
       }
       filterConditions.push(eq(inventarioTransacciones.tipo, type));
+    }
+
+    if (accounts) {
+      filterConditions.push(
+        inArray(
+          inventarioTransacciones.cuentaId,
+          accounts.map((account) => account)
+        )
+      );
     }
 
     const countWhereCondition =

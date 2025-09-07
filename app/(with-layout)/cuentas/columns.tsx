@@ -67,7 +67,7 @@ export const columns: ColumnDef<Transacciones>[] = [
   {
     accessorKey: "descripcion",
     header: "Descripción",
-    size: 200,
+    size: 700,
   },
   {
     accessorKey: "cuenta",
