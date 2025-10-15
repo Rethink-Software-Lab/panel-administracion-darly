@@ -454,46 +454,6 @@ export const ProductosCafeteriaSchema = object({
   ),
 });
 
-export const VentasCafeteriaSchema = pipe(
-  object({
-    metodo_pago: enum_(METODOS_PAGO, "El método de pago es requerido."),
-    efectivo: optional(pipe(string(), nonEmpty("El efectivo es requerido"))),
-    transferencia: optional(
-      pipe(string(), nonEmpty("La transferencia es requerida"))
-    ),
-    tarjeta: optional(pipe(string(), nonEmpty("La tarjeta es requerida"))),
-    productos: array(
-      object({
-        producto: pipe(
-          string("El producto es requerido."),
-          nonEmpty("El producto es requerido.")
-        ),
-        cantidad: optional(
-          pipe(string(), nonEmpty("La cantidad debe ser > 0"))
-        ),
-        isElaboracion: boolean(),
-      })
-    ),
-  }),
-  forward(
-    partialCheck(
-      ["productos"] as any[],
-      (input) => {
-        const productosIds = input.productos.map(
-          (producto) => producto.producto
-        );
-        const uniqueProductos = new Set(productosIds);
-        if (productosIds.length !== uniqueProductos.size) {
-          return false;
-        }
-        return true;
-      },
-      "No se deben tener productos repetidos."
-    ),
-    ["productos"]
-  )
-);
-
 export const SalidaAlmacenCafeteriaSchema = pipe(
   object({
     productos: array(

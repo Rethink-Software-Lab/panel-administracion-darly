@@ -1,4 +1,3 @@
-import { Usuario } from "../../users/types";
 import { Tarjetas } from "../../cuentas/types";
 import { Proveedor } from "../../proveedores/types";
 
@@ -11,11 +10,11 @@ export enum METODOS_PAGO {
 export interface ProductoEntrada {
   id: number;
   nombre: string;
-  precio_costo: number;
-  precio_venta: number;
+  precio_costo: string;
+  precio_venta: string;
 }
 
-interface ProductosInEntrada {
+export interface ProductosInEntrada {
   id: number;
   producto: ProductoEntrada;
   cantidad: number;
@@ -23,16 +22,16 @@ interface ProductosInEntrada {
 
 export interface EntradaCafeteria {
   id: number;
-  usuario: Usuario;
-  created_at: string;
-  metodo_pago: METODOS_PAGO;
-  proveedor: Proveedor;
-  proveedor_nombre: string | null;
-  proveedor_nit: string | null;
-  proveedor_telefono: string | null;
-  proveedor_direccion: string | null;
-  proveedor_no_cuenta_cup: string | null;
-  proveedor_no_cuenta_mayorista: string | null;
+  usuario: string | null;
+  createdAt: string;
+  metodoPago: string;
+  proveedor: Proveedor | null;
+  proveedorNombre: string | null;
+  proveedorNit: string | null;
+  proveedorTelefono: string | null;
+  proveedorDireccion: string | null;
+  proveedorNoCuentaCup: string | null;
+  proveedorNoCuentaMayorista: string | null;
   comprador: string;
   productos: ProductosInEntrada[];
 }
@@ -40,6 +39,6 @@ export interface EntradaCafeteria {
 export interface EndpointEntradasCafeteria {
   productos: ProductoEntrada[];
   entradas: EntradaCafeteria[];
-  cuentas: Tarjetas[];
+  cuentas: Omit<Tarjetas, "total_transferencias_mes">[];
   proveedores: Pick<Proveedor, "id" | "nombre">[];
 }

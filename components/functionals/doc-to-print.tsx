@@ -1,6 +1,6 @@
-'use client';
-import { EntradaCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
-import { DateTime } from 'luxon';
+"use client";
+import { EntradaCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
+import { DateTime } from "luxon";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
+} from "../ui/table";
 
 export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
   return (
@@ -18,22 +18,22 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
         <div>
           <h2 className="text-3xl font-medium">Factura</h2>
           <p className="print:hidden">
-            {DateTime.fromISO(data.created_at || '').toLocaleString(
+            {DateTime.fromSQL(data.createdAt || "").toLocaleString(
               DateTime.DATE_FULL,
-              { locale: 'es' }
+              { locale: "es" }
             )}
           </p>
         </div>
         <div className="text-right hidden print:block">
           <p>
-            {DateTime.fromISO(data?.created_at || '').toLocaleString(
+            {DateTime.fromSQL(data?.createdAt || "").toLocaleString(
               DateTime.DATE_FULL,
-              { locale: 'es' }
+              { locale: "es" }
             )}
           </p>
           <p className="text-sm">
-            No. Factura:{' '}
-            {DateTime.fromISO(data?.created_at || '')
+            No. Factura:{" "}
+            {DateTime.fromSQL(data?.createdAt || "")
               .toMillis()
               .toString()
               .substring(0, 10)}
@@ -44,35 +44,33 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
         <p className="text-sm mb-2">Productor</p>
         <div className="border-t bg-muted/50 w-full mb-2" />
         <h1 className="font-bold">
-          {data?.proveedor?.nombre || data.proveedor_nombre}
+          {data?.proveedor?.nombre || data.proveedorNombre}
         </h1>
         <h2 className="text-sm">
-          <b>Domicilio social:</b>{' '}
-          {data?.proveedor?.direccion || data.proveedor_direccion}
+          <b>Domicilio social:</b>{" "}
+          {data?.proveedor?.direccion || data.proveedorDireccion}
         </h2>
         <h2 className="text-sm ">
-          <b>NIT:</b> {data?.proveedor?.nit || data.proveedor_nit}
+          <b>NIT:</b> {data?.proveedor?.nit || data.proveedorNit}
         </h2>
-        {(data?.proveedor?.noCuentaCup ||
-          data.proveedor_no_cuenta_mayorista) && (
+        {(data?.proveedor?.noCuentaCup || data.proveedorNoCuentaMayorista) && (
           <h2 className="text-sm ">
-            <b>No. Cuenta CUP:</b>{' '}
-            {data?.proveedor?.noCuentaCup || data.proveedor_no_cuenta_mayorista}
+            <b>No. Cuenta CUP:</b>{" "}
+            {data?.proveedor?.noCuentaCup || data.proveedorNoCuentaMayorista}
           </h2>
         )}
 
         {(data?.proveedor?.noCuentaMayorista ||
-          data.proveedor_no_cuenta_mayorista) && (
+          data.proveedorNoCuentaMayorista) && (
           <h2 className="text-sm ">
-            <b>No. Cuenta Mayorista:</b>{' '}
+            <b>No. Cuenta Mayorista:</b>{" "}
             {data?.proveedor?.noCuentaMayorista ||
-              data.proveedor_no_cuenta_mayorista}
+              data.proveedorNoCuentaMayorista}
           </h2>
         )}
 
         <h2 className="text-sm ">
-          <b>Teléfono:</b>{' '}
-          {data?.proveedor?.telefono || data.proveedor_telefono}
+          <b>Teléfono:</b> {data?.proveedor?.telefono || data.proveedorTelefono}
         </h2>
       </div>
 
@@ -93,16 +91,18 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
               </TableCell>
               <TableCell>{producto.cantidad}</TableCell>
               <TableCell>
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
-                }).format(producto.producto.precio_costo)}
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
+                }).format(Number(producto.producto.precio_costo))}
               </TableCell>
               <TableCell className="text-right">
-                {Intl.NumberFormat('es-CU', {
-                  style: 'currency',
-                  currency: 'CUP',
-                }).format(producto.cantidad * producto.producto.precio_costo)}
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
+                }).format(
+                  producto.cantidad * Number(producto.producto.precio_costo)
+                )}
               </TableCell>
             </TableRow>
           ))}
@@ -116,7 +116,9 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
                 .reduce(
                   (total, producto) =>
                     total +
-                    Number(producto.cantidad * producto.producto.precio_costo),
+                    Number(
+                      producto.cantidad * Number(producto.producto.precio_costo)
+                    ),
                   0
                 )
                 .toFixed(2)}

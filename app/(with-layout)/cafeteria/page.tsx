@@ -1,12 +1,12 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { inventarioCafeteria } from './services';
-import DataTable from '@/components/functionals/data-tables/data-table-general';
-import { CloudOff } from 'lucide-react';
-import { columns as columnsInventario } from './columns-inventario';
-import { columns as columnsVentas } from './columns-ventas';
-import SheetVentasCafeteria from '@/components/functionals/sheets/SheetVentasCafeteria';
-import { ProductoCafeteria, VentasCafeteria } from './types';
+import { inventarioCafeteria } from "./services";
+import DataTable from "@/components/functionals/data-tables/data-table-general";
+import { CloudOff } from "lucide-react";
+import { columns as columnsInventario } from "./columns-inventario";
+import { columns as columnsVentas } from "./columns-ventas";
+import SheetVentasCafeteria from "@/components/functionals/sheets/SheetVentasCafeteria";
+import { ProductoCafeteria, VentasCafeteria } from "./types";
 
 export default async function Cafeteria() {
   const { data } = await inventarioCafeteria();
@@ -16,7 +16,7 @@ export default async function Cafeteria() {
         <h1 className="text-lg font-semibold md:text-2xl">Cafetería</h1>
         <SheetVentasCafeteria
           productos={data?.productos_elaboraciones}
-          tarjetas={data?.tarjetas}
+          cuentasBancarias={data?.tarjetas}
         />
       </div>
 

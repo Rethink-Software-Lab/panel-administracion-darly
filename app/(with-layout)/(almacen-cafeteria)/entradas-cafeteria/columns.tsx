@@ -1,35 +1,35 @@
-'use client';
-import EspecialWarningDelete from '@/components/functionals/EspecialWarningDelete';
-import { deleteEntradaCafeteria } from './actions';
-import { Badge } from '@/components/ui/badge';
-import { DateTime } from 'luxon';
-import { ColumnDef } from '@tanstack/react-table';
-import { EntradaCafeteria } from './types';
-import SheetInfoEntradasCafeteria from '@/components/functionals/sheets/SheetInfoEntradasCafeteria';
-import { Button } from '@/components/ui/button';
-import { ReceiptText } from 'lucide-react';
-import { ExtendedTableOptions } from '@/components/functionals/data-tables/data-table-general';
+"use client";
+import EspecialWarningDelete from "@/components/functionals/EspecialWarningDelete";
+import { deleteEntradaCafeteria } from "./actions";
+import { Badge } from "@/components/ui/badge";
+import { DateTime } from "luxon";
+import { ColumnDef } from "@tanstack/react-table";
+import { EntradaCafeteria } from "./types";
+import SheetInfoEntradasCafeteria from "@/components/functionals/sheets/SheetInfoEntradasCafeteria";
+import { Button } from "@/components/ui/button";
+import { ReceiptText } from "lucide-react";
+import { ExtendedTableOptions } from "@/components/functionals/data-tables/data-table-general";
 
 export const columns: ColumnDef<EntradaCafeteria>[] = [
   {
-    accessorKey: 'created_at',
-    header: 'Fecha',
+    accessorKey: "createdAt",
+    header: "Fecha",
     cell: ({ row }) =>
-      DateTime.fromISO(row.getValue('created_at')).toLocaleString(
+      DateTime.fromSQL(row.getValue("createdAt")).toLocaleString(
         DateTime.DATETIME_MED,
-        { locale: 'es' }
+        { locale: "es" }
       ),
   },
   {
-    accessorKey: 'comprador',
-    header: 'Comprador',
+    accessorKey: "comprador",
+    header: "Comprador",
   },
   {
-    accessorKey: 'proveedor',
-    header: 'Proveedor',
+    accessorKey: "proveedor",
+    header: "Proveedor",
     cell: ({ row }) => {
       const proveedor = row.original.proveedor?.nombre;
-      const proveedorNombre = row.original.proveedor_nombre;
+      const proveedorNombre = row.original.proveedorNombre;
       if (proveedor) {
         return proveedor;
       } else if (proveedorNombre) {
@@ -40,18 +40,18 @@ export const columns: ColumnDef<EntradaCafeteria>[] = [
     },
   },
   {
-    accessorKey: 'metodo_pago',
-    header: 'Método de pago',
+    accessorKey: "metodoPago",
+    header: "Método de pago",
     cell: ({ row }) => (
-      <Badge variant="outline">{row.getValue('metodo_pago')}</Badge>
+      <Badge variant="outline">{row.getValue("metodoPago")}</Badge>
     ),
   },
 
   {
-    accessorKey: 'usuario.username',
-    header: 'Usuario',
+    accessorKey: "usuario",
+    header: "Usuario",
     cell: ({ row }) => {
-      const username = row.original.usuario?.username;
+      const username = row.original.usuario;
       if (username) {
         return username;
       } else {
@@ -61,7 +61,7 @@ export const columns: ColumnDef<EntradaCafeteria>[] = [
   },
 
   {
-    header: ' ',
+    header: " ",
     cell: ({ row, table }) => (
       <span className="space-x-2">
         <SheetInfoEntradasCafeteria data={row.original} />

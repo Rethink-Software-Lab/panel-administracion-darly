@@ -29,3 +29,4 @@ export function canDeleteVenta(
 
 export const CAJA_SALON = "25";
 export const CAJA_MESAS = "70";
+export const CAJA_CAFETERIA = "71";
