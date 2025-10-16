@@ -36,24 +36,13 @@ interface TotalReporteCafeteria {
   transferencia: number;
 }
 
-interface GastosVariablesReporteCafeteria {
-  descripcion: string;
-  cantidad: number;
-}
-
-interface GastosFijosReporteCafeteria {
-  descripcion: string;
-  cantidad: number;
-}
-
 interface Params {
   productos: Producto[];
   elaboraciones: ElaboracionesType[];
   total: TotalReporteCafeteria;
-  gastos_variables: GastosVariablesReporteCafeteria[];
-  gastos_fijos: GastosFijosReporteCafeteria[];
   subtotal: SubtotalReporteCafeteria;
   mano_obra: number;
+  mano_obra_cuenta_casa: number;
   ganancia: number;
 }
 
@@ -212,34 +201,24 @@ export default async function ReporteVentasCafeteria({
             </TableRow>
             <TableRow>
               <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                Gastos Fijos
+                Mano de obra
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
                 {Intl.NumberFormat("es-CU", {
                   style: "currency",
                   currency: "CUP",
-                }).format(
-                  data.gastos_fijos.reduce(
-                    (acc, curr) => acc + curr.cantidad,
-                    0
-                  )
-                )}
+                }).format(data.mano_obra)}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                Gastos Variables
+                Mano de obra (Cuenta casa)
               </TableCell>
               <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
                 {Intl.NumberFormat("es-CU", {
                   style: "currency",
                   currency: "CUP",
-                }).format(
-                  data.gastos_variables.reduce(
-                    (acc, curr) => acc + curr.cantidad,
-                    0
-                  ) + data.mano_obra
-                )}
+                }).format(data.mano_obra_cuenta_casa)}
               </TableCell>
             </TableRow>
             <TableRow>
@@ -306,88 +285,6 @@ export default async function ReporteVentasCafeteria({
             </TableRow>
           </TableBody>
         </Table>
-
-        {data.gastos_fijos.length > 0 && (
-          <>
-            <h3 className="text-lg font-semibold pl-2 print:pl-0 pb-2 pt-4">
-              Desglose gastos fijos
-            </h3>
-            <Table className="whitespace-nowrap bg-background border-separate border-spacing-0 border print:border-none border-gray-300 rounded-lg overflow-hidden">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className=" px-4 print:px-0">
-                    Descripcion
-                  </TableHead>
-                  <TableHead className="text-right px-4 print:px-0">
-                    Monto
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.gastos_fijos.map((gasto_fijo, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                      {gasto_fijo.descripcion}
-                    </TableCell>
-                    <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat("es-CU", {
-                        style: "currency",
-                        currency: "CUP",
-                      }).format(gasto_fijo.cantidad)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
-        )}
-
-        {(data.gastos_variables.length > 0 || data.mano_obra > 0) && (
-          <>
-            <h3 className="text-lg font-semibold pl-2 print:pl-0 pb-2 pt-4">
-              Desglose gastos variables
-            </h3>
-            <Table className="whitespace-nowrap bg-background border-separate border-spacing-0 border print:border-none border-gray-300 rounded-lg overflow-hidden">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className=" px-4 print:px-0">
-                    Descripcion
-                  </TableHead>
-                  <TableHead className="text-right px-4 print:px-0">
-                    Monto
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                    Mano de obra
-                  </TableCell>
-                  <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                    {Intl.NumberFormat("es-CU", {
-                      style: "currency",
-                      currency: "CUP",
-                    }).format(data.mano_obra)}
-                  </TableCell>
-                </TableRow>
-
-                {data.gastos_variables.map((gasto_variable, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                      {gasto_variable.descripcion}
-                    </TableCell>
-                    <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                      {Intl.NumberFormat("es-CU", {
-                        style: "currency",
-                        currency: "CUP",
-                      }).format(gasto_variable.cantidad)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
-        )}
 
         <h3 className="text-lg font-semibold pl-2 print:pl-0  pb-2 pt-4">
           Desglose del total por medio de pago
