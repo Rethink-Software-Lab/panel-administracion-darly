@@ -36,8 +36,10 @@ interface Params {
   total: SubtotalYTotalReporteVenta;
   pago_trabajador: number;
   ventas_por_usuario: { [key: string]: number };
-  gastos_variables?: GastosReporteVenta[];
-  gastos_fijos?: GastosReporteVenta[];
+  mano_obra?: number;
+  mano_obra_cuenta_casa?: number;
+  gastos_variables: GastosReporteVenta[];
+  gastos_fijos: GastosReporteVenta[];
   subtotal: SubtotalYTotalReporteVenta;
   area: string;
   ganancia: number;
@@ -54,7 +56,9 @@ export default async function ReporteVentas({
   desde: string;
   hasta: string;
 }) {
-  const { isAdmin } = await getSession();
+  const { userId } = await getSession();
+
+  console.log(data);
   if (!data && !error) {
     return (
       <div className="bg-muted h-full">
@@ -168,83 +172,46 @@ export default async function ReporteVentas({
                 }).format(data.subtotal.general)}
               </TableCell>
             </TableRow>
-            {data.gastos_fijos && (
-              <TableRow>
-                <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                  Gastos Fijos
-                </TableCell>
-                <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                  {Intl.NumberFormat("es-CU", {
-                    style: "currency",
-                    currency: "CUP",
-                  }).format(
-                    data.gastos_fijos.reduce(
-                      (acc, curr) => acc + curr.cantidad,
+
+            <TableRow>
+              <TableCell className="px-4 border-t border-gray-300 print:px-0">
+                Gastos Fijos
+              </TableCell>
+              <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
+                }).format(
+                  data.gastos_fijos.reduce(
+                    (acc, curr) => acc + curr.cantidad,
+                    0
+                  )
+                )}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="px-4 border-t border-gray-300 print:px-0">
+                Gastos Variables
+              </TableCell>
+              <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
+                {Intl.NumberFormat("es-CU", {
+                  style: "currency",
+                  currency: "CUP",
+                }).format(
+                  Number(
+                    (data?.gastos_variables?.reduce(
+                      (acc, curr) => acc + Number(curr?.cantidad ?? 0),
                       0
-                    )
-                  )}
-                </TableCell>
-              </TableRow>
-            )}
-            {data?.gastos_variables && (
-              <TableRow>
-                <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                  Gastos Variables
-                </TableCell>
-                <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                  {Intl.NumberFormat("es-CU", {
-                    style: "currency",
-                    currency: "CUP",
-                  }).format(
-                    data.gastos_variables.reduce(
-                      (acc, curr) => acc + curr.cantidad,
-                      0
-                    ) + data.pago_trabajador
-                  )}
-                </TableCell>
-              </TableRow>
-            )}
-            {data.area !== "general" && (
-              <>
-                <TableRow>
-                  <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                    Pago trabajador
-                  </TableCell>
-                  <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
-                    {Intl.NumberFormat("es-CU", {
-                      style: "currency",
-                      currency: "CUP",
-                    }).format(data.pago_trabajador)}
-                  </TableCell>
-                </TableRow>
-                <TableRow className="relative hover:bg-white">
-                  <TableCell colSpan={2} className="pl-4">
-                    <div className={styles.subrowGroup}>
-                      <div className={styles.verticalLine} />
-                      {Object.keys(data.ventas_por_usuario).map(
-                        (usuario, index: number) => (
-                          <div
-                            className="pl-4 relative "
-                            key={`${usuario}-${index}`}
-                          >
-                            <div className={styles.branchLine} />
-                            <div className="flex justify-between items-center px-2 py-1">
-                              <p>{usuario}</p>
-                              <p>
-                                {Intl.NumberFormat("es-CU", {
-                                  style: "currency",
-                                  currency: "CUP",
-                                }).format(data.ventas_por_usuario[usuario])}
-                              </p>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </>
-            )}
+                    ) ?? 0) +
+                      Number(data?.pago_trabajador ?? 0) +
+                      Number(data?.mano_obra ?? 0) +
+                      Number(data?.mano_obra_cuenta_casa ?? 0)
+                  )
+                )}
+              </TableCell>
+            </TableRow>
+
             <TableRow>
               <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
                 Total
@@ -257,7 +224,7 @@ export default async function ReporteVentas({
               </TableCell>
             </TableRow>
 
-            {isAdmin && (
+            {(userId === "1" || userId === "10") && (
               <TableRow>
                 <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
                   Ganancia
@@ -346,79 +313,110 @@ export default async function ReporteVentas({
           </>
         )}
 
-        {data.gastos_variables &&
-          (data.gastos_variables.length > 0 || data.pago_trabajador > 0) && (
-            <>
-              <h3 className="text-lg font-semibold pl-2 print:pl-0 pb-2 pt-4">
-                Desglose gastos variables
-              </h3>
-              <Table className="whitespace-nowrap bg-background border-separate border-spacing-0 border print:border-none border-gray-300 rounded-lg overflow-hidden">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className=" px-4 print:px-0">
-                      Descripcion
-                    </TableHead>
-                    <TableHead className="text-right px-4 print:px-0">
-                      Monto
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+        {(data.gastos_variables.length > 0 ||
+          data.pago_trabajador > 0 ||
+          data.mano_obra ||
+          data.mano_obra_cuenta_casa) && (
+          <>
+            <h3 className="text-lg font-semibold pl-2 print:pl-0 pb-2 pt-4">
+              Desglose gastos variables
+            </h3>
+            <Table className="whitespace-nowrap bg-background border-separate border-spacing-0 border print:border-none border-gray-300 rounded-lg overflow-hidden">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className=" px-4 print:px-0">
+                    Descripcion
+                  </TableHead>
+                  <TableHead className="text-right px-4 print:px-0">
+                    Monto
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="px-4 border-t border-gray-300 print:px-0">
+                    Pago trabajador
+                  </TableCell>
+                  <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
+                    {Intl.NumberFormat("es-CU", {
+                      style: "currency",
+                      currency: "CUP",
+                    }).format(data.pago_trabajador)}
+                  </TableCell>
+                </TableRow>
+                <TableRow className="relative hover:bg-white">
+                  <TableCell colSpan={2} className="pl-4">
+                    <div className={styles.subrowGroup}>
+                      <div className={styles.verticalLine} />
+                      {Object.keys(data.ventas_por_usuario).map(
+                        (usuario, index: number) => (
+                          <div
+                            className="pl-4 relative "
+                            key={`${usuario}-${index}`}
+                          >
+                            <div className={styles.branchLine} />
+                            <div className="flex justify-between items-center px-2 py-1">
+                              <p>{usuario}</p>
+                              <p>
+                                {Intl.NumberFormat("es-CU", {
+                                  style: "currency",
+                                  currency: "CUP",
+                                }).format(data.ventas_por_usuario[usuario])}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+
+                {data.mano_obra && data.mano_obra > 0 && (
                   <TableRow>
                     <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                      Pago trabajador
+                      Mano de obra
                     </TableCell>
                     <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
                       {Intl.NumberFormat("es-CU", {
                         style: "currency",
                         currency: "CUP",
-                      }).format(data.pago_trabajador)}
+                      }).format(data.mano_obra)}
                     </TableCell>
                   </TableRow>
-                  <TableRow className="relative hover:bg-white">
-                    <TableCell colSpan={2} className="pl-4">
-                      <div className={styles.subrowGroup}>
-                        <div className={styles.verticalLine} />
-                        {Object.keys(data.ventas_por_usuario).map(
-                          (usuario, index: number) => (
-                            <div
-                              className="pl-4 relative "
-                              key={`${usuario}-${index}`}
-                            >
-                              <div className={styles.branchLine} />
-                              <div className="flex justify-between items-center px-2 py-1">
-                                <p>{usuario}</p>
-                                <p>
-                                  {Intl.NumberFormat("es-CU", {
-                                    style: "currency",
-                                    currency: "CUP",
-                                  }).format(data.ventas_por_usuario[usuario])}
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                )}
 
-                  {data.gastos_variables.map((gasto_variable, index) => (
-                    <TableRow key={`${gasto_variable.descripcion}-${index}`}>
-                      <TableCell className="px-4 border-t border-gray-300 print:px-0 print:border-t print:border-gray-300">
-                        {gasto_variable.descripcion}
+                {data.mano_obra_cuenta_casa &&
+                  data.mano_obra_cuenta_casa > 0 && (
+                    <TableRow>
+                      <TableCell className="px-4 border-t border-gray-300 print:px-0">
+                        Mano de obra
                       </TableCell>
                       <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
                         {Intl.NumberFormat("es-CU", {
                           style: "currency",
                           currency: "CUP",
-                        }).format(gasto_variable.cantidad)}
+                        }).format(data.mano_obra_cuenta_casa)}
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </>
-          )}
+                  )}
+
+                {data.gastos_variables.map((gasto_variable, index) => (
+                  <TableRow key={`${gasto_variable.descripcion}-${index}`}>
+                    <TableCell className="px-4 border-t border-gray-300 print:px-0 print:border-t print:border-gray-300">
+                      {gasto_variable.descripcion}
+                    </TableCell>
+                    <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
+                      {Intl.NumberFormat("es-CU", {
+                        style: "currency",
+                        currency: "CUP",
+                      }).format(gasto_variable.cantidad)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </>
+        )}
 
         <h3 className="text-lg font-semibold pl-2 print:pl-0  pb-2 pt-4">
           Desglose del total por medio de pago
