@@ -58,7 +58,6 @@ export default async function ReporteVentas({
 }) {
   const { userId } = await getSession();
 
-  console.log(data);
   if (!data && !error) {
     return (
       <div className="bg-muted h-full">
