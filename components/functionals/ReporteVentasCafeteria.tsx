@@ -237,8 +237,8 @@ export default async function ReporteVentasCafeteria({
                     (acc, curr) => acc + curr.cantidad,
                     0
                   ) +
-                    data.mano_obra +
-                    data.mano_obra_cuenta_casa
+                    Number(data?.mano_obra ?? 0) +
+                    Number(data?.mano_obra_cuenta_casa ?? 0)
                 )}
               </TableCell>
             </TableRow>
