@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -9,8 +9,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { useState } from 'react';
+} from "@/components/ui/sheet";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,9 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { METODOS_PAGO } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
-import { VentasCafeteria } from '@/app/(with-layout)/cafeteria/types';
+} from "@/components/ui/table";
+import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
+import { VentasCafeteria } from "@/app/(with-layout)/cafeteria/types";
 
 export default function SheetInfoVentasCafeteria({
   data,
@@ -41,7 +41,7 @@ export default function SheetInfoVentasCafeteria({
             Información de venta
           </SheetTitle>
           <SheetDescription className="flex justify-between items-center gap-2">
-            <div className="flex flex-col">
+            <span className="flex flex-col">
               <span className="text-sm text-muted-foreground">
                 Método de pago: {data.metodo_pago}
               </span>
@@ -50,12 +50,12 @@ export default function SheetInfoVentasCafeteria({
                   Cuenta: {data.cuenta}
                 </span>
               )}
-            </div>
+            </span>
             {data.metodo_pago === METODOS_PAGO.MIXTO && (
-              <div className="flex flex-col">
+              <span className="flex flex-col">
                 <span>Efectivo: {data.efectivo}</span>
                 <span>Transferencia: {data.transferencia}</span>
-              </div>
+              </span>
             )}
           </SheetDescription>
         </SheetHeader>

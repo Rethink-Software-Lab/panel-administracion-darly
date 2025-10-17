@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -9,8 +9,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { useState } from 'react';
+} from "@/components/ui/sheet";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,9 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { DateTime } from 'luxon';
-import { EntradaCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types';
+} from "@/components/ui/table";
+import { DateTime } from "luxon";
+import { EntradaCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
 
 export default function SheetInfoEntradasCafeteria({
   data,
@@ -42,11 +42,11 @@ export default function SheetInfoEntradasCafeteria({
           </SheetTitle>
           <SheetDescription className="pb-6 flex items-center gap-2 justify-between">
             <span>
-              {DateTime.fromISO(data.created_at).toLocaleString(
+              {DateTime.fromSQL(data.createdAt).toLocaleString(
                 DateTime.DATETIME_MED
               )}
             </span>
-            <span>creada por : {data?.usuario?.username}</span>
+            <span>creada por : {data?.usuario}</span>
           </SheetDescription>
         </SheetHeader>
         <Table>

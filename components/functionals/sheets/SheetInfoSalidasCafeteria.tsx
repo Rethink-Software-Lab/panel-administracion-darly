@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -9,8 +9,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { useState } from 'react';
+} from "@/components/ui/sheet";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { SalidasCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/salidas-cafeteria/types';
+} from "@/components/ui/table";
+import { SalidasCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/salidas-cafeteria/types";
 
 export default function SheetInfoSalidasCafeteria({
   data,
@@ -49,23 +49,23 @@ export default function SheetInfoSalidasCafeteria({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.elaboraciones.map((elaboracion) => (
-              <TableRow key={elaboracion.id}>
+            {data.elaboraciones.map((elaboracion, index) => (
+              <TableRow key={`${index}-${elaboracion.id}`}>
                 <TableCell className="font-semibold align-top w-1/2">
                   {elaboracion.producto.nombre}
                 </TableCell>
                 <TableCell className="text-right">
-                  {Intl.NumberFormat('es-ES').format(elaboracion.cantidad)}
+                  {Intl.NumberFormat("es-ES").format(elaboracion.cantidad)}
                 </TableCell>
               </TableRow>
             ))}
-            {data.productos.map((producto) => (
-              <TableRow key={producto.producto.id}>
+            {data.productos.map((producto, index) => (
+              <TableRow key={`${index}-${producto.producto.id}`}>
                 <TableCell className="font-semibold align-top w-1/2">
                   {producto.producto.nombre}
                 </TableCell>
                 <TableCell className="text-right">
-                  {Intl.NumberFormat('es-ES').format(producto.cantidad)}
+                  {Intl.NumberFormat("es-ES").format(producto.cantidad)}
                 </TableCell>
               </TableRow>
             ))}

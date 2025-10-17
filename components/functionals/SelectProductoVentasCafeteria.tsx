@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormMessage } from '../ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { CheckIcon, ChevronDown } from 'lucide-react';
+import { UseFormReturn } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { CheckIcon, ChevronDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -13,19 +13,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command';
-import { InferInput } from 'valibot';
-import { VentasCafeteriaSchema } from '@/lib/schemas';
-import { RefObject, useState } from 'react';
-import { Productos_Elaboraciones } from '@/app/(with-layout)/cafeteria/types';
+} from "../ui/command";
+import { InferOutput } from "valibot";
+import { RefObject, useState } from "react";
+import { Productos_Elaboraciones } from "@/app/(with-layout)/cafeteria/types";
+import { VentasCafeteriaSchema } from "@/app/(with-layout)/cafeteria/schema";
 
 export default function SelectProductoVentaCafeteria({
   form,
-  index,
+  index: indexProducto,
   productos,
   formRef,
 }: {
-  form: UseFormReturn<InferInput<typeof VentasCafeteriaSchema>>;
+  form: UseFormReturn<InferOutput<typeof VentasCafeteriaSchema>>;
   index: number;
   productos: Productos_Elaboraciones[];
   formRef: RefObject<HTMLElement>;
@@ -35,7 +35,7 @@ export default function SelectProductoVentaCafeteria({
   return (
     <FormField
       control={form.control}
-      name={`productos.${index}.producto`}
+      name={`productos.${indexProducto}.producto`}
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <Popover open={openPopover} onOpenChange={setOpenPopover}>
@@ -45,8 +45,8 @@ export default function SelectProductoVentaCafeteria({
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    'justify-between',
-                    !field.value && 'text-muted-foreground'
+                    "justify-between",
+                    !field.value && "text-muted-foreground"
                   )}
                 >
                   {field.value
@@ -54,9 +54,11 @@ export default function SelectProductoVentaCafeteria({
                         (producto) =>
                           producto?.id.toString() === field.value &&
                           producto.isElaboracion ===
-                            form.getValues(`productos.${index}.isElaboracion`)
+                            form.getValues(
+                              `productos.${indexProducto}.isElaboracion`
+                            )
                       )?.nombre
-                    : 'Seleccione un producto'}
+                    : "Seleccione un producto"}
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
@@ -67,35 +69,40 @@ export default function SelectProductoVentaCafeteria({
                 <CommandList>
                   <CommandEmpty>Ningún resultado encontrado.</CommandEmpty>
                   <CommandGroup heading="Sugerencias">
-                    {productos?.map((producto: Productos_Elaboraciones) => (
-                      <CommandItem
-                        key={producto.id}
-                        value={`${producto.id}-${producto.nombre}-${producto.isElaboracion}`}
-                        keywords={[producto.nombre]}
-                        onSelect={(currentValue: string) => {
-                          const splits = currentValue.split('-');
-                          const id = splits[0];
-                          const isElaboracion = splits[2] === 'true';
+                    {productos?.map(
+                      (producto: Productos_Elaboraciones, index) => (
+                        <CommandItem
+                          key={`${producto.id}-${index}`}
+                          value={`${producto.id}-${producto.nombre}-${producto.isElaboracion}`}
+                          keywords={[producto.nombre]}
+                          onSelect={(currentValue: string) => {
+                            const splits = currentValue.split("-");
+                            const id = splits[0];
+                            const isElaboracion = splits[2] === "true";
 
-                          form.setValue(`productos.${index}.producto`, id);
-                          form.setValue(
-                            `productos.${index}.isElaboracion`,
-                            isElaboracion
-                          );
-                          setOpenPopover(false);
-                        }}
-                      >
-                        {producto.nombre}
-                        <CheckIcon
-                          className={cn(
-                            'ml-auto h-4 w-4',
-                            producto.id.toString() === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
+                            form.setValue(
+                              `productos.${indexProducto}.producto`,
+                              id
+                            );
+                            form.setValue(
+                              `productos.${indexProducto}.isElaboracion`,
+                              isElaboracion
+                            );
+                            setOpenPopover(false);
+                          }}
+                        >
+                          {producto.nombre}
+                          <CheckIcon
+                            className={cn(
+                              "ml-auto h-4 w-4",
+                              producto.id.toString() === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      )
+                    )}
                   </CommandGroup>
                 </CommandList>
               </Command>
