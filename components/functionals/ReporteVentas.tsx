@@ -388,7 +388,7 @@ export default async function ReporteVentas({
                   data.mano_obra_cuenta_casa > 0 && (
                     <TableRow>
                       <TableCell className="px-4 border-t border-gray-300 print:px-0">
-                        Mano de obra
+                        Mano de obra (Cuenta Casa)
                       </TableCell>
                       <TableCell className="text-right px-4 border-t border-gray-300 print:px-0">
                         {Intl.NumberFormat("es-CU", {

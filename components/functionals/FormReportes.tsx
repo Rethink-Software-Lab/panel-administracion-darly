@@ -76,10 +76,13 @@ export default function FormReportes({
         <Label className="max-sm:hidden">Localización</Label>
         <Select value={area || ""} onValueChange={setArea}>
           <SelectTrigger className="w-[180px] max-sm:w-full">
-            <SelectValue placeholder="Todas las áreas" />
+            <SelectValue placeholder="General" />
           </SelectTrigger>
           <SelectContent>
             <>
+              <SelectItem disabled={!session.isAdmin} value="general">
+                General
+              </SelectItem>
               <SelectItem
                 disabled={
                   !session.isAdmin &&
@@ -128,9 +131,6 @@ export default function FormReportes({
                   </SelectItem>
                 </>
               )}
-              <SelectItem disabled={!session.isAdmin} value="general">
-                Todas las áreas
-              </SelectItem>
 
               {data?.areas?.map((area) => (
                 <SelectItem
