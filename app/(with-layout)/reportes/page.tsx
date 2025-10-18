@@ -1,31 +1,27 @@
-import { getReporte } from '@/lib/services';
+import { getReporte } from "@/lib/services";
 
-import { Suspense } from 'react';
-import { CloudOff, FilePenLine, Loader2 } from 'lucide-react';
-import ReporteVentas from '@/components/functionals/ReporteVentas';
-import ReporteVentasCafeteria from '@/components/functionals/ReporteVentasCafeteria';
-import ReporteInventario from '@/components/functionals/ReporteInventario';
-import { getReporteCafeteria } from './services';
+import { Suspense } from "react";
+import { CloudOff, FilePenLine, Loader2 } from "lucide-react";
+import ReporteVentas from "@/components/functionals/ReporteVentas";
+import ReporteVentasCafeteria from "@/components/functionals/ReporteVentasCafeteria";
+import ReporteInventario from "@/components/functionals/ReporteInventario";
+import { getReporteCafeteria } from "./services";
 
 export interface ReportesSearchParams {
-  type?: 'ventas' | 'inventario';
+  type?: "ventas" | "inventario";
   area?: string;
   desde?: string;
   hasta?: string;
   categoria?: string;
 }
 
-export default async function Reportes(
-  props: {
-    searchParams: Promise<ReportesSearchParams>;
-  }
-) {
-  const searchParams = await props.searchParams;
-  const area = searchParams?.area || '';
-  const type = searchParams?.type || '';
+export default async function Reportes(props: PageProps<"/reportes">) {
+  const searchParams: ReportesSearchParams = await props.searchParams;
+  const area = searchParams?.area || "";
+  const type = searchParams?.type || "";
 
   const { data: reportes, error } =
-    type === 'ventas' && area === 'cafeteria'
+    type === "ventas" && area === "cafeteria"
       ? await getReporteCafeteria(searchParams)
       : await getReporte(searchParams);
 
@@ -39,10 +35,10 @@ export default async function Reportes(
           </div>
         }
       >
-        {type === 'ventas' &&
+        {type === "ventas" &&
           searchParams.desde &&
           searchParams.hasta &&
-          (area === 'cafeteria' ? (
+          (area === "cafeteria" ? (
             <ReporteVentasCafeteria
               data={reportes}
               desde={searchParams.desde}
@@ -57,7 +53,7 @@ export default async function Reportes(
               error={error}
             />
           ))}
-        {type === 'inventario' && (
+        {type === "inventario" && (
           <ReporteInventario data={reportes} error={error} />
         )}
       </Suspense>

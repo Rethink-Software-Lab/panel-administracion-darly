@@ -3,11 +3,7 @@ import FormReportes from "@/components/functionals/FormReportes";
 import { getReporteFormData } from "./services";
 import { getSession } from "@/lib/getSession";
 
-export default async function LayoutReportes({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function LayoutReportes(props: LayoutProps<"/reportes">) {
   const { data, error } = await getReporteFormData();
   const session = await getSession();
   return (
@@ -25,7 +21,7 @@ export default async function LayoutReportes({
         </div>
       </div>
 
-      {children}
+      {props.children}
     </main>
   );
 }
