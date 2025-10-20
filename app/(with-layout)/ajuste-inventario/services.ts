@@ -5,7 +5,7 @@ import {
   inventarioAjusteinventarioProductos,
   inventarioAreaventa,
   inventarioCategorias,
-  producto,
+  inventarioProducto,
   inventarioProductoinfo,
   inventarioUser,
 } from "@/db/schema";
@@ -41,12 +41,15 @@ export async function getAjustesInventario(): Promise<{
           })
           .from(inventarioAjusteinventarioProductos)
           .innerJoin(
-            producto,
-            eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+            inventarioProducto,
+            eq(
+              inventarioProducto.id,
+              inventarioAjusteinventarioProductos.productoId
+            )
           )
           .innerJoin(
             inventarioProductoinfo,
-            eq(inventarioProductoinfo.id, producto.infoId)
+            eq(inventarioProductoinfo.id, inventarioProducto.infoId)
           )
           .groupBy(
             inventarioAjusteinventarioProductos.ajusteinventarioId,
@@ -63,10 +66,16 @@ export async function getAjustesInventario(): Promise<{
             isZapato: sql<boolean>`${inventarioCategorias.nombre} = 'Zapatos'`,
           })
           .from(inventarioProductoinfo)
-          .innerJoin(producto, eq(inventarioProductoinfo.id, producto.infoId))
+          .innerJoin(
+            inventarioProducto,
+            eq(inventarioProductoinfo.id, inventarioProducto.infoId)
+          )
           .leftJoin(
             inventarioAjusteinventarioProductos,
-            eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+            eq(
+              inventarioProducto.id,
+              inventarioAjusteinventarioProductos.productoId
+            )
           )
           .innerJoin(
             inventarioCategorias,
@@ -74,7 +83,7 @@ export async function getAjustesInventario(): Promise<{
           )
           .where(
             and(
-              isNull(producto.ventaId),
+              isNull(inventarioProducto.ventaId),
               isNull(inventarioAjusteinventarioProductos)
             )
           ),

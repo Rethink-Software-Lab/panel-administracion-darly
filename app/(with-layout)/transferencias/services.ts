@@ -3,7 +3,7 @@ import {
   inventarioAjusteinventarioProductos,
   inventarioAreaventa,
   inventarioCategorias,
-  producto,
+  inventarioProducto,
   inventarioProductoinfo,
   inventarioTransferencia,
   inventarioTransferenciaProductos,
@@ -31,12 +31,12 @@ export async function getTransferencias(): Promise<{
       })
       .from(inventarioTransferenciaProductos)
       .innerJoin(
-        producto,
-        eq(inventarioTransferenciaProductos.productoId, producto.id)
+        inventarioProducto,
+        eq(inventarioTransferenciaProductos.productoId, inventarioProducto.id)
       )
       .innerJoin(
         inventarioProductoinfo,
-        eq(producto.infoId, inventarioProductoinfo.id)
+        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
       )
       .groupBy(
         inventarioTransferenciaProductos.transferenciaId,
@@ -90,20 +90,26 @@ export async function getTransferencias(): Promise<{
           isZapato: sql<boolean>`${inventarioCategorias.nombre} = 'Zapatos'`,
         })
         .from(inventarioProductoinfo)
-        .innerJoin(producto, eq(producto.infoId, inventarioProductoinfo.id))
+        .innerJoin(
+          inventarioProducto,
+          eq(inventarioProducto.infoId, inventarioProductoinfo.id)
+        )
         .innerJoin(
           inventarioCategorias,
           eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
         )
         .leftJoin(
           inventarioAjusteinventarioProductos,
-          eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+          eq(
+            inventarioProducto.id,
+            inventarioAjusteinventarioProductos.productoId
+          )
         )
         .where(
           and(
-            isNotNull(producto.areaVentaId),
-            eq(producto.almacenRevoltosa, false),
-            isNull(producto.ventaId),
+            isNotNull(inventarioProducto.areaVentaId),
+            eq(inventarioProducto.almacenRevoltosa, false),
+            isNull(inventarioProducto.ventaId),
             isNull(inventarioAjusteinventarioProductos)
           )
         )

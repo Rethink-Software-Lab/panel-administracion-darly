@@ -6,7 +6,7 @@ import {
   inventarioAjusteinventarioProductos,
   inventarioCuentas,
   inventarioHistorialprecioventasalon,
-  producto,
+  inventarioProducto,
   inventarioProductoinfo,
   inventarioTransacciones,
   inventarioVentas,
@@ -78,9 +78,9 @@ export async function addVenta(data: DataVenta): Promise<ResultPattern> {
       );
 
       await tx
-        .update(producto)
+        .update(inventarioProducto)
         .set({ ventaId: venta[0].id })
-        .where(inArray(producto.id, ids));
+        .where(inArray(inventarioProducto.id, ids));
 
       await rebajar_de_las_cuentas({
         areaVenta: data.areaVenta,
@@ -178,23 +178,23 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
   }
 
   let whereCondition = [
-    eq(producto.infoId, producto_info.id),
-    eq(producto.areaVentaId, areaVenta),
-    eq(producto.almacenRevoltosa, false),
-    isNull(producto.ventaId),
+    eq(inventarioProducto.infoId, producto_info.id),
+    eq(inventarioProducto.areaVentaId, areaVenta),
+    eq(inventarioProducto.almacenRevoltosa, false),
+    isNull(inventarioProducto.ventaId),
     isNull(inventarioAjusteinventarioProductos),
   ];
 
   if (producto_info.isZapato && zapatos_id) {
-    whereCondition.push(inArray(producto.id, zapatos_id));
+    whereCondition.push(inArray(inventarioProducto.id, zapatos_id));
   }
 
   const baseQuery = db
-    .select({ id: producto.id })
-    .from(producto)
+    .select({ id: inventarioProducto.id })
+    .from(inventarioProducto)
     .leftJoin(
       inventarioAjusteinventarioProductos,
-      eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+      eq(inventarioProducto.id, inventarioAjusteinventarioProductos.productoId)
     )
     .where(and(...whereCondition));
 

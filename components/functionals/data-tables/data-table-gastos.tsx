@@ -26,28 +26,34 @@ import { useState } from "react";
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import {
   AreaVentaForSelectGasto,
+  CuentaForSelectGasto,
   Gasto,
 } from "@/app/(with-layout)/gastos/types";
 
 export interface CustomTableOptions<T> extends TableOptions<T> {
-  areas: AreaVentaForSelectGasto[];
+  meta: {
+    cuentas?: CuentaForSelectGasto[];
+    areas?: AreaVentaForSelectGasto[];
+  };
 }
 
 export function DataTable({
   columns,
   data,
   areas,
+  cuentas,
 }: {
   columns: ColumnDef<Gasto>[];
   data: Gasto[];
   areas?: AreaVentaForSelectGasto[];
+  cuentas?: CuentaForSelectGasto[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
     columns,
-    areas,
+    meta: { cuentas, areas },
     getCoreRowModel: getCoreRowModel(),
     initialState: {
       pagination: {

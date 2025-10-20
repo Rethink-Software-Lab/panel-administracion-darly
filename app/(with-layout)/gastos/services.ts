@@ -1,6 +1,7 @@
 import { db } from "@/db/initial";
 import {
   inventarioAreaventa,
+  inventarioCuentas,
   inventarioGastos,
   inventarioUser,
 } from "@/db/schema";
@@ -20,6 +21,15 @@ export async function getGastos(): Promise<{
       })
       .from(inventarioAreaventa);
 
+    const cuentas = await db
+      .select({
+        id: inventarioCuentas.id,
+        nombre: inventarioCuentas.nombre,
+        tipo: inventarioCuentas.tipo,
+        banco: inventarioCuentas.banco,
+      })
+      .from(inventarioCuentas);
+
     const gastos = await db
       .select({
         id: inventarioGastos.id,
@@ -27,6 +37,10 @@ export async function getGastos(): Promise<{
         tipo: inventarioGastos.tipo,
         cantidad: inventarioGastos.cantidad,
         created_at: inventarioGastos.createdAt,
+        cuenta: {
+          id: inventarioCuentas.id,
+          nombre: inventarioCuentas.nombre,
+        },
         area_venta: {
           id: inventarioAreaventa.id,
           nombre: inventarioAreaventa.nombre,
@@ -34,8 +48,8 @@ export async function getGastos(): Promise<{
         is_cafeteria: inventarioGastos.isCafeteria,
         frecuencia: inventarioGastos.frecuencia,
         usuario: inventarioUser.username,
-        dia_mes: inventarioGastos.diaMes,
-        dia_semana: inventarioGastos.diaSemana,
+        diaMes: inventarioGastos.diaMes,
+        diaSemana: inventarioGastos.diaSemana,
       })
       .from(inventarioGastos)
       .leftJoin(
@@ -45,6 +59,10 @@ export async function getGastos(): Promise<{
       .leftJoin(
         inventarioAreaventa,
         eq(inventarioGastos.areaVentaId, inventarioAreaventa.id)
+      )
+      .leftJoin(
+        inventarioCuentas,
+        eq(inventarioCuentas.id, inventarioGastos.cuentaId)
       )
       .orderBy(desc(inventarioGastos.id));
 
@@ -73,6 +91,7 @@ export async function getGastos(): Promise<{
         fijos: gastos_fijos,
         variables: gastos_variables,
         areas_venta: areas_venta,
+        cuentas,
       },
       error: null,
     };
