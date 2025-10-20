@@ -72,6 +72,12 @@ export async function GET(request: NextRequest) {
             throw new Error(`La cuenta con ID ${cuentaId} no fue encontrada.`);
           }
 
+          if (parseFloat(cuenta.saldo) < cantidad) {
+            throw new Error(
+              `El saldo de la cuenta ${cuentaId} es insuficiente.`
+            );
+          }
+
           const nuevoSaldo = parseFloat(cuenta.saldo) - cantidad;
 
           await tx

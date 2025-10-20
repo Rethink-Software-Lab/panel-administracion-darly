@@ -19,7 +19,7 @@ export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
           columns={columns}
           data={data.transacciones}
           cuentas={cuentas}
-          {...meta}
+          meta={meta}
         />
       ) : (
         <div className="flex py-40 flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">

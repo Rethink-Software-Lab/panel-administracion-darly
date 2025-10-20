@@ -75,8 +75,7 @@ export async function GetTarjetas(): Promise<{
 
 export async function getTransacciones(): Promise<ResponseTransacciones> {
   const {
-    c: cursor,
-    d: direction,
+    p: page,
     l: limit,
     from,
     to,
@@ -93,12 +92,6 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
     }
 
     if (type) {
-      if (
-        type !== TipoTransferencia.INGRESO &&
-        type !== TipoTransferencia.EGRESO
-      ) {
-        throw new ValidationError("Tipo de transferencia no válido");
-      }
       filterConditions.push(eq(inventarioTransacciones.tipo, type));
     }
 
@@ -111,29 +104,16 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
       );
     }
 
-    const countWhereCondition =
-      filterConditions.length > 0 ? and(...filterConditions) : undefined;
-
-    const queryConditions = [...filterConditions];
-    let orderBy;
-
-    if (cursor) {
-      if (direction === "next") {
-        queryConditions.push(lt(inventarioTransacciones.id, cursor));
-        orderBy = desc(inventarioTransacciones.id);
-      } else {
-        queryConditions.push(gt(inventarioTransacciones.id, cursor));
-        orderBy = asc(inventarioTransacciones.id);
-      }
-    } else {
-      orderBy = desc(inventarioTransacciones.id);
-    }
+    const safeLimit = Math.min(limit, 50);
 
     const whereCondition =
-      queryConditions.length > 0 ? and(...queryConditions) : undefined;
+      filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
-    const query = db
+    const offset = (page - 1) * safeLimit;
+
+    const transaccionesConConteo = await db
       .select({
+        // Tus campos existentes no cambian
         id: inventarioTransacciones.id,
         cuenta: inventarioCuentas.nombre,
         tipo: inventarioTransacciones.tipo,
@@ -149,6 +129,7 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
           THEN TRUE 
           ELSE FALSE 
         END`,
+        totalCount: sql<number>`COUNT(*) OVER()`.as("total_count"),
       })
       .from(inventarioTransacciones)
       .leftJoin(
@@ -160,37 +141,16 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
         eq(inventarioTransacciones.cuentaId, inventarioCuentas.id)
       )
       .where(whereCondition)
-      .orderBy(orderBy)
-      .limit(limit + 1);
+      .orderBy(desc(inventarioTransacciones.id))
+      .limit(safeLimit)
+      .offset(offset);
 
-    let rows = await query;
+    const totalCount = transaccionesConConteo[0]?.totalCount ?? 0;
+    const pageCount = Math.ceil(totalCount / safeLimit);
 
-    const hasMore = rows.length > limit;
-    let result = rows.slice(0, limit);
-
-    let hasNextPage = false;
-    let hasPrevPage = false;
-
-    if (direction === "next") {
-      hasNextPage = hasMore;
-      hasPrevPage = cursor != null;
-    } else {
-      hasPrevPage = hasMore;
-      hasNextPage = cursor != null;
-      result = result.reverse();
-    }
-
-    if (!cursor) {
-      hasNextPage = hasMore;
-    }
-
-    const nextCursor = hasNextPage
-      ? result[result.length - 1]?.id ?? null
-      : null;
-    const prevCursor = hasPrevPage ? result[0]?.id ?? null : null;
-
-    const count = await db.$count(inventarioTransacciones, countWhereCondition);
-    const pageCount = Math.ceil(count / limit);
+    const transacciones = transaccionesConConteo.map(
+      ({ totalCount, ...rest }) => rest
+    );
 
     const cuentas = await db
       .select({
@@ -204,15 +164,12 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
     return {
       error: null,
       data: {
-        transacciones: result,
+        transacciones,
         cuentas,
       },
       meta: {
-        nextCursor,
-        prevCursor,
-        hasNext: hasNextPage,
-        hasPrev: hasPrevPage,
         pageCount,
+        totalCount,
       },
     };
   } catch (e) {

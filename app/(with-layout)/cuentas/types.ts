@@ -41,11 +41,8 @@ export interface Transacciones {
 }
 
 export interface Meta {
-  nextCursor: number | null;
-  prevCursor: number | null;
   pageCount: number;
-  hasNext: boolean;
-  hasPrev: boolean;
+  totalCount: number;
 }
 
 export interface CuentasInTransaccionesCompanent {

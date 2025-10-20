@@ -8,8 +8,7 @@ import {
 import { TipoTransferencia } from "./types";
 
 export const cuentasSearchParams = {
-  c: parseAsInteger,
-  d: parseAsStringLiteral(["next", "prev"]),
+  p: parseAsInteger.withDefault(1),
   l: parseAsInteger.withDefault(10),
   from: parseAsIsoDateTime,
   to: parseAsIsoDateTime,

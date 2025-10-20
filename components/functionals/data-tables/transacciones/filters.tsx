@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DateRangePickerServer } from "../../date-range-picker-server";
+import { DateRangePickerFilter } from "../../date-range-picker-server";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,12 +8,17 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { parseAsArrayOf, parseAsInteger, useQueryState } from "nuqs";
-import { Tarjetas, TipoTransferencia } from "@/app/(with-layout)/cuentas/types";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+
+import {
+  TipoTransferencia,
+  Transacciones,
+} from "@/app/(with-layout)/cuentas/types";
+import { ArrowDownLeft, ArrowUpRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import MultipleSelector from "@/components/ui/multiselect";
 import { type Option } from "@/components/ui/multiselect";
+import { Table } from "@tanstack/react-table";
+import { TransaccionesTableMeta } from "./data-table-transacciones";
 
 const tipoConfig = {
   [TipoTransferencia.INGRESO]: {
@@ -28,41 +33,41 @@ const tipoConfig = {
   },
 };
 
-export function FiltersTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
-  const [type, setType] = useQueryState("type", { shallow: false });
-  const [selectedAccounts, setSelectedAccounts] = useQueryState(
-    "accounts",
-    parseAsArrayOf(parseAsInteger)
-  );
+export function FiltersTransacciones({
+  table,
+}: {
+  table: Table<Transacciones>;
+}) {
+  const type = table.getColumn("tipo")?.getFilterValue() as string | undefined;
+  const selectedAccounts = table.getColumn("cuenta")?.getFilterValue() as
+    | number[]
+    | undefined;
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   const handleTypeChange = (value: string) => {
-    if (!type) {
-      setType(value);
-    } else {
-      if (type === value) {
-        setType(null);
-      } else {
-        setType(value);
-      }
-    }
+    const currentType = table.getColumn("tipo")?.getFilterValue();
+    const newType = currentType === value ? undefined : value;
+
+    table.getColumn("tipo")?.setFilterValue(newType);
   };
+
   const onChangeAccounts = (value: Option[]) => {
-    if (value.length === 0) {
-      setSelectedAccounts(null, { shallow: false });
-    } else {
-      setSelectedAccounts(
-        value.map((cuenta) => parseInt(cuenta.value)),
-        { shallow: false }
-      );
-    }
+    const newAccounts =
+      value.length > 0 ? value.map((v) => parseInt(v.value)) : undefined;
+
+    table.getColumn("cuenta")?.setFilterValue(newAccounts);
   };
+
   return (
-    <div className="md:flex gap-2 space-y-2 md:space-y-0 mb-2 justify-between">
+    <div className="md:flex gap-2 space-y-2 md:space-y-0 mb-2">
       <div className="flex gap-2">
-        <DateRangePickerServer />
+        <DateRangePickerFilter table={table} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ring-0 focus-visible:ring-0">
+            <Button
+              variant="outline"
+              className="ring-0 focus-visible:ring-0 text-muted-foreground"
+            >
               {type ? (
                 <span className="flex gap-1 items-center">
                   {(() => {
@@ -110,17 +115,20 @@ export function FiltersTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
       <MultipleSelector
         commandProps={{
           label: "Seleccione cuentas",
-          className: "w-72",
+          className: "w-72 bg-white cursor-pointer text-muted-foreground",
         }}
         value={
           selectedAccounts?.map((cuenta) => ({
             label:
-              cuentas.find((c) => c.id.toString() === cuenta.toString())
-                ?.nombre ?? "",
+              (
+                (table.options.meta as TransaccionesTableMeta)?.cuentas ?? []
+              ).find((c) => c.id === cuenta)?.nombre ?? "",
             value: cuenta.toString(),
-          })) ?? undefined
+          })) ?? []
         }
-        defaultOptions={cuentas.map((cuenta) => ({
+        defaultOptions={(
+          (table.options.meta as TransaccionesTableMeta)?.cuentas ?? []
+        ).map((cuenta) => ({
           label: cuenta.nombre,
           value: cuenta.id.toString(),
         }))}
@@ -132,6 +140,17 @@ export function FiltersTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
           <p className="text-center text-sm">Sin resultados que mostrar</p>
         }
       />
+      {isFiltered && (
+        <Button
+          onClick={() => table.resetColumnFilters()}
+          variant="ghost"
+          size="sm"
+          className="h-10"
+        >
+          <X className="mr-2 h-4 w-4" />
+          Limpiar filtros
+        </Button>
+      )}
     </div>
   );
 }
