@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { CircleX, Pen, PlusCircle } from "lucide-react";
+import { CheckIcon, ChevronDown, CircleX, Pen, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { GastosSchema } from "@/lib/schemas";
 
 import { Input } from "@/components/ui/input";
 import { InferInput } from "valibot";
@@ -37,20 +36,40 @@ import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AreaVentaForSelectGasto,
+  CuentaForSelectGasto,
   FrecuenciasGastos,
   Gasto,
   TiposGastos,
 } from "@/app/(with-layout)/gastos/types";
 import { addGasto, editGasto } from "@/app/(with-layout)/gastos/actions";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { GastosSchema } from "@/app/(with-layout)/gastos/schema";
 
 export default function SheetGastos({
   data,
   areas,
+  cuentas,
 }: {
   data?: Gasto;
   areas: AreaVentaForSelectGasto[];
+  cuentas: CuentaForSelectGasto[];
 }) {
   const [open, setOpen] = useState(false);
+  const [openPopover, setOpenPopover] = useState(false);
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -58,12 +77,13 @@ export default function SheetGastos({
     resolver: valibotResolver(GastosSchema),
     defaultValues: {
       descripcion: data?.descripcion || "",
+      cuenta: data?.cuenta?.id.toLocaleString() || "",
       area_venta: data?.area_venta?.id?.toLocaleString() || "",
       tipo: data?.tipo,
       frecuencia: data?.frecuencia || undefined,
       cantidad: data?.cantidad || 0,
-      dia_mes: data?.dia_mes || undefined,
-      dia_semana: data?.dia_semana?.toLocaleString() || undefined,
+      diaMes: data?.diaMes || undefined,
+      diaSemana: data?.diaSemana?.toLocaleString() || undefined,
     },
   });
 
@@ -86,6 +106,28 @@ export default function SheetGastos({
       setOpen(false);
     }
   };
+
+  const getColors = (selectedValue: string): string | undefined => {
+    const { tipo, banco } =
+      cuentas.find((cuenta) => cuenta?.id.toString() === selectedValue) || {};
+
+    if (tipo === TipoCuenta.EFECTIVO) {
+      return "from-blue-500 to-blue-700";
+    } else {
+      switch (banco) {
+        case Banco.BANDEC:
+          return "from-[#6c0207] to-[#bc1f26]";
+        case Banco.BPA:
+          return "from-[#1d6156] to-[#1d6156]";
+      }
+    }
+  };
+
+  const getNombreCuenta = (id: string) => {
+    const cuenta = cuentas?.find((cuenta) => cuenta?.id.toString() === id);
+    return cuenta?.nombre || "Selecciona una cuenta";
+  };
+
   return (
     <Sheet open={open} onOpenChange={setOpen} modal={true}>
       <SheetTrigger asChild>
@@ -138,6 +180,94 @@ export default function SheetGastos({
               />
               <FormField
                 control={form.control}
+                name="cuenta"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <Label>Cuenta</Label>
+                    <Popover open={openPopover} onOpenChange={setOpenPopover}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "justify-between contain-strict",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            disabled={!cuentas || cuentas.length < 1}
+                          >
+                            <div className="flex">
+                              {field.value && (
+                                <div
+                                  className={cn(
+                                    "hidden md:block w-6 aspect-square rounded-full bg-gradient-to-br mr-2 shrink-0",
+                                    getColors(field.value)
+                                  )}
+                                />
+                              )}
+
+                              {getNombreCuenta(field.value)}
+                            </div>
+
+                            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        containerRef={formRef}
+                        className="w-[320px] p-0"
+                      >
+                        <Command className="rounded-lg border shadow-md">
+                          <CommandInput placeholder="Seleccione una cuenta" />
+                          <CommandList>
+                            <CommandEmpty>
+                              Ningún resultado encontrado.
+                            </CommandEmpty>
+                            <CommandGroup heading="Sugerencias">
+                              {cuentas?.map((cuenta) => (
+                                <CommandItem
+                                  key={cuenta.id}
+                                  value={cuenta.id.toString()}
+                                  keywords={[cuenta.nombre]}
+                                  onSelect={(currentValue) => {
+                                    field.onChange(
+                                      currentValue === field.value
+                                        ? ""
+                                        : currentValue
+                                    );
+                                    setOpenPopover(false);
+                                  }}
+                                >
+                                  <div className="flex gap-2 items-center ">
+                                    <div
+                                      className={cn(
+                                        "w-6 aspect-square rounded-full bg-gradient-to-br",
+                                        getColors(cuenta.id.toString())
+                                      )}
+                                    ></div>
+                                    <p>{cuenta.nombre}</p>
+                                  </div>
+                                  <CheckIcon
+                                    className={cn(
+                                      "ml-auto h-4 w-4",
+                                      cuenta.id.toString() === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="area_venta"
                 render={({ field }) => (
                   <FormItem className="w-full">
@@ -178,8 +308,8 @@ export default function SheetGastos({
                       onValueChange={(value) => {
                         if (value === TiposGastos.VARIABLE) {
                           form.setValue("frecuencia", undefined);
-                          form.setValue("dia_semana", undefined),
-                            form.setValue("dia_mes", undefined);
+                          form.setValue("diaSemana", undefined),
+                            form.setValue("diaMes", undefined);
                         }
                         field.onChange(value);
                       }}
@@ -212,10 +342,10 @@ export default function SheetGastos({
                       <Select
                         onValueChange={(value) => {
                           if (value === FrecuenciasGastos.MENSUAL) {
-                            form.setValue("dia_semana", undefined);
+                            form.setValue("diaSemana", undefined);
                           }
                           if (value === FrecuenciasGastos.SEMANAL) {
-                            form.setValue("dia_mes", undefined);
+                            form.setValue("diaMes", undefined);
                           }
                           field.onChange(value);
                         }}
@@ -246,7 +376,7 @@ export default function SheetGastos({
               {frecuencia === FrecuenciasGastos.SEMANAL && (
                 <FormField
                   control={form.control}
-                  name="dia_semana"
+                  name="diaSemana"
                   render={({ field }) => (
                     <FormItem className="w-full text-left">
                       <Label>Día de la semana</Label>
@@ -277,7 +407,7 @@ export default function SheetGastos({
               {frecuencia === FrecuenciasGastos.MENSUAL && (
                 <FormField
                   control={form.control}
-                  name="dia_mes"
+                  name="diaMes"
                   render={({ field }) => (
                     <FormItem className="w-full text-left">
                       <Label>Día del mes</Label>

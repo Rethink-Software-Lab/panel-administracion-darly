@@ -7,7 +7,7 @@ import { SalidaSchema } from "./schema";
 import { db } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
-  producto,
+  inventarioProducto,
   inventarioSalidaalmacen,
 } from "@/db/schema";
 import { getSession } from "@/lib/getSession";
@@ -38,22 +38,25 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
 
         const productosZapatos = await db
           .select({
-            id: producto.id,
+            id: inventarioProducto.id,
           })
-          .from(producto)
+          .from(inventarioProducto)
           .leftJoin(
             inventarioAjusteinventarioProductos,
-            eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+            eq(
+              inventarioAjusteinventarioProductos.productoId,
+              inventarioProducto.id
+            )
           )
           .where(
             and(
-              inArray(producto.id, idsZapatos),
-              eq(producto.infoId, Number(producto_info.id)),
-              eq(producto.almacenRevoltosa, false),
-              isNull(producto.areaVentaId),
-              isNull(producto.ventaId),
-              isNull(producto.salidaId),
-              isNull(producto.salidaRevoltosaId),
+              inArray(inventarioProducto.id, idsZapatos),
+              eq(inventarioProducto.infoId, Number(producto_info.id)),
+              eq(inventarioProducto.almacenRevoltosa, false),
+              isNull(inventarioProducto.areaVentaId),
+              isNull(inventarioProducto.ventaId),
+              isNull(inventarioProducto.salidaId),
+              isNull(inventarioProducto.salidaRevoltosaId),
               isNull(inventarioAjusteinventarioProductos.id)
             )
           );
@@ -66,31 +69,34 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
         }
 
         await db
-          .update(producto)
+          .update(inventarioProducto)
           .set({
             salidaId: salidaInsertada[0].id,
             areaVentaId: areaVentaId,
             almacenRevoltosa: esAlmacenRevoltosa,
           })
-          .where(inArray(producto.id, idsZapatos));
+          .where(inArray(inventarioProducto.id, idsZapatos));
       } else {
         const productos_en_almacen = await db
           .select({
-            id: producto.id,
+            id: inventarioProducto.id,
           })
-          .from(producto)
+          .from(inventarioProducto)
           .leftJoin(
             inventarioAjusteinventarioProductos,
-            eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+            eq(
+              inventarioAjusteinventarioProductos.productoId,
+              inventarioProducto.id
+            )
           )
           .where(
             and(
-              eq(producto.infoId, Number(producto_info.id)),
-              eq(producto.almacenRevoltosa, false),
-              isNull(producto.areaVentaId),
-              isNull(producto.ventaId),
-              isNull(producto.salidaId),
-              isNull(producto.salidaRevoltosaId),
+              eq(inventarioProducto.infoId, Number(producto_info.id)),
+              eq(inventarioProducto.almacenRevoltosa, false),
+              isNull(inventarioProducto.areaVentaId),
+              isNull(inventarioProducto.ventaId),
+              isNull(inventarioProducto.salidaId),
+              isNull(inventarioProducto.salidaRevoltosaId),
               isNull(inventarioAjusteinventarioProductos.id)
             )
           )
@@ -106,13 +112,13 @@ export async function addSalida(data: InferInput<typeof SalidaSchema>) {
         const idsAActualizar = productos_en_almacen.map((p) => p.id);
 
         await db
-          .update(producto)
+          .update(inventarioProducto)
           .set({
             salidaId: salidaInsertada[0].id,
             areaVentaId: areaVentaId,
             almacenRevoltosa: esAlmacenRevoltosa,
           })
-          .where(inArray(producto.id, idsAActualizar));
+          .where(inArray(inventarioProducto.id, idsAActualizar));
       }
     }
     revalidatePath("/salidas");
@@ -148,23 +154,23 @@ async function procesarZapatos(
 
   const productosZapatos = await db
     .select({
-      id: producto.id,
+      id: inventarioProducto.id,
     })
-    .from(producto)
+    .from(inventarioProducto)
     .leftJoin(
       inventarioAjusteinventarioProductos,
-      eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+      eq(inventarioAjusteinventarioProductos.productoId, inventarioProducto.id)
     )
     .where(
       and(
-        eq(producto.salidaId, salidaId),
-        eq(producto.infoId, Number(producto_info.id)),
+        eq(inventarioProducto.salidaId, salidaId),
+        eq(inventarioProducto.infoId, Number(producto_info.id)),
         areaVentaId
-          ? eq(producto.areaVentaId, areaVentaId)
-          : isNull(producto.areaVentaId),
-        eq(producto.almacenRevoltosa, esAlmacenRevoltosa),
-        isNull(producto.ventaId),
-        isNull(producto.salidaRevoltosaId),
+          ? eq(inventarioProducto.areaVentaId, areaVentaId)
+          : isNull(inventarioProducto.areaVentaId),
+        eq(inventarioProducto.almacenRevoltosa, esAlmacenRevoltosa),
+        isNull(inventarioProducto.ventaId),
+        isNull(inventarioProducto.salidaRevoltosaId),
         isNull(inventarioAjusteinventarioProductos.id)
       )
     );
@@ -177,21 +183,24 @@ async function procesarZapatos(
   if (agregados.length > 0) {
     const validatedProducts = await db
       .select({
-        id: producto.id,
+        id: inventarioProducto.id,
       })
-      .from(producto)
+      .from(inventarioProducto)
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+        eq(
+          inventarioAjusteinventarioProductos.productoId,
+          inventarioProducto.id
+        )
       )
       .where(
         and(
-          inArray(producto.id, agregados),
-          eq(producto.infoId, Number(producto_info.id)),
-          eq(producto.almacenRevoltosa, false),
-          isNull(producto.ventaId),
-          isNull(producto.salidaId),
-          isNull(producto.salidaRevoltosaId),
+          inArray(inventarioProducto.id, agregados),
+          eq(inventarioProducto.infoId, Number(producto_info.id)),
+          eq(inventarioProducto.almacenRevoltosa, false),
+          isNull(inventarioProducto.ventaId),
+          isNull(inventarioProducto.salidaId),
+          isNull(inventarioProducto.salidaRevoltosaId),
           isNull(inventarioAjusteinventarioProductos.id)
         )
       );
@@ -203,24 +212,24 @@ async function procesarZapatos(
     }
 
     await db
-      .update(producto)
+      .update(inventarioProducto)
       .set({
         salidaId,
         areaVentaId,
         almacenRevoltosa: esAlmacenRevoltosa,
       })
-      .where(inArray(producto.id, agregados));
+      .where(inArray(inventarioProducto.id, agregados));
   }
 
   if (eliminados.length > 0) {
     await db
-      .update(producto)
+      .update(inventarioProducto)
       .set({
         salidaId: null,
         areaVentaId: null,
         almacenRevoltosa: false,
       })
-      .where(inArray(producto.id, eliminados));
+      .where(inArray(inventarioProducto.id, eliminados));
   }
 }
 
@@ -232,23 +241,23 @@ async function procesarProducto(
 ) {
   const productos = await db
     .select({
-      id: producto.id,
+      id: inventarioProducto.id,
     })
-    .from(producto)
+    .from(inventarioProducto)
     .leftJoin(
       inventarioAjusteinventarioProductos,
-      eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+      eq(inventarioAjusteinventarioProductos.productoId, inventarioProducto.id)
     )
     .where(
       and(
-        eq(producto.salidaId, salidaId),
-        eq(producto.infoId, Number(producto_info.id)),
+        eq(inventarioProducto.salidaId, salidaId),
+        eq(inventarioProducto.infoId, Number(producto_info.id)),
         areaVentaId
-          ? eq(producto.areaVentaId, areaVentaId)
-          : isNull(producto.areaVentaId),
-        eq(producto.almacenRevoltosa, esAlmacenRevoltosa),
-        isNull(producto.ventaId),
-        isNull(producto.salidaRevoltosaId),
+          ? eq(inventarioProducto.areaVentaId, areaVentaId)
+          : isNull(inventarioProducto.areaVentaId),
+        eq(inventarioProducto.almacenRevoltosa, esAlmacenRevoltosa),
+        isNull(inventarioProducto.ventaId),
+        isNull(inventarioProducto.salidaRevoltosaId),
         isNull(inventarioAjusteinventarioProductos.id)
       )
     );
@@ -259,20 +268,23 @@ async function procesarProducto(
     // Los del almacen
     const productosParaActualizar = await db
       .select({
-        id: producto.id,
+        id: inventarioProducto.id,
       })
-      .from(producto)
+      .from(inventarioProducto)
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+        eq(
+          inventarioAjusteinventarioProductos.productoId,
+          inventarioProducto.id
+        )
       )
       .where(
         and(
-          eq(producto.infoId, Number(producto_info.id)),
-          eq(producto.almacenRevoltosa, false),
-          isNull(producto.ventaId),
-          isNull(producto.salidaId),
-          isNull(producto.salidaRevoltosaId),
+          eq(inventarioProducto.infoId, Number(producto_info.id)),
+          eq(inventarioProducto.almacenRevoltosa, false),
+          isNull(inventarioProducto.ventaId),
+          isNull(inventarioProducto.salidaId),
+          isNull(inventarioProducto.salidaRevoltosaId),
           isNull(inventarioAjusteinventarioProductos.id)
         )
       )
@@ -283,7 +295,7 @@ async function procesarProducto(
     }
 
     await db
-      .update(producto)
+      .update(inventarioProducto)
       .set({
         salidaId,
         areaVentaId,
@@ -291,7 +303,7 @@ async function procesarProducto(
       })
       .where(
         inArray(
-          producto.id,
+          inventarioProducto.id,
           productosParaActualizar.map((p) => p.id)
         )
       );
@@ -304,7 +316,7 @@ async function procesarProducto(
     }
 
     await db
-      .update(producto)
+      .update(inventarioProducto)
       .set({
         salidaId: null,
         areaVentaId: null,
@@ -312,7 +324,7 @@ async function procesarProducto(
       })
       .where(
         inArray(
-          producto.id,
+          inventarioProducto.id,
           productosParaActualizar.map((p) => p.id)
         )
       );

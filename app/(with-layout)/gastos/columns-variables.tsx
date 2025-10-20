@@ -17,6 +17,7 @@ export const columns: ColumnDef<Gasto>[] = [
         { locale: "es" }
       ),
   },
+  { accessorKey: "cuenta.nombre", header: "Cuenta" },
   {
     accessorKey: "area_venta.nombre",
     header: "Área de venta",
@@ -40,6 +41,11 @@ export const columns: ColumnDef<Gasto>[] = [
   {
     accessorKey: "cantidad",
     header: "Monto",
+    cell: ({ row }) =>
+      Intl.NumberFormat("es-CU", {
+        style: "currency",
+        currency: "CUP",
+      }).format(row.getValue("cantidad")),
   },
   {
     accessorKey: "usuario",

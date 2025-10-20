@@ -6,7 +6,7 @@ import {
   inventarioCategorias,
   inventarioCuentas,
   inventarioHistorialprecioventasalon,
-  producto,
+  inventarioProducto,
   inventarioProductoinfo,
   inventarioTransacciones,
   inventarioUser,
@@ -44,24 +44,30 @@ export async function getAreaVenta(
           ORDER BY ${inventarioHistorialprecioventasalon.fechaInicio} DESC 
           LIMIT 1
         )`,
-        cantidad: count(producto.id),
+        cantidad: count(inventarioProducto.id),
         categoria_nombre: inventarioCategorias.nombre,
       })
       .from(inventarioProductoinfo)
-      .innerJoin(producto, eq(inventarioProductoinfo.id, producto.infoId))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioProductoinfo.id, inventarioProducto.infoId)
+      )
       .leftJoin(
         inventarioCategorias,
         eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+        eq(
+          inventarioProducto.id,
+          inventarioAjusteinventarioProductos.productoId
+        )
       )
       .where(
         and(
-          isNull(producto.ventaId),
+          isNull(inventarioProducto.ventaId),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId),
-          eq(producto.areaVentaId, Number(id))
+          eq(inventarioProducto.areaVentaId, Number(id))
         )
       )
       .groupBy(inventarioProductoinfo.id, inventarioCategorias.nombre)
@@ -71,15 +77,15 @@ export async function getAreaVenta(
 
     const zapatos = await db
       .select({
-        id: producto.id,
+        id: inventarioProducto.id,
         descripcion: inventarioProductoinfo.descripcion,
-        color: producto.color,
-        numero: producto.numero,
+        color: inventarioProducto.color,
+        numero: inventarioProducto.numero,
       })
-      .from(producto)
+      .from(inventarioProducto)
       .innerJoin(
         inventarioProductoinfo,
-        eq(producto.infoId, inventarioProductoinfo.id)
+        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
       )
       .innerJoin(
         inventarioCategorias,
@@ -87,17 +93,20 @@ export async function getAreaVenta(
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+        eq(
+          inventarioProducto.id,
+          inventarioAjusteinventarioProductos.productoId
+        )
       )
       .where(
         and(
           eq(inventarioCategorias.nombre, "Zapatos"),
-          isNull(producto.ventaId),
-          eq(producto.areaVentaId, Number(id)),
+          isNull(inventarioProducto.ventaId),
+          eq(inventarioProducto.areaVentaId, Number(id)),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId)
         )
       )
-      .orderBy(desc(producto.id));
+      .orderBy(desc(inventarioProducto.id));
 
     const allProductos = await db
       .select({
@@ -110,15 +119,21 @@ export async function getAreaVenta(
         inventarioCategorias,
         eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
       )
-      .innerJoin(producto, eq(inventarioProductoinfo.id, producto.infoId))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioProductoinfo.id, inventarioProducto.infoId)
+      )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(producto.id, inventarioAjusteinventarioProductos.productoId)
+        eq(
+          inventarioProducto.id,
+          inventarioAjusteinventarioProductos.productoId
+        )
       )
       .where(
         and(
-          eq(producto.areaVentaId, Number(id)),
-          isNull(producto.ventaId),
+          eq(inventarioProducto.areaVentaId, Number(id)),
+          isNull(inventarioProducto.ventaId),
           isNull(inventarioAjusteinventarioProductos.ajusteinventarioId)
         )
       )
@@ -143,14 +158,17 @@ export async function getAreaVenta(
         metodo_pago: inventarioVentas.metodoPago,
         usuario: { id: inventarioUser.id, username: inventarioUser.username },
         descripcion: inventarioProductoinfo.descripcion,
-        cantidad: count(producto.id),
+        cantidad: count(inventarioProducto.id),
         id: inventarioVentas.id,
       })
       .from(inventarioVentas)
-      .innerJoin(producto, eq(inventarioVentas.id, producto.ventaId))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioVentas.id, inventarioProducto.ventaId)
+      )
       .innerJoin(
         inventarioProductoinfo,
-        eq(producto.infoId, inventarioProductoinfo.id)
+        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
       )
       .innerJoin(
         inventarioUser,

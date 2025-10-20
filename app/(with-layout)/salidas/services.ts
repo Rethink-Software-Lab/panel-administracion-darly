@@ -3,7 +3,7 @@ import {
   inventarioAjusteinventarioProductos,
   inventarioAreaventa,
   inventarioCategorias,
-  producto,
+  inventarioProducto,
   inventarioProductoinfo,
   inventarioSalidaalmacen,
   inventarioUser,
@@ -32,7 +32,7 @@ export async function getSalidas(): Promise<{
         usuario: sql<string>`COALESCE (${inventarioUser.username}, 'Usuario eliminado')`,
         destino: sql<any>`COALESCE(json_build_object('id', ${inventarioAreaventa.id}, 'nombre', ${inventarioAreaventa.nombre}), json_build_object('id', 0, 'nombre', 'Almacen Revoltosa'))`,
         producto: countDistinct(inventarioProductoinfo),
-        cantidad: count(producto),
+        cantidad: count(inventarioProducto),
         detalle: sql<any>`COALESCE((
           SELECT json_agg(row_to_json(det))
           FROM (
@@ -69,10 +69,13 @@ export async function getSalidas(): Promise<{
         inventarioAreaventa,
         eq(inventarioSalidaalmacen.areaVentaId, inventarioAreaventa.id)
       )
-      .innerJoin(producto, eq(producto.salidaId, inventarioSalidaalmacen.id))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioProducto.salidaId, inventarioSalidaalmacen.id)
+      )
       .innerJoin(
         inventarioProductoinfo,
-        eq(producto.infoId, inventarioProductoinfo.id)
+        eq(inventarioProducto.infoId, inventarioProductoinfo.id)
       )
       .groupBy(
         inventarioSalidaalmacen.id,
@@ -91,12 +94,12 @@ export async function getSalidas(): Promise<{
       })
       .from(inventarioProductoinfo)
       .innerJoin(
-        producto,
+        inventarioProducto,
         and(
-          eq(producto.infoId, inventarioProductoinfo.id),
-          isNull(producto.ventaId),
-          isNull(producto.salidaId),
-          isNull(producto.salidaRevoltosaId)
+          eq(inventarioProducto.infoId, inventarioProductoinfo.id),
+          isNull(inventarioProducto.ventaId),
+          isNull(inventarioProducto.salidaId),
+          isNull(inventarioProducto.salidaRevoltosaId)
         )
       )
       .innerJoin(
@@ -105,10 +108,13 @@ export async function getSalidas(): Promise<{
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
-        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+        eq(
+          inventarioAjusteinventarioProductos.productoId,
+          inventarioProducto.id
+        )
       )
       .where(isNull(inventarioAjusteinventarioProductos.id))
-      .having(gt(count(producto), 0))
+      .having(gt(count(inventarioProducto), 0))
       .groupBy(
         inventarioProductoinfo.id,
         inventarioProductoinfo.descripcion,

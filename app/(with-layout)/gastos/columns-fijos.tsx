@@ -24,6 +24,7 @@ export const columns: ColumnDef<Gasto>[] = [
     header: "Descripción",
     size: 700,
   },
+  { accessorKey: "cuenta.nombre", header: "Cuenta" },
   {
     accessorKey: "area_venta.nombre",
     header: "Área de venta",
@@ -50,14 +51,19 @@ export const columns: ColumnDef<Gasto>[] = [
   {
     header: "Día",
     cell: ({ row }) =>
-      row.original.dia_mes ||
-      (row.original.dia_semana && DiasSemana[row.original.dia_semana]) || (
+      row.original.diaMes ||
+      (row.original.diaSemana && DiasSemana[row.original.diaSemana]) || (
         <Badge variant="outline">Vacío</Badge>
       ),
   },
   {
     accessorKey: "cantidad",
     header: "Monto",
+    cell: ({ row }) =>
+      Intl.NumberFormat("es-CU", {
+        style: "currency",
+        currency: "CUP",
+      }).format(row.getValue("cantidad")),
   },
   {
     accessorKey: "usuario",
@@ -74,11 +80,16 @@ export const columns: ColumnDef<Gasto>[] = [
   {
     header: " ",
     cell: ({ row, table }) => {
-      const areas = (table.options as CustomTableOptions<Gasto>).areas;
+      const areas = (table.options as CustomTableOptions<Gasto>).meta.areas;
+      const cuentas = (table.options as CustomTableOptions<Gasto>).meta.cuentas;
 
       return (
         <span className="space-x-2">
-          <SheetGastos areas={areas} data={row.original} />
+          <SheetGastos
+            areas={areas || []}
+            cuentas={cuentas || []}
+            data={row.original}
+          />
           <TableDeleteV2 id={row.original.id} action={deleteGasto} />
         </span>
       );

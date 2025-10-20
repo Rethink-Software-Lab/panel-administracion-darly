@@ -23,7 +23,7 @@ import {
   inventarioMermacafeteria,
   inventarioMermacafeteriaElaboraciones,
   inventarioMermacafeteriaProductos,
-  producto,
+  inventarioProducto,
   inventarioProductosCafeteria,
   inventarioProductosCantidadCuentaCasa,
   inventarioProductosCantidadMerma,
@@ -134,14 +134,14 @@ export async function getMovimientosProducto(
   try {
     const productos = await db
       .select({
-        id: producto.id,
-        entradaId: producto.entradaId,
-        salidaId: producto.salidaId,
-        ventaId: producto.ventaId,
-        salidaRevoltosaId: producto.salidaRevoltosaId,
+        id: inventarioProducto.id,
+        entradaId: inventarioProducto.entradaId,
+        salidaId: inventarioProducto.salidaId,
+        ventaId: inventarioProducto.ventaId,
+        salidaRevoltosaId: inventarioProducto.salidaRevoltosaId,
       })
-      .from(producto)
-      .where(eq(producto.infoId, infoId));
+      .from(inventarioProducto)
+      .where(eq(inventarioProducto.infoId, infoId));
 
     let entradasIds: number[] = [];
     let salidasIds: number[] = [];
@@ -167,7 +167,7 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioEntradaalmacen.createdAt,
         type: sql<TipoMovimiento>`'Entrada'`,
-        cantidad: sql<string>`COUNT (${producto})`.as("cantidad"),
+        cantidad: sql<string>`COUNT (${inventarioProducto})`.as("cantidad"),
         user: inventarioUser.username,
         proveedor: inventarioProveedor.nombre,
         metodoPago: sql<METODOS_PAGO>`${inventarioEntradaalmacen.metodoPago}`,
@@ -175,10 +175,10 @@ export async function getMovimientosProducto(
       .from(inventarioEntradaalmacen)
       .where(inArray(inventarioEntradaalmacen.id, entradasIds))
       .innerJoin(
-        producto,
+        inventarioProducto,
         and(
-          eq(producto.entradaId, inventarioEntradaalmacen.id),
-          eq(producto.infoId, infoId)
+          eq(inventarioProducto.entradaId, inventarioEntradaalmacen.id),
+          eq(inventarioProducto.infoId, infoId)
         )
       )
       .leftJoin(
@@ -200,13 +200,16 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioSalidaalmacen.createdAt,
         type: sql<TipoMovimiento>`'Salida'`,
-        cantidad: sql<string>`COUNT (${producto})`.as("cantidad"),
+        cantidad: sql<string>`COUNT (${inventarioProducto})`.as("cantidad"),
         user: inventarioUser.username,
         areaVenta: inventarioAreaventa.nombre,
       })
       .from(inventarioSalidaalmacen)
       .where(inArray(inventarioSalidaalmacen.id, salidasIds))
-      .innerJoin(producto, eq(producto.salidaId, inventarioSalidaalmacen.id))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioProducto.salidaId, inventarioSalidaalmacen.id)
+      )
       .leftJoin(
         inventarioUser,
         eq(inventarioSalidaalmacen.usuarioId, inventarioUser.id)
@@ -225,15 +228,18 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioSalidaalmacenrevoltosa.createdAt,
         type: sql<TipoMovimiento>`'Salida Revoltosa'`,
-        cantidad: sql<string>`COUNT (${producto})`.as("cantidad"),
+        cantidad: sql<string>`COUNT (${inventarioProducto})`.as("cantidad"),
         user: inventarioUser.username,
         areaVenta: sql<string>`'Revoltosa'`,
       })
       .from(inventarioSalidaalmacenrevoltosa)
       .where(inArray(inventarioSalidaalmacenrevoltosa.id, salidaRevoltosaId))
       .innerJoin(
-        producto,
-        eq(producto.salidaRevoltosaId, inventarioSalidaalmacenrevoltosa.id)
+        inventarioProducto,
+        eq(
+          inventarioProducto.salidaRevoltosaId,
+          inventarioSalidaalmacenrevoltosa.id
+        )
       )
       .leftJoin(
         inventarioUser,
@@ -248,19 +254,22 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioAjusteinventario.createdAt,
         type: sql<TipoMovimiento>`'Ajuste'`,
-        cantidad: sql<string>`COUNT (${producto})`.as("cantidad"),
+        cantidad: sql<string>`COUNT (${inventarioProducto})`.as("cantidad"),
         user: inventarioUser.username,
         areaVenta: sql<string>`COALESCE(${inventarioAreaventa.nombre}, 'Almacen Principal')`,
         motivo: inventarioAjusteinventario.motivo,
       })
       .from(inventarioAjusteinventarioProductos)
       .innerJoin(
-        producto,
-        eq(inventarioAjusteinventarioProductos.productoId, producto.id)
+        inventarioProducto,
+        eq(
+          inventarioAjusteinventarioProductos.productoId,
+          inventarioProducto.id
+        )
       )
       .leftJoin(
         inventarioAreaventa,
-        eq(producto.areaVentaId, inventarioAreaventa.id)
+        eq(inventarioProducto.areaVentaId, inventarioAreaventa.id)
       )
       .innerJoin(
         inventarioAjusteinventario,
@@ -296,15 +305,15 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioTransferencia.createdAt,
         type: sql<TipoMovimiento>`'Transferencia'`,
-        cantidad: sql<string>`COUNT (${producto})`.as("cantidad"),
+        cantidad: sql<string>`COUNT (${inventarioProducto})`.as("cantidad"),
         user: inventarioUser.username,
         desde: areaVentaDesde.nombre,
         hacia: areaVentaPara.nombre,
       })
       .from(inventarioTransferenciaProductos)
       .innerJoin(
-        producto,
-        eq(producto.id, inventarioTransferenciaProductos.productoId)
+        inventarioProducto,
+        eq(inventarioProducto.id, inventarioTransferenciaProductos.productoId)
       )
       .innerJoin(
         inventarioTransferencia,
@@ -342,7 +351,7 @@ export async function getMovimientosProducto(
       .select({
         createdAt: inventarioVentas.createdAt,
         type: sql<TipoMovimiento>`'Venta'`,
-        cantidad: count(producto),
+        cantidad: count(inventarioProducto),
         user: inventarioUser.username,
         areaVenta: inventarioAreaventa.nombre,
         metodoPago: sql<METODOS_PAGO>`${inventarioVentas.metodoPago}`,
@@ -356,7 +365,10 @@ export async function getMovimientosProducto(
         inventarioAreaventa,
         eq(inventarioAreaventa.id, inventarioVentas.areaVentaId)
       )
-      .innerJoin(producto, eq(producto.ventaId, inventarioVentas.id))
+      .innerJoin(
+        inventarioProducto,
+        eq(inventarioProducto.ventaId, inventarioVentas.id)
+      )
       .where(inArray(inventarioVentas.id, ventasIds))
       .groupBy(
         inventarioVentas.createdAt,
@@ -411,14 +423,14 @@ export async function getMovimientosProductoCafeteria(
   try {
     const productos = await db
       .select({
-        id: producto.id,
-        entradaId: producto.entradaId,
-        salidaId: producto.salidaId,
-        ventaId: producto.ventaId,
-        salidaRevoltosaId: producto.salidaRevoltosaId,
+        id: inventarioProducto.id,
+        entradaId: inventarioProducto.entradaId,
+        salidaId: inventarioProducto.salidaId,
+        ventaId: inventarioProducto.ventaId,
+        salidaRevoltosaId: inventarioProducto.salidaRevoltosaId,
       })
-      .from(producto)
-      .where(eq(producto.infoId, infoId));
+      .from(inventarioProducto)
+      .where(eq(inventarioProducto.infoId, infoId));
 
     let entradasIds: number[] = [];
     let salidasIds: number[] = [];
