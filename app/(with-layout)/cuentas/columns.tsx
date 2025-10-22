@@ -5,7 +5,17 @@ import { DateTime } from "luxon";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { TipoTransferencia, Transacciones } from "./types";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import {
+  ArrowDownLeft,
+  ArrowRightLeft,
+  ArrowUpRight,
+  Banknote,
+  CircleDollarSign,
+  Coins,
+  HardHat,
+  LucideProps,
+  SquareArrowDownLeft,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -13,6 +23,66 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+
+type TipoConfigItem = {
+  name: string;
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  className: string;
+  tooltipClassName: string;
+};
+
+const tipoConfig: Record<TipoTransferencia, TipoConfigItem> = {
+  [TipoTransferencia.INGRESO]: {
+    name: "Ingreso",
+    icon: ArrowDownLeft,
+    className: "text-green-500",
+    tooltipClassName: "bg-green-500",
+  },
+  [TipoTransferencia.EGRESO]: {
+    name: "Egreso",
+    icon: ArrowUpRight,
+    className: "text-red-500",
+    tooltipClassName: "bg-red-500",
+  },
+  [TipoTransferencia.ENTRADA]: {
+    name: "Entrada",
+    icon: SquareArrowDownLeft,
+    className: "text-blue-500",
+    tooltipClassName: "bg-blue-500",
+  },
+  [TipoTransferencia.PAGO_TRABAJADOR]: {
+    name: "Pago trabajador",
+    icon: HardHat,
+    className: "text-amber-500",
+    tooltipClassName: "bg-amber-500",
+  },
+  [TipoTransferencia.GASTO_FIJO]: {
+    name: "Gasto fijo",
+    icon: Banknote,
+    className: "text-orange-500",
+    tooltipClassName: "bg-orange-500",
+  },
+  [TipoTransferencia.GASTO_VARIABLE]: {
+    name: "Gasto variable",
+    icon: Coins,
+    className: "text-pink-500",
+    tooltipClassName: "bg-pink-500",
+  },
+  [TipoTransferencia.TRANSFERENCIA]: {
+    name: "Transferencia",
+    icon: ArrowRightLeft,
+    className: "text-amber-400",
+    tooltipClassName: "bg-amber-400",
+  },
+  [TipoTransferencia.VENTA]: {
+    name: "Venta",
+    icon: CircleDollarSign,
+    className: "text-purple-500",
+    tooltipClassName: "bg-purple-500",
+  },
+};
 
 export const columns: ColumnDef<Transacciones>[] = [
   {
@@ -28,31 +98,26 @@ export const columns: ColumnDef<Transacciones>[] = [
     accessorKey: "tipo",
     header: "Tipo",
     cell: ({ row }) => {
-      const tipo = row.getValue("tipo");
+      const tipo = row.getValue("tipo") as TipoTransferencia;
 
-      if (tipo === TipoTransferencia.INGRESO) {
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <ArrowDownLeft className="text-green-500" />
-              </TooltipTrigger>
-              <TooltipContent className="bg-green-500">Ingreso</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      } else if (tipo === TipoTransferencia.EGRESO) {
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <ArrowUpRight className="text-red-500" />
-              </TooltipTrigger>
-              <TooltipContent className="bg-red-500">Egreso</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      }
+      const config = tipoConfig[tipo];
+
+      if (!config) return null;
+
+      const IconComponent = config.icon;
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <IconComponent className={config.className} />
+            </TooltipTrigger>
+            <TooltipContent className={config.tooltipClassName}>
+              {config.name}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
   },
   {

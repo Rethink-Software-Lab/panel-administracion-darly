@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
 import { InferOutput } from "valibot";
 import { VentasCafeteriaSchema } from "./schema";
 import { getSession } from "@/lib/getSession";
@@ -12,7 +11,6 @@ import {
   inventarioElaboracionesIngredientesCantidad,
   inventarioElaboracionesVentasCafeteria,
   inventarioIngredienteCantidad,
-  inventarioInventarioAlmacenCafeteria,
   inventarioInventarioAreaCafeteria,
   inventarioProductosCafeteria,
   inventarioProductosVentasCafeteria,
@@ -21,7 +19,7 @@ import {
   inventarioVentasCafeteriaElaboraciones,
   inventarioVentasCafeteriaProductos,
 } from "@/db/schema";
-import { desc, eq, sql, inArray, and } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 import { METODOS_PAGO } from "../(almacen-cafeteria)/entradas-cafeteria/types";
 import { CAJA_CAFETERIA } from "@/lib/utils";
 import { TipoCuenta, TipoTransferencia } from "../cuentas/types";
@@ -78,8 +76,8 @@ export async function addVentaCafeteria(
         await tx.insert(inventarioTransacciones).values({
           cuentaId: Number(CAJA_CAFETERIA),
           cantidad: totalManoObra.toString(),
-          descripcion: `[PAGO TRABAJADOR] ${totalCantidadProductos}x Prod, ${totalCantidadElaboraciones}x Elab - Cafetería`,
-          tipo: TipoTransferencia.EGRESO,
+          descripcion: `${totalCantidadProductos}x Prod, ${totalCantidadElaboraciones}x Elab - Cafetería`,
+          tipo: TipoTransferencia.PAGO_TRABAJADOR,
           usuarioId: Number(userId),
           ventaCafeteriaId: venta.id,
           createdAt: new Date().toISOString(),
@@ -420,7 +418,7 @@ async function actualizarSaldosYCrearTransacciones({
       cuentaId: cuentaId,
       cantidad: monto.toString(),
       descripcion,
-      tipo: "INGRESO",
+      tipo: TipoTransferencia.VENTA,
       usuarioId: userId,
       ventaCafeteriaId: ventaId,
       createdAt: new Date().toISOString(),
@@ -563,18 +561,18 @@ export async function deleteVentaCafeteria({
           )
         );
 
-      const transaccionesIngreso = transacciones.filter(
-        (t) => t.tipo === TipoTransferencia.INGRESO
+      const transaccionesVenta = transacciones.filter(
+        (t) => t.tipo === TipoTransferencia.VENTA
       );
-      const transaccionesEgreso = transacciones.filter(
-        (t) => t.tipo === TipoTransferencia.EGRESO
+      const transaccionesPagoTrabajador = transacciones.filter(
+        (t) => t.tipo === TipoTransferencia.PAGO_TRABAJADOR
       );
 
       const cuentasMap = new Map(
         cuentasConSaldo.map((cuenta) => [cuenta.id, parseFloat(cuenta.saldo)])
       );
 
-      for (const transaccion of transaccionesIngreso) {
+      for (const transaccion of transaccionesVenta) {
         const saldoActual = cuentasMap.get(transaccion.cuentaId) || 0;
         const nuevoSaldo = saldoActual - parseFloat(transaccion.cantidad);
 
@@ -645,19 +643,20 @@ export async function deleteVentaCafeteria({
           .where(eq(inventarioCuentas.id, cuentaId));
       }
 
-      for (const transaccionEgreso of transaccionesEgreso) {
+      for (const transaccionPagoTrabajador of transaccionesPagoTrabajador) {
         const [cuenta] = await tx
           .select({
             id: inventarioCuentas.id,
             saldo: inventarioCuentas.saldo,
           })
           .from(inventarioCuentas)
-          .where(eq(inventarioCuentas.id, transaccionEgreso.cuentaId))
+          .where(eq(inventarioCuentas.id, transaccionPagoTrabajador.cuentaId))
           .limit(1);
 
         if (cuenta) {
           const nuevoSaldo =
-            parseFloat(cuenta.saldo) + parseFloat(transaccionEgreso.cantidad);
+            parseFloat(cuenta.saldo) +
+            parseFloat(transaccionPagoTrabajador.cantidad);
           await tx
             .update(inventarioCuentas)
             .set({ saldo: nuevoSaldo.toString() })

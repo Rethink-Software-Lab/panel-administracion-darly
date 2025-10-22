@@ -376,12 +376,10 @@ async function rebajar_de_las_cuentas({
 
         await tx.insert(inventarioTransacciones).values({
           createdAt: new Date().toISOString(),
-          descripcion: `[PAGO TRABAJADOR] ${
-            ids.length
-          }x ${descripcion_producto.slice(0, 15)}`,
+          descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
           cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
           ventaId: venta[0].id,
-          tipo: TipoTransferencia.EGRESO,
+          tipo: TipoTransferencia.PAGO_TRABAJADOR,
           cantidad: String(cantidadDescuento),
           usuarioId: Number(userId),
         });
@@ -439,13 +437,10 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
-    descripcion: `[PAGO TRABAJADOR] ${ids.length}x ${descripcion_producto.slice(
-      0,
-      15
-    )}`,
+    descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
     cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
     ventaId: venta[0].id,
-    tipo: TipoTransferencia.EGRESO,
+    tipo: TipoTransferencia.PAGO_TRABAJADOR,
     cantidad: String(sum_pago_trabajador),
     usuarioId: Number(userId),
   });
@@ -488,13 +483,12 @@ async function crear_transacciones_de_venta({
   await tx.insert(inventarioTransacciones).values(
     cuentasParaTransacciones.map((cuenta) => ({
       createdAt: new Date().toISOString(),
-      descripcion: `[VENTA] ${ids.length}x ${descripcion_producto.slice(
-        0,
-        15
-      )} - ${areaVenta.nombre}`,
+      descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)} - ${
+        areaVenta.nombre
+      }`,
       cuentaId: Number(cuenta.cuenta),
       ventaId: venta[0].id,
-      tipo: TipoTransferencia.INGRESO,
+      tipo: TipoTransferencia.VENTA,
       cantidad: String(cuenta.cantidad),
       usuarioId: Number(userId),
     }))
@@ -613,7 +607,7 @@ function retornar_saldo_de_y_hacia_cuentas({
 }) {
   cuentasConTransacciones.forEach(async ({ cuenta, transaccion }) => {
     if (
-      transaccion.tipo !== TipoTransferencia.EGRESO &&
+      transaccion.tipo === TipoTransferencia.VENTA &&
       Number(cuenta.saldo) < Number(transaccion.cantidad)
     ) {
       throw new ValidationError(
@@ -622,9 +616,9 @@ function retornar_saldo_de_y_hacia_cuentas({
     }
     const saldoADescontar = () => {
       switch (transaccion.tipo) {
-        case TipoTransferencia.INGRESO:
+        case TipoTransferencia.VENTA:
           return sql<string>`${inventarioCuentas.saldo} - ${transaccion.cantidad}`;
-        case TipoTransferencia.EGRESO:
+        case TipoTransferencia.PAGO_TRABAJADOR:
           return sql<string>`${inventarioCuentas.saldo} + ${transaccion.cantidad}`;
         default:
           throw new Error("Tipo transaccion corrupto");

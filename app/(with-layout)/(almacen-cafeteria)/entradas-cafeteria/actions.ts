@@ -306,7 +306,7 @@ async function actualizarSaldosYCrearTransacciones({
   totalCosto: number;
   userId: number;
 }) {
-  const descripcion = `[ENT CAF] ${totalCantidadProductos}x Prod`;
+  const descripcion = `${totalCantidadProductos}x Prod - Almacén Cafetería`;
 
   for (const pago of cuentas) {
     const cuentaId = Number(pago.cuenta);
@@ -336,7 +336,7 @@ async function actualizarSaldosYCrearTransacciones({
       cuentaId: cuentaDb.id,
       cantidad: monto.toString(),
       descripcion,
-      tipo: TipoTransferencia.EGRESO,
+      tipo: TipoTransferencia.ENTRADA,
       usuarioId: userId,
       entradaCafeteriaId: entradaId,
       createdAt: new Date().toISOString(),

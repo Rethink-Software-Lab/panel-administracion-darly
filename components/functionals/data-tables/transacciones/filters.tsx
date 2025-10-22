@@ -13,7 +13,17 @@ import {
   TipoTransferencia,
   Transacciones,
 } from "@/app/(with-layout)/cuentas/types";
-import { ArrowDownLeft, ArrowUpRight, X } from "lucide-react";
+import {
+  ArrowDownLeft,
+  ArrowRightLeft,
+  ArrowUpRight,
+  Banknote,
+  CircleDollarSign,
+  Coins,
+  HardHat,
+  SquareArrowDownLeft,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import MultipleSelector from "@/components/ui/multiselect";
 import { type Option } from "@/components/ui/multiselect";
@@ -31,6 +41,37 @@ const tipoConfig = {
     color: "text-red-500",
     label: "Egreso",
   },
+
+  [TipoTransferencia.ENTRADA]: {
+    label: "Entrada",
+    icon: SquareArrowDownLeft,
+    color: "text-blue-500",
+  },
+  [TipoTransferencia.PAGO_TRABAJADOR]: {
+    label: "Pago trabajador",
+    icon: HardHat,
+    color: "text-amber-500",
+  },
+  [TipoTransferencia.GASTO_FIJO]: {
+    label: "Gasto fijo",
+    icon: Banknote,
+    color: "text-orange-500",
+  },
+  [TipoTransferencia.GASTO_VARIABLE]: {
+    label: "Gasto variable",
+    icon: Coins,
+    color: "text-pink-500",
+  },
+  [TipoTransferencia.TRANSFERENCIA]: {
+    label: "Transferencia",
+    icon: ArrowRightLeft,
+    color: "text-amber-400",
+  },
+  [TipoTransferencia.VENTA]: {
+    label: "Venta",
+    icon: CircleDollarSign,
+    color: "text-purple-500",
+  },
 };
 
 export function FiltersTransacciones({
@@ -38,7 +79,9 @@ export function FiltersTransacciones({
 }: {
   table: Table<Transacciones>;
 }) {
-  const type = table.getColumn("tipo")?.getFilterValue() as string | undefined;
+  const type = table.getColumn("tipo")?.getFilterValue() as
+    | TipoTransferencia
+    | undefined;
   const selectedAccounts = table.getColumn("cuenta")?.getFilterValue() as
     | number[]
     | undefined;
@@ -68,17 +111,13 @@ export function FiltersTransacciones({
               variant="outline"
               className="ring-0 focus-visible:ring-0 text-muted-foreground"
             >
-              {type ? (
+              {type && tipoConfig[type] ? (
                 <span className="flex gap-1 items-center">
                   {(() => {
-                    const {
-                      icon: Icon,
-                      color,
-                      label,
-                    } = tipoConfig[type as TipoTransferencia];
+                    const { icon: Icon, color, label } = tipoConfig[type];
                     return (
                       <>
-                        <Icon className={cn("size-6", color)} />
+                        <Icon className={cn("size-5", color)} />
                         {label}
                       </>
                     );
@@ -93,21 +132,21 @@ export function FiltersTransacciones({
             <DropdownMenuRadioGroup
               value={type ?? undefined}
               onValueChange={handleTypeChange}
+              className="[&>div]:cursor-pointer"
             >
-              <DropdownMenuRadioItem
-                value={TipoTransferencia.INGRESO}
-                className="flex items-center gap-1"
-              >
-                <ArrowDownLeft className="size-6 text-green-500" />
-                Ingreso
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem
-                value={TipoTransferencia.EGRESO}
-                className="flex items-center gap-1"
-              >
-                <ArrowUpRight className="size-6 text-red-500" />
-                Egreso
-              </DropdownMenuRadioItem>
+              {Object.entries(tipoConfig).map(([enumValue, config]) => {
+                const Icon = config.icon;
+                return (
+                  <DropdownMenuRadioItem
+                    key={config.label}
+                    value={enumValue}
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className={cn("size-5", config.color)} />
+                    <span>{config.label}</span>
+                  </DropdownMenuRadioItem>
+                );
+              })}
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>

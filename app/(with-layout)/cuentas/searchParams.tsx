@@ -12,10 +12,7 @@ export const cuentasSearchParams = {
   l: parseAsInteger.withDefault(10),
   from: parseAsIsoDateTime,
   to: parseAsIsoDateTime,
-  type: parseAsStringLiteral([
-    TipoTransferencia.INGRESO,
-    TipoTransferencia.EGRESO,
-  ]),
+  type: parseAsStringLiteral([...Object.values(TipoTransferencia)]),
   accounts: parseAsArrayOf(parseAsInteger),
 };
 
