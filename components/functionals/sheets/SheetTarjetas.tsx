@@ -20,7 +20,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { TarjetasSchema } from "@/lib/schemas";
+import { TarjetasSchema } from "@/app/(with-layout)/cuentas/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput } from "valibot";

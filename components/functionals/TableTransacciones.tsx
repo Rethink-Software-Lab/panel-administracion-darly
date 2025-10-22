@@ -1,9 +1,11 @@
 import { CloudOff } from "lucide-react";
-import SheetTransferenciasTarjetas from "./sheets/SheetTransferenciasTarjetas";
+
 import { getTransacciones } from "@/app/(with-layout)/cuentas/services";
 import { columns } from "@/app/(with-layout)/cuentas/columns";
 import DataTableTransacciones from "./data-tables/transacciones/data-table-transacciones";
 import { Tarjetas } from "@/app/(with-layout)/cuentas/types";
+
+import { DropdownActionCuentas } from "./DropdownActionsCuentas";
 
 export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
   const { data, error, meta } = await getTransacciones();
@@ -12,8 +14,12 @@ export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
     <div className="p-4 m-0 bg-muted/40 h-full border-t-2 border-muted">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-lg font-semibold md:text-xl">Transacciones</h1>
-        <SheetTransferenciasTarjetas tarjetas={data?.cuentas || []} />
+        <DropdownActionCuentas
+          cuentas={data?.cuentas || []}
+          isError={!!error}
+        />
       </div>
+
       {data && meta ? (
         <DataTableTransacciones
           columns={columns}

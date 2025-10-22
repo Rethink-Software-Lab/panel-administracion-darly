@@ -281,34 +281,6 @@ export const AjusteSchema = object({
   ),
 });
 
-export const TarjetasSchema = object({
-  nombre: pipe(
-    string("El nombre es requerido"),
-    nonEmpty("El nombre es requerido")
-  ),
-  banco: enum_(Banco, "Banco requerido."),
-  saldo_inicial: pipe(
-    string("El saldo inicial es requerido"),
-    nonEmpty("El saldo inicial es requerido")
-  ),
-});
-
-export const TransferenciasTarjetas = object({
-  cuenta: pipe(
-    string("La tarjeta es requerida."),
-    nonEmpty("La tarjeta es requerida.")
-  ),
-  cantidad: pipe(
-    string("El valor es requerido"),
-    nonEmpty("El valor es requerido")
-  ),
-  descripcion: pipe(
-    string("La descripción es requerida."),
-    nonEmpty("La descripción es requerida.")
-  ),
-  tipo: enum_(TipoTransferencia, "El tipo de la transferencia es requerido."),
-});
-
 export const ElaboracionesSchema = pipe(
   object({
     nombre: pipe(

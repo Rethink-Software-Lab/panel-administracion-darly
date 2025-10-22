@@ -8,6 +8,12 @@ export enum Banco {
 export enum TipoTransferencia {
   INGRESO = "INGRESO",
   EGRESO = "EGRESO",
+  VENTA = "VENTA",
+  PAGO_TRABAJADOR = "PAGO_TRABAJADOR",
+  GASTO_FIJO = "GASTO_FIJO",
+  GASTO_VARIABLE = "GASTO_VARIABLE",
+  TRANSFERENCIA = "TRANSFERENCIA",
+  ENTRADA = "ENTRADA",
 }
 
 export enum TipoCuenta {

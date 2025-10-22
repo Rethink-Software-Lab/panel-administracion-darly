@@ -59,10 +59,10 @@ export async function addGasto(
 
         await tx.insert(inventarioTransacciones).values({
           cuentaId: cuenta.id,
-          tipo: TipoTransferencia.EGRESO,
+          tipo: TipoTransferencia.GASTO_VARIABLE,
           cantidad: gasto.cantidad.toString(),
           createdAt: new Date().toISOString(),
-          descripcion: `[Gasto variable] ${gasto.descripcion}`,
+          descripcion: gasto.descripcion,
           usuarioId: Number(userId),
         });
       }

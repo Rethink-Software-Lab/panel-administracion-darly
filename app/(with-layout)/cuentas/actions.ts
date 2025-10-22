@@ -1,11 +1,20 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
-import { InferInput } from "valibot";
-import { TarjetasSchema, TransferenciasTarjetas } from "@/lib/schemas";
-import { TipoCuenta } from "./types";
+import { InferInput, InferOutput } from "valibot";
+import { TipoCuenta, TipoTransferencia } from "./types";
+import {
+  TarjetasSchema,
+  TransferenciaSchema,
+  TransferenciasTarjetas,
+} from "./schema";
+import { db } from "@/db/initial";
+import { inventarioCuentas, inventarioTransacciones } from "@/db/schema";
+import { eq, inArray } from "drizzle-orm";
+import { ValidationError } from "@/lib/errors";
+import { getSession } from "@/lib/getSession";
 
 export async function addTarjeta(
   data: InferInput<typeof TarjetasSchema>
@@ -174,4 +183,79 @@ export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
     data: "Transferencia eliminada con éxito.",
     error: null,
   };
+}
+
+export async function addTransferencia(
+  data: InferOutput<typeof TransferenciaSchema>
+): Promise<{ data: string | null; error: string | null }> {
+  const { userId } = await getSession();
+  try {
+    const cuentas = await db
+      .select({
+        id: inventarioCuentas.id,
+        nombre: inventarioCuentas.nombre,
+        saldo: inventarioCuentas.saldo,
+      })
+      .from(inventarioCuentas)
+      .where(
+        inArray(inventarioCuentas.id, [data.cuentaOrigen, data.cuentaDestino])
+      );
+
+    if (cuentas.length !== 2) {
+      throw new ValidationError("Las cuentas no son válidas.");
+    }
+
+    const cuentaOrigen = cuentas.find((c) => c.id === data.cuentaOrigen);
+    const cuentaDestino = cuentas.find((c) => c.id === data.cuentaDestino);
+
+    if (!cuentaOrigen || !cuentaDestino)
+      throw new ValidationError("Las cuentas no son válidas.");
+
+    if (parseFloat(cuentaOrigen.saldo) < data.cantidad) {
+      throw new ValidationError(
+        "El saldo de la cuenta origen es insuficiente."
+      );
+    }
+    const nuevoSaldoOrigen = parseFloat(cuentaOrigen.saldo) - data.cantidad;
+    const nuevoSaldoDestino = parseFloat(cuentaDestino.saldo) + data.cantidad;
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(inventarioCuentas)
+        .set({ saldo: nuevoSaldoOrigen.toString() })
+        .where(eq(inventarioCuentas.id, cuentaOrigen.id));
+
+      await tx
+        .update(inventarioCuentas)
+        .set({ saldo: nuevoSaldoDestino.toString() })
+        .where(eq(inventarioCuentas.id, cuentaDestino.id));
+
+      await tx.insert(inventarioTransacciones).values({
+        tipo: TipoTransferencia.TRANSFERENCIA,
+        cantidad: data.cantidad.toString(),
+        createdAt: new Date().toISOString(),
+        descripcion: `${data.cantidad} de ${cuentaOrigen.nombre} a ${cuentaDestino.nombre}`,
+        usuarioId: Number(userId),
+        cuentaId: cuentaOrigen.id,
+      });
+    });
+
+    revalidatePath("/cuentas");
+    return {
+      error: null,
+      data: "Transferencia realizada con éxito.",
+    };
+  } catch (e) {
+    console.error(e);
+    if (e instanceof ValidationError) {
+      return {
+        data: null,
+        error: e.message,
+      };
+    }
+    return {
+      data: null,
+      error: "Error al agregar la transferencia.",
+    };
+  }
 }

@@ -87,10 +87,10 @@ export async function GET(request: NextRequest) {
 
           await tx.insert(inventarioTransacciones).values({
             cuentaId,
-            tipo: TipoTransferencia.EGRESO,
+            tipo: TipoTransferencia.GASTO_FIJO,
             cantidad: cantidad.toString(),
             createdAt: new Date().toISOString(),
-            descripcion: `[Gasto fijo] ${descripcion}`,
+            descripcion: descripcion,
             gastoId: id,
           });
         });
