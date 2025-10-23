@@ -1,5 +1,3 @@
-import { Usuario } from "../users/types";
-
 export enum Banco {
   BPA = "BPA",
   BANDEC = "BANDEC",
@@ -21,12 +19,18 @@ export enum TipoCuenta {
   BANCARIA = "BANCARIA",
 }
 
+export enum Moneda {
+  CUP = "CUP",
+  USD = "USD",
+}
+
 export interface Tarjetas {
   id: number;
   nombre: string;
   tipo: string;
   banco: string | null;
   saldo: string;
+  moneda: string;
   total_transferencias_mes: number;
 }
 

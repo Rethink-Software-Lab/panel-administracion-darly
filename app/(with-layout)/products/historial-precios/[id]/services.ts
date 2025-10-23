@@ -1,11 +1,11 @@
-import { db } from '@/db/initial';
+import { db } from "@/db/initial";
 import {
   inventarioHistorialpreciocostosalon,
   inventarioHistorialprecioventasalon,
   inventarioUser,
-} from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
-import { EndPointHistorialPrecios } from './types';
+} from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
+import { EndPointHistorialPrecios } from "./types";
 
 export async function getHistorial(id: string): Promise<{
   data: EndPointHistorialPrecios | null;
@@ -53,7 +53,7 @@ export async function getHistorial(id: string): Promise<{
     console.error(e);
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }

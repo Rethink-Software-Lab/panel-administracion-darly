@@ -82,7 +82,7 @@ export default function SheetEntradasCafeteria({
   proveedores,
 }: {
   productos: ProductoEntrada[];
-  cuentas: Omit<Tarjetas, "total_transferencias_mes">[];
+  cuentas: Omit<Tarjetas, "total_transferencias_mes" | "moneda">[];
   proveedores: Pick<Proveedor, "id" | "nombre">[];
 }) {
   const [open, setOpen] = useState(false);

@@ -1,7 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { InferOutput } from "valibot";
 import { EntradaCafeteriaSchema } from "./schema";
 import { db, DrizzleTransaction } from "@/db/initial";

@@ -41,7 +41,7 @@ export type AreaVentaForSelectGasto = Omit<AreaVenta, "color" | "isMesa">;
 
 export type CuentaForSelectGasto = Omit<
   Tarjetas,
-  "saldo" | "total_transferencias_mes"
+  "saldo" | "total_transferencias_mes" | "moneda"
 >;
 
 export interface ResponseGastos {

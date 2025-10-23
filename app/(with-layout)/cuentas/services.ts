@@ -10,18 +10,7 @@ import {
   inventarioUser,
 } from "@/db/schema";
 import { ValidationError } from "@/lib/errors";
-import {
-  and,
-  asc,
-  desc,
-  eq,
-  gt,
-  gte,
-  inArray,
-  lt,
-  lte,
-  sql,
-} from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { searchParamsCache } from "./searchParams";
 
 export async function GetTarjetas(): Promise<{
@@ -40,6 +29,7 @@ export async function GetTarjetas(): Promise<{
         tipo: inventarioCuentas.tipo,
         banco: inventarioCuentas.banco,
         saldo: inventarioCuentas.saldo,
+        moneda: inventarioCuentas.moneda,
         total_transferencias_mes: sql<number>`coalesce(sum(${inventarioTransacciones.cantidad}), 0)`,
       })
       .from(inventarioCuentas)

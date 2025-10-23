@@ -1,7 +1,7 @@
-import { db } from '@/db/initial';
-import { inventarioProveedor } from '@/db/schema';
-import { desc } from 'drizzle-orm';
-import { Proveedor } from './types';
+import { db } from "@/db/initial";
+import { inventarioProveedor } from "@/db/schema";
+import { desc } from "drizzle-orm";
+import { Proveedor } from "./types";
 
 export async function getProveedores(): Promise<{
   data: Proveedor[] | null;
@@ -21,7 +21,7 @@ export async function getProveedores(): Promise<{
     console.error(e);
     return {
       data: null,
-      error: 'Error al obtener los proveedores',
+      error: "Error al obtener los proveedores",
     };
   }
 }

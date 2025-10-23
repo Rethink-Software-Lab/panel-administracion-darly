@@ -1,9 +1,9 @@
-import { cookies } from 'next/headers';
-import { Elaboraciones, PrecioElaboracion } from './types';
-import { ProductoEntrada } from '../entradas-cafeteria/types';
-import { db } from '@/db/initial';
-import { inventarioPrecioelaboracion, inventarioUser } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { cookies } from "next/headers";
+import { Elaboraciones, PrecioElaboracion } from "./types";
+import { ProductoEntrada } from "../entradas-cafeteria/types";
+import { db } from "@/db/initial";
+import { inventarioPrecioelaboracion, inventarioUser } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 interface Data {
   elaboraciones: Elaboraciones[];
@@ -14,22 +14,22 @@ export async function GetElaboraciones(): Promise<{
   data: Data | null;
   error: string | null;
 }> {
-  const token = (await cookies()).get('session')?.value;
+  const token = (await cookies()).get("session")?.value;
   try {
     const res = await fetch(
-      process.env.BACKEND_URL_V2 + '/cafeteria/elaboraciones/',
+      process.env.BACKEND_URL_V2 + "/cafeteria/elaboraciones/",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        next: { tags: ['elaboraciones'] },
+        next: { tags: ["elaboraciones"] },
       }
     );
     if (!res.ok) {
       if (res.status === 401)
-        return { data: null, error: 'Credenciales inválidas' };
+        return { data: null, error: "Credenciales inválidas" };
 
-      return { data: null, error: 'Algo salió mal.' };
+      return { data: null, error: "Algo salió mal." };
     }
     const data = await res.json();
     return {
@@ -39,7 +39,7 @@ export async function GetElaboraciones(): Promise<{
   } catch (e) {
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }
@@ -67,7 +67,7 @@ export async function getHistorialPrecioElaboracion(
     console.error(e);
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }

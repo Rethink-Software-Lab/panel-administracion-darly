@@ -17,13 +17,13 @@ import {
 } from "../ui/sheet";
 import { FormTransacciones } from "./FormTransacciones";
 import { useState } from "react";
-import { CuentasInTransaccionesCompanent } from "@/app/(with-layout)/cuentas/types";
+import { Tarjetas } from "@/app/(with-layout)/cuentas/types";
 import { FormTransferencia } from "./FormTransferencia";
 export function DropdownActionCuentas({
   cuentas,
   isError,
 }: {
-  cuentas: CuentasInTransaccionesCompanent[];
+  cuentas: Tarjetas[];
   isError: boolean;
 }) {
   const [openTransacciones, setOpenTransacciones] = useState(false);

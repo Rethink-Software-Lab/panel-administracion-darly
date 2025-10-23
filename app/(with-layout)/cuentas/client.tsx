@@ -1,18 +1,18 @@
-'use client';
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
-import { deleteTarjeta } from './actions';
+"use client";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { deleteCuenta } from "./actions";
 
 export default function Delete({ id }: { id: number }) {
   const handledeleteTarjeta = async (id: number) => {
-    toast('La tarjeta se eliminará en breve', {
+    toast("La tarjeta se eliminará en breve", {
       duration: 5000,
       action: {
-        label: 'Cancelar',
+        label: "Cancelar",
         onClick: () => toast.dismiss(),
       },
       onAutoClose: async () => {
-        const { data, error } = await deleteTarjeta(id);
+        const { data, error } = await deleteCuenta(id);
         if (!error) {
           toast.success(data);
         } else {

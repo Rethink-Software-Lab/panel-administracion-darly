@@ -4,7 +4,7 @@ import {
   inventarioHistorialpreciocostocafeteria,
   inventarioHistorialprecioventacafeteria,
   inventarioPrecioelaboracion,
-} from "./schema";
+} from "@/db/schema";
 
 export const createSubqueryUltimoPrecioElaboracion = (productoId: number) =>
   db
