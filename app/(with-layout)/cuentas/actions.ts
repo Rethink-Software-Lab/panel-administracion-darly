@@ -4,9 +4,9 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
 import { InferInput, InferOutput } from "valibot";
-import { TipoCuenta, TipoTransferencia } from "./types";
+import { TipoTransferencia } from "./types";
 import {
-  TarjetasSchema,
+  CuentasSchema,
   TransferenciaSchema,
   TransferenciasTarjetas,
 } from "./schema";
@@ -16,87 +16,58 @@ import { eq, inArray } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
 import { getSession } from "@/lib/getSession";
 
-export async function addTarjeta(
-  data: InferInput<typeof TarjetasSchema>
+export async function addCuenta(
+  data: InferOutput<typeof CuentasSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
-  const res = await fetch(process.env.BACKEND_URL_V2 + "/tarjetas/", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ ...data, tipo: TipoCuenta.BANCARIA }),
-  });
-  if (!res.ok) {
-    if (res.status === 401)
-      return {
-        data: null,
-        error: "No autorizado",
-      };
-
-    if (res.status === 400) {
-      const json = await res.json();
-      return {
-        data: null,
-        error: json.detail,
-      };
-    }
-
+  try {
+    await db.insert(inventarioCuentas).values({
+      nombre: data.nombre,
+      tipo: data.tipo,
+      saldo: data.saldo_inicial.toString(),
+      banco: data.banco,
+      moneda: data.moneda,
+    });
+    revalidatePath("/cuentas");
     return {
-      data: null,
-      error: "Algo salió mal.",
+      error: null,
+      data: "Tarjeta agregada con éxito.",
     };
+  } catch (e) {
+    console.error(e);
+    return { data: null, error: "Error al agregar la tarjeta." };
   }
-  revalidateTag("tarjetas");
-  return {
-    error: null,
-    data: "Tarjeta agregada con éxito.",
-  };
 }
 
-export async function deleteTarjeta(id: number) {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
-  const res = await fetch(
-    process.env.BACKEND_URL_V2 + "/tarjetas/" + id + "/",
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+export async function deleteCuenta(id: number) {
+  try {
+    const cuentaEliminada = await db
+      .delete(inventarioCuentas)
+      .where(eq(inventarioCuentas.id, id))
+      .returning({
+        id: inventarioCuentas.id,
+      });
+
+    if (cuentaEliminada.length === 0)
+      throw new ValidationError("Cuenta no encontrada");
+
+    revalidatePath("/cuentas");
+    return {
+      data: "Cuenta eliminada con éxito.",
+      error: null,
+    };
+  } catch (e) {
+    console.error(e);
+    if (e instanceof ValidationError) {
+      return {
+        data: null,
+        error: e.message,
+      };
     }
-  );
-  if (!res.ok) {
-    if (res.status === 401)
-      return {
-        data: null,
-        error: "No autorizado",
-      };
-    if (res.status === 400) {
-      const json = await res.json();
-      return {
-        data: null,
-        error: json.detail,
-      };
-    }
-    if (res.status === 404)
-      return {
-        data: null,
-        error: "Tarjeta no encontrada",
-      };
     return {
       data: null,
-      error: "Algo salió mal.",
+      error: "Error al eliminar la cuenta.",
     };
   }
-  revalidateTag("tarjetas");
-  return {
-    data: "Tarjeta eliminada con éxito.",
-    error: null,
-  };
 }
 
 export async function addTransferenciaTarjeta(
@@ -188,13 +159,15 @@ export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
 export async function addTransferencia(
   data: InferOutput<typeof TransferenciaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const { userId } = await getSession();
   try {
+    const { userId } = await getSession();
+
     const cuentas = await db
       .select({
         id: inventarioCuentas.id,
         nombre: inventarioCuentas.nombre,
         saldo: inventarioCuentas.saldo,
+        moneda: inventarioCuentas.moneda,
       })
       .from(inventarioCuentas)
       .where(
@@ -202,22 +175,35 @@ export async function addTransferencia(
       );
 
     if (cuentas.length !== 2) {
-      throw new ValidationError("Las cuentas no son válidas.");
+      throw new ValidationError(
+        "Las cuentas de origen o destino no son válidas."
+      );
     }
 
     const cuentaOrigen = cuentas.find((c) => c.id === data.cuentaOrigen);
     const cuentaDestino = cuentas.find((c) => c.id === data.cuentaDestino);
 
-    if (!cuentaOrigen || !cuentaDestino)
-      throw new ValidationError("Las cuentas no son válidas.");
+    if (!cuentaOrigen || !cuentaDestino) {
+      throw new ValidationError(
+        "No se pudieron encontrar las cuentas especificadas."
+      );
+    }
 
     if (parseFloat(cuentaOrigen.saldo) < data.cantidad) {
       throw new ValidationError(
-        "El saldo de la cuenta origen es insuficiente."
+        "El saldo de la cuenta de origen es insuficiente."
       );
     }
+
+    const { cantidadDestino, descripcion } = calcularDetallesTransferencia(
+      cuentaOrigen,
+      cuentaDestino,
+      data.cantidad,
+      data.tipoCambio
+    );
+
     const nuevoSaldoOrigen = parseFloat(cuentaOrigen.saldo) - data.cantidad;
-    const nuevoSaldoDestino = parseFloat(cuentaDestino.saldo) + data.cantidad;
+    const nuevoSaldoDestino = parseFloat(cuentaDestino.saldo) + cantidadDestino;
 
     await db.transaction(async (tx) => {
       await tx
@@ -234,7 +220,7 @@ export async function addTransferencia(
         tipo: TipoTransferencia.TRANSFERENCIA,
         cantidad: data.cantidad.toString(),
         createdAt: new Date().toISOString(),
-        descripcion: `${data.cantidad} de ${cuentaOrigen.nombre} a ${cuentaDestino.nombre}`,
+        descripcion: descripcion,
         usuarioId: Number(userId),
         cuentaId: cuentaOrigen.id,
       });
@@ -258,4 +244,31 @@ export async function addTransferencia(
       error: "Error al agregar la transferencia.",
     };
   }
+}
+
+function calcularDetallesTransferencia(
+  origen: { nombre: string; moneda: string },
+  destino: { nombre: string; moneda: string },
+  cantidadOrigen: number,
+  tipoCambio?: number
+) {
+  const sonMonedasIguales = origen.moneda === destino.moneda;
+
+  if (sonMonedasIguales) {
+    return {
+      cantidadDestino: cantidadOrigen,
+      descripcion: `Transferencia de ${origen.nombre} a ${destino.nombre}`,
+    };
+  }
+
+  if (!tipoCambio || tipoCambio <= 0) {
+    throw new ValidationError(
+      "El tipo de cambio es requerido para transferencias entre monedas diferentes."
+    );
+  }
+
+  return {
+    cantidadDestino: cantidadOrigen * tipoCambio,
+    descripcion: `Transferencia de ${origen.nombre} a ${destino.nombre} (T/C: ${tipoCambio})`,
+  };
 }

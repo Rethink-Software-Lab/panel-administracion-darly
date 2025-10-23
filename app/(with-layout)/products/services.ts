@@ -1,13 +1,13 @@
-import { EndpointProductos } from './types';
-import { db } from '@/db/initial';
+import { EndpointProductos } from "./types";
+import { db } from "@/db/initial";
 import {
   inventarioCategorias,
   inventarioHistorialpreciocostosalon,
   inventarioHistorialprecioventasalon,
   inventarioImage,
   inventarioProductoinfo,
-} from '@/db/schema';
-import { desc, eq, sql } from 'drizzle-orm';
+} from "@/db/schema";
+import { desc, eq, sql } from "drizzle-orm";
 
 // TODO: actualizar drizzle-orm y usar el nuevo joinLateral
 
@@ -63,7 +63,7 @@ export async function getProductosWithCategorias(): Promise<{
   } catch (e) {
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }

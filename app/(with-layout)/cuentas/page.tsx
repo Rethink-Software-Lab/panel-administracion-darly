@@ -39,7 +39,7 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
           <div className="flex gap-1 items-center">
             <p className="text-sm">Saldo total:</p>
             <p className="text-md font-semibold">
-              {Intl.NumberFormat("es-ES", {
+              {Intl.NumberFormat("es-CU", {
                 style: "currency",
                 currency: "CUP",
               }).format(data.total_balance)}
@@ -78,7 +78,8 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
               <p className="text-xl font-bold">
                 {Intl.NumberFormat("es-ES", {
                   style: "currency",
-                  currency: "CUP",
+                  currency: tarjeta.moneda,
+                  currencyDisplay: "code",
                 }).format(Number(tarjeta.saldo))}
               </p>
             </CardContent>

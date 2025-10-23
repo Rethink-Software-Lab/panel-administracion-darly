@@ -9,15 +9,11 @@ import { DropdownActionCuentas } from "./DropdownActionsCuentas";
 
 export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
   const { data, error, meta } = await getTransacciones();
-
   return (
     <div className="p-4 m-0 bg-muted/40 h-full border-t-2 border-muted">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-lg font-semibold md:text-xl">Transacciones</h1>
-        <DropdownActionCuentas
-          cuentas={data?.cuentas || []}
-          isError={!!error}
-        />
+        <DropdownActionCuentas cuentas={cuentas || []} isError={!!error} />
       </div>
 
       {data && meta ? (

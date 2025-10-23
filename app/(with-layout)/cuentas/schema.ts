@@ -8,20 +8,50 @@ import {
   string,
   forward,
   partialCheck,
+  variant,
+  literal,
+  optional,
+  undefined_,
 } from "valibot";
-import { Banco, TipoTransferencia } from "./types";
+import {
+  Banco,
+  Moneda,
+  Tarjetas,
+  TipoCuenta,
+  TipoTransferencia,
+} from "@/app/(with-layout)/cuentas/types";
 
-export const TarjetasSchema = object({
+const BaseSchema = object({
   nombre: pipe(
     string("El nombre es requerido"),
     nonEmpty("El nombre es requerido")
   ),
-  banco: enum_(Banco, "Banco requerido."),
   saldo_inicial: pipe(
     string("El saldo inicial es requerido"),
-    nonEmpty("El saldo inicial es requerido")
+    nonEmpty("El saldo inicial es requerido"),
+    transform((value: string) => parseFloat(value)),
+    minValue(0, "El saldo inicial debe ser mayor que 0")
   ),
+  moneda: enum_(Moneda, "Moneda requerida."),
 });
+
+const EfectivoSchema = object({
+  ...BaseSchema.entries,
+  tipo: literal(TipoCuenta.EFECTIVO),
+  banco: optional(undefined_()),
+});
+
+const BancariaSchema = object({
+  ...BaseSchema.entries,
+  tipo: literal(TipoCuenta.BANCARIA),
+  banco: enum_(Banco, "Banco requerido."),
+});
+
+export const CuentasSchema = variant(
+  "tipo",
+  [EfectivoSchema, BancariaSchema],
+  "El tipo de cuenta es requerido."
+);
 
 export const TransferenciasTarjetas = object({
   cuenta: pipe(
@@ -59,6 +89,14 @@ export const TransferenciaSchema = pipe(
       transform((value: string) => parseFloat(value)),
       minValue(0.1, "La cantidad debe ser mayor que 0")
     ),
+    tipoCambio: optional(
+      pipe(
+        string("El tipo de cambio es requerido."),
+        nonEmpty("El tipo de cambio es requerido."),
+        transform((value: string) => parseFloat(value)),
+        minValue(0.1, "El tipo de cambio debe ser mayor que 0")
+      )
+    ),
   }),
   forward(
     partialCheck(
@@ -74,3 +112,71 @@ export const TransferenciaSchema = pipe(
     ["cuentaDestino"]
   )
 );
+
+export const createTransferenciaSchema = (cuentas: Tarjetas[]) =>
+  pipe(
+    object({
+      cuentaOrigen: pipe(
+        string("La cuenta origen es requerida."),
+        nonEmpty("La cuenta origen es requerida."),
+        transform((value: string) => parseInt(value)),
+        minValue(1, "La cuenta origen es requerida.")
+      ),
+      cuentaDestino: pipe(
+        string("La cuenta destino es requerida."),
+        nonEmpty("La cuenta destino es requerida."),
+        transform((value: string) => parseInt(value)),
+        minValue(1, "La cuenta destino es requerida.")
+      ),
+      cantidad: pipe(
+        string("La cantidad es requerida."),
+        nonEmpty("La cantidad es requerida."),
+        transform(Number),
+        minValue(0.01, "La cantidad debe ser mayor que 0")
+      ),
+      tipoCambio: optional(
+        pipe(
+          string(),
+          transform(Number),
+          minValue(0.01, "El tipo de cambio debe ser mayor que 0")
+        )
+      ),
+    }),
+    forward(
+      partialCheck(
+        [["cuentaOrigen"], ["cuentaDestino"]],
+        (input) => input.cuentaOrigen !== input.cuentaDestino,
+        "Las cuentas origen y destino no pueden ser iguales."
+      ),
+      ["cuentaDestino"]
+    ),
+    forward(
+      partialCheck(
+        [["cuentaOrigen"], ["cuentaDestino"], ["tipoCambio"]],
+        (input) => {
+          if (!input.cuentaOrigen || !input.cuentaDestino) return true;
+
+          const cuentaOrigen = cuentas.find((c) => c.id === input.cuentaOrigen);
+          const cuentaDestino = cuentas.find(
+            (c) => c.id === input.cuentaDestino
+          );
+
+          if (!cuentaOrigen || !cuentaDestino) return true;
+
+          if (cuentaOrigen.moneda !== cuentaDestino.moneda) {
+            if (typeof input.tipoCambio !== "number" || input.tipoCambio <= 0) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+        "El tipo de cambio es requerido cuando las monedas son diferentes."
+      ),
+      ["tipoCambio"]
+    )
+  );
+
+export type TransferenciaSchemaType = ReturnType<
+  typeof createTransferenciaSchema
+>;

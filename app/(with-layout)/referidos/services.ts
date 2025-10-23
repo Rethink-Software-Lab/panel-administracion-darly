@@ -1,7 +1,7 @@
-import { Referido } from './types';
-import { db } from '@/db/initial';
-import { inventarioVendedorexterno } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { Referido } from "./types";
+import { db } from "@/db/initial";
+import { inventarioVendedorexterno } from "@/db/schema";
+import { desc } from "drizzle-orm";
 
 export async function getReferidos(): Promise<{
   data: Referido[] | null;
@@ -19,7 +19,7 @@ export async function getReferidos(): Promise<{
   } catch (e) {
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al conectar con el servidor.",
     };
   }
 }

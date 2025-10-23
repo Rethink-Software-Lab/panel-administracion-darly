@@ -16,22 +16,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { TransferenciaSchema } from "@/app/(with-layout)/cuentas/schema";
+import { createTransferenciaSchema } from "@/app/(with-layout)/cuentas/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput, InferOutput } from "valibot";
 import { toast } from "sonner";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import {
-  Banco,
-  CuentasInTransaccionesCompanent,
-  TipoCuenta,
-} from "@/app/(with-layout)/cuentas/types";
+import { Banco, Tarjetas, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import { addTransferencia } from "@/app/(with-layout)/cuentas/actions";
 import { cn } from "@/lib/utils";
 import {
@@ -52,7 +48,7 @@ export function FormTransferencia({
   cuentas,
   setOpen,
 }: {
-  cuentas: CuentasInTransaccionesCompanent[];
+  cuentas: Tarjetas[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [loading, setLoading] = useState(false);
@@ -61,13 +57,29 @@ export function FormTransferencia({
   const [openPopoverDestino, setOpenPopoverDestino] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const TransferenciaSchema = useMemo(
+    () => createTransferenciaSchema(cuentas),
+    [cuentas]
+  );
+
   const form = useForm<InferInput<typeof TransferenciaSchema>>({
     resolver: valibotResolver(TransferenciaSchema),
     defaultValues: {
       cuentaOrigen: "",
       cuentaDestino: "",
       cantidad: "",
+      tipoCambio: undefined,
     },
+  });
+
+  const cuentaOrigenWatch = useWatch({
+    name: "cuentaOrigen",
+    control: form.control,
+  });
+
+  const cuentaDestinoWatch = useWatch({
+    name: "cuentaDestino",
+    control: form.control,
   });
 
   const onSubmit = async (
@@ -334,6 +346,27 @@ export function FormTransferencia({
               </FormItem>
             )}
           />
+
+          {cuentaOrigenWatch &&
+            cuentaDestinoWatch &&
+            cuentas.find((c) => c.id.toString() === cuentaOrigenWatch)
+              ?.moneda !==
+              cuentas.find((c) => c.id.toString() === cuentaDestinoWatch)
+                ?.moneda && (
+              <FormField
+                control={form.control}
+                name="tipoCambio"
+                render={({ field }) => (
+                  <FormItem className="w-full text-left">
+                    <Label>Tipo de cambio</Label>
+                    <FormControl>
+                      <Input {...field} type="number" step={0.01} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
           <div className="flex justify-end">
             <Button disabled={loading} type="submit" className="gap-2">

@@ -1,7 +1,5 @@
-import { neon } from "@neondatabase/serverless";
 import { drizzle as drizzleNode } from "drizzle-orm/node-postgres";
-import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
-import * as schema from "./schema";
+import * as schema from "@/db/schema";
 
 const DATABASE_URL = process.env.DATABASE_URL!;
 

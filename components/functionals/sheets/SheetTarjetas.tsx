@@ -18,12 +18,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { TarjetasSchema } from "@/app/(with-layout)/cuentas/schema";
+import { CuentasSchema } from "@/app/(with-layout)/cuentas/schema";
 
 import { Input } from "@/components/ui/input";
-import { InferInput } from "valibot";
+import { InferInput, InferOutput } from "valibot";
 import { toast } from "sonner";
 import { useRef, useState } from "react";
 
@@ -36,27 +36,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Banco } from "@/app/(with-layout)/cuentas/types";
-import { addTarjeta } from "@/app/(with-layout)/cuentas/actions";
+import { Banco, Moneda, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
+import { addCuenta } from "@/app/(with-layout)/cuentas/actions";
 
-export default function SheetTarjetas({ isError }: { isError: boolean }) {
+export default function SheetCuentas({ isError }: { isError: boolean }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<InferInput<typeof TarjetasSchema>>({
-    resolver: valibotResolver(TarjetasSchema),
+  const form = useForm<InferInput<typeof CuentasSchema>>({
+    resolver: valibotResolver(CuentasSchema),
     defaultValues: {
       nombre: "",
-      banco: undefined,
       saldo_inicial: "0",
     },
   });
 
+  const tipoWatch = useWatch({
+    name: "tipo",
+    control: form.control,
+  });
+
   const onSubmit = async (
-    dataForm: InferInput<typeof TarjetasSchema>
+    dataForm: InferOutput<typeof CuentasSchema>
   ): Promise<void> => {
-    const { data: dataRes, error } = await addTarjeta(dataForm);
+    const { data: dataRes, error } = await addCuenta(dataForm);
 
     if (error) {
       setError(error);
@@ -97,7 +101,7 @@ export default function SheetTarjetas({ isError }: { isError: boolean }) {
           <Form {...form}>
             <form
               ref={formRef}
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit as any)}
               className="space-y-4"
             >
               <FormField
@@ -113,41 +117,103 @@ export default function SheetTarjetas({ isError }: { isError: boolean }) {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="banco"
+                name="tipo"
                 render={({ field }) => (
                   <FormItem className="w-full text-left">
-                    <Label>Banco</Label>
+                    <Label>Tipo de cuenta</Label>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        if (value === TipoCuenta.EFECTIVO) {
+                          form.setValue("banco", undefined);
+                          form.clearErrors("banco");
+                        }
+                      }}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione un banco" />
+                          <SelectValue placeholder="Seleccione un tipo de cuenta" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={Banco.BPA}>BPA</SelectItem>
-                        <SelectItem value={Banco.BANDEC}>BANDEC</SelectItem>
+                        <SelectItem value={TipoCuenta.EFECTIVO}>
+                          Efectivo
+                        </SelectItem>
+                        <SelectItem value={TipoCuenta.BANCARIA}>
+                          Bancaria
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {tipoWatch === TipoCuenta.BANCARIA && (
+                <FormField
+                  control={form.control}
+                  name="banco"
+                  render={({ field }) => (
+                    <FormItem className="w-full text-left">
+                      <Label>Banco</Label>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccione un banco" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={Banco.BPA}>BPA</SelectItem>
+                          <SelectItem value={Banco.BANDEC}>BANDEC</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="saldo_inicial"
                 render={({ field }) => (
                   <FormItem className="w-full text-left">
-                    <Label>
-                      Saldo inicial <span className="text-xs">(opcional)</span>
-                    </Label>
+                    <Label>Saldo inicial</Label>
                     <FormControl>
                       <Input {...field} type="number" step={0.01} min={0} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="moneda"
+                render={({ field }) => (
+                  <FormItem className="w-full text-left">
+                    <Label>Moneda</Label>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccione una moneda" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={Moneda.CUP}>CUP</SelectItem>
+                        <SelectItem value={Moneda.USD}>USD</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

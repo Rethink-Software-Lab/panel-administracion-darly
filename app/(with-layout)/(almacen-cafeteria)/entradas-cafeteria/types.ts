@@ -39,6 +39,6 @@ export interface EntradaCafeteria {
 export interface EndpointEntradasCafeteria {
   productos: ProductoEntrada[];
   entradas: EntradaCafeteria[];
-  cuentas: Omit<Tarjetas, "total_transferencias_mes">[];
+  cuentas: Omit<Tarjetas, "total_transferencias_mes" | "moneda">[];
   proveedores: Pick<Proveedor, "id" | "nombre">[];
 }
