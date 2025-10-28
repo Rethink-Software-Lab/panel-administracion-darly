@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProductInfo } from "@/app/(with-layout)/products/types";
 import { Fragment } from "react";
 import { PackageOpen } from "lucide-react";
 
@@ -17,15 +16,15 @@ interface ProductoInInventarioSearch {
   numero: number;
 }
 
-type InventarioSearch = {
+export type InventarioSearch = {
   area: string;
 } & (
   | {
       cantidad: number;
-      productos: never;
+      productos?: never;
     }
   | {
-      cantidad: never;
+      cantidad?: never;
       productos: ProductoInInventarioSearch[];
     }
 );
@@ -35,7 +34,13 @@ export function SearchDisponibles({
   zapato: isZapato,
   inventario,
 }: {
-  info: ProductInfo;
+  info: {
+    id: number;
+    imagen: string | null;
+    descripcion: string;
+    precio_costo: string;
+    precio_venta: string;
+  };
   zapato: boolean;
   inventario: InventarioSearch[];
 }) {
@@ -55,20 +60,23 @@ export function SearchDisponibles({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {res.productos.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell>{p.id}</TableCell>
-                      <TableCell>{p.numero}</TableCell>
-                      <TableCell>{p.color}</TableCell>
-                    </TableRow>
-                  ))}
+                  {res.productos &&
+                    res.productos.map((p) => (
+                      <TableRow key={p.id}>
+                        <TableCell>{p.id}</TableCell>
+                        <TableCell>{p.numero}</TableCell>
+                        <TableCell>{p.color}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
                 <TableFooter>
                   <TableRow>
                     <TableCell colSpan={info ? 2 : 3} className="font-bold">
                       Total
                     </TableCell>
-                    <TableCell>{res.productos.length}</TableCell>
+                    <TableCell>
+                      {res.productos && res?.productos.length}
+                    </TableCell>
                   </TableRow>
                 </TableFooter>
               </Table>

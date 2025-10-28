@@ -2,7 +2,9 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "./initial";
 import {
   inventarioHistorialpreciocostocafeteria,
+  inventarioHistorialpreciocostosalon,
   inventarioHistorialprecioventacafeteria,
+  inventarioHistorialprecioventasalon,
   inventarioPrecioelaboracion,
 } from "@/db/schema";
 
@@ -40,5 +42,27 @@ export const createSubqueryUltimoPrecioCostoProductoCafeteria = (
     .from(inventarioHistorialpreciocostocafeteria)
     .where(eq(inventarioHistorialpreciocostocafeteria.productoId, productoId))
     .orderBy(desc(inventarioHistorialpreciocostocafeteria.id))
+    .limit(1)
+    .as("precioCosto");
+
+export const createSubqueryUltimoPrecioVentaProducto = (productoId: number) =>
+  db
+    .select({
+      precio: inventarioHistorialprecioventasalon.precio,
+    })
+    .from(inventarioHistorialprecioventasalon)
+    .where(eq(inventarioHistorialprecioventasalon.productoInfoId, productoId))
+    .orderBy(desc(inventarioHistorialprecioventasalon.id))
+    .limit(1)
+    .as("precioVenta");
+
+export const createSubqueryUltimoPrecioCostoProducto = (productoId: number) =>
+  db
+    .select({
+      precio: inventarioHistorialpreciocostosalon.precio,
+    })
+    .from(inventarioHistorialpreciocostosalon)
+    .where(eq(inventarioHistorialpreciocostosalon.productoInfoId, productoId))
+    .orderBy(desc(inventarioHistorialpreciocostosalon.id))
     .limit(1)
     .as("precioCosto");
