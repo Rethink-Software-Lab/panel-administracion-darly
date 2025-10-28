@@ -26,7 +26,12 @@ export async function getAreaVenta(
         isMesa: inventarioAreaventa.isMesa,
       })
       .from(inventarioAreaventa)
-      .where(eq(inventarioAreaventa.id, id))
+      .where(
+        and(
+          eq(inventarioAreaventa.id, id),
+          eq(inventarioAreaventa.active, true)
+        )
+      )
       .limit(1);
 
     if (!areaVenta || areaVenta.length === 0) {

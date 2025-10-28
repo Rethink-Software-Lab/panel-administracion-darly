@@ -1,7 +1,7 @@
 import { db } from "@/db/initial";
 import { inventarioAreaventa } from "@/db/schema";
 import { AreaVenta } from "./types";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export async function getAreasVentas(): Promise<{
   data: AreaVenta[] | null;
@@ -9,8 +9,14 @@ export async function getAreasVentas(): Promise<{
 }> {
   try {
     const areas = await db
-      .select()
+      .select({
+        id: inventarioAreaventa.id,
+        nombre: inventarioAreaventa.nombre,
+        color: inventarioAreaventa.color,
+        isMesa: inventarioAreaventa.isMesa,
+      })
       .from(inventarioAreaventa)
+      .where(eq(inventarioAreaventa.active, true))
       .orderBy(desc(inventarioAreaventa.id));
     return {
       data: areas,

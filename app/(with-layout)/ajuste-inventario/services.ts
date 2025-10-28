@@ -57,7 +57,10 @@ export async function getAjustesInventario(): Promise<{
             inventarioProductoinfo.descripcion
           ),
 
-        db.select().from(inventarioAreaventa),
+        db
+          .select()
+          .from(inventarioAreaventa)
+          .where(eq(inventarioAreaventa.active, true)),
 
         db
           .selectDistinct({

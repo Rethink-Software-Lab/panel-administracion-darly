@@ -51,7 +51,10 @@ export async function updateArea(
 
 export async function deleteAreaVenta({ id }: { id: number }) {
   try {
-    await db.delete(inventarioAreaventa).where(eq(inventarioAreaventa.id, id));
+    await db
+      .update(inventarioAreaventa)
+      .set({ active: false })
+      .where(eq(inventarioAreaventa.id, id));
   } catch (e) {
     console.error(e);
     return {

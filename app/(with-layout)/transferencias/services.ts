@@ -12,7 +12,6 @@ import {
 import { and, count, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { ProductosTransfer, ResponseTransferencias } from "./types";
-import { revalidatePath } from "next/cache";
 
 export async function getTransferencias(): Promise<{
   data: ResponseTransferencias | null;
@@ -82,7 +81,10 @@ export async function getTransferencias(): Promise<{
           areaVentaPara.nombre
         )
         .orderBy(desc(inventarioTransferencia.id)),
-      await db.select().from(inventarioAreaventa),
+      await db
+        .select()
+        .from(inventarioAreaventa)
+        .where(eq(inventarioAreaventa.active, true)),
       await db
         .selectDistinct({
           id: inventarioProductoinfo.id,

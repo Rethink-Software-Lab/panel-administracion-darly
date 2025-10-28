@@ -3,6 +3,7 @@ import { ReportesSearchParams } from "./page";
 import { inventarioAreaventa, inventarioCategorias } from "@/db/schema";
 import { db } from "@/db/initial";
 import { ReporteFormData } from "./types";
+import { eq } from "drizzle-orm";
 
 export async function getReporteFormData(): Promise<{
   data: ReporteFormData | null;
@@ -15,7 +16,8 @@ export async function getReporteFormData(): Promise<{
           id: inventarioAreaventa.id,
           nombre: inventarioAreaventa.nombre,
         })
-        .from(inventarioAreaventa),
+        .from(inventarioAreaventa)
+        .where(eq(inventarioAreaventa.active, true)),
       await db.select().from(inventarioCategorias),
     ]);
     return {
