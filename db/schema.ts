@@ -19,16 +19,14 @@ export const inventarioAjusteinventario = pgTable(
   "inventario_ajusteinventario",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ajusteinventario_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ajusteinventario_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -52,16 +50,14 @@ export const inventarioAjusteinventario = pgTable(
 
 export const djangoMigrations = pgTable("django_migrations", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "django_migrations_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "django_migrations_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   app: varchar({ length: 255 }).notNull(),
   name: varchar({ length: 255 }).notNull(),
   applied: timestamp({ withTimezone: true, mode: "string" }).notNull(),
@@ -92,16 +88,14 @@ export const djangoSession = pgTable(
 export const authGroup = pgTable(
   "auth_group",
   {
-    id: integer()
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "auth_group_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
+      name: "auth_group_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     name: varchar({ length: 150 }).notNull(),
   },
   (table) => [
@@ -116,16 +110,14 @@ export const authGroup = pgTable(
 export const djangoContentType = pgTable(
   "django_content_type",
   {
-    id: integer()
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "django_content_type_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
+      name: "django_content_type_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     appLabel: varchar("app_label", { length: 100 }).notNull(),
     model: varchar({ length: 100 }).notNull(),
   },
@@ -140,16 +132,14 @@ export const djangoContentType = pgTable(
 export const djangoAdminLog = pgTable(
   "django_admin_log",
   {
-    id: integer()
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "django_admin_log_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
+      name: "django_admin_log_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     actionTime: timestamp("action_time", {
       withTimezone: true,
       mode: "string",
@@ -189,16 +179,14 @@ export const inventarioAjusteinventarioProductos = pgTable(
   "inventario_ajusteinventario_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ajusteinventario_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ajusteinventario_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ajusteinventarioId: bigint("ajusteinventario_id", {
       mode: "number",
@@ -235,16 +223,14 @@ export const inventarioCuentacasa = pgTable(
   "inventario_cuentacasa",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_cuentacasa_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_cuentacasa_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -270,16 +256,14 @@ export const inventarioCuentacasaProductos = pgTable(
   "inventario_cuentacasa_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_cuentacasa_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_cuentacasa_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentacasaId: bigint("cuentacasa_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -318,16 +302,14 @@ export const inventarioCuentacasaElaboraciones = pgTable(
   "inventario_cuentacasa_elaboraciones",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_cuentacasa_elaboraciones_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_cuentacasa_elaboraciones_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentacasaId: bigint("cuentacasa_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -367,16 +349,14 @@ export const inventarioElaboracionesCantidadCuentaCasa = pgTable(
   "inventario_elaboraciones_cantidad_cuenta_casa",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_elaboraciones_cantidad_cuenta_casa_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_elaboraciones_cantidad_cuenta_casa_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -396,16 +376,14 @@ export const inventarioElaboracionesCantidadCuentaCasa = pgTable(
 
 export const inventarioElaboraciones = pgTable("inventario_elaboraciones", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "inventario_elaboraciones_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "inventario_elaboraciones_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   manoObra: numeric("mano_obra", { precision: 12, scale: 2 }).notNull(),
   nombre: varchar({ length: 50 }).notNull(),
 });
@@ -414,16 +392,14 @@ export const inventarioElaboracionesIngredientesCantidad = pgTable(
   "inventario_elaboraciones_ingredientes_cantidad",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_elaboraciones_ingredientes_cantidad_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_elaboraciones_ingredientes_cantidad_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     elaboracionesId: bigint("elaboraciones_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -460,16 +436,14 @@ export const inventarioElaboracionesCantidadMerma = pgTable(
   "inventario_elaboraciones_cantidad_merma",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_elaboraciones_cantidad_merma_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_elaboraciones_cantidad_merma_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -489,16 +463,14 @@ export const inventarioElaboracionesCantidadMerma = pgTable(
 
 export const inventarioCuentas = pgTable("inventario_cuentas", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "inventario_cuentas_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "inventario_cuentas_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   nombre: varchar({ length: 50 }).notNull(),
   tipo: varchar({ length: 30 }).notNull(),
   saldo: numeric({ precision: 12, scale: 2 }).notNull(),
@@ -508,50 +480,45 @@ export const inventarioCuentas = pgTable("inventario_cuentas", {
 
 export const inventarioCategorias = pgTable("inventario_categorias", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "inventario_categorias_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "inventario_categorias_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   nombre: varchar({ length: 50 }).notNull(),
 });
 
 export const inventarioAreaventa = pgTable("inventario_areaventa", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "inventario_areaventa_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "inventario_areaventa_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   nombre: varchar({ length: 50 }).notNull(),
   color: varchar({ length: 10 }).notNull(),
-  isMesa: boolean().notNull(),
+  isMesa: boolean().default(false).notNull(),
+  active: boolean().default(true).notNull(),
 });
 
 export const inventarioElaboracionesVentasCafeteria = pgTable(
   "inventario_elaboraciones_ventas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_elaboraciones_ventas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_elaboraciones_ventas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: integer().notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -572,16 +539,14 @@ export const inventarioHistorialprecioventacafeteria = pgTable(
   "inventario_historialprecioventacafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_historialprecioventacafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_historialprecioventacafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     precio: numeric({ precision: 7, scale: 2 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
@@ -617,16 +582,14 @@ export const inventarioHistorialpreciocostocafeteria = pgTable(
   "inventario_historialpreciocostocafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_historialpreciocostocafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_historialpreciocostocafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     precio: numeric({ precision: 7, scale: 2 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
@@ -662,16 +625,14 @@ export const inventarioHistorialpreciocostosalon = pgTable(
   "inventario_historialpreciocostosalon",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_historialpreciocostosalon_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_historialpreciocostosalon_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     precio: numeric({ precision: 7, scale: 2 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
@@ -707,16 +668,14 @@ export const inventarioGastos = pgTable(
   "inventario_gastos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_gastos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_gastos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     tipo: varchar({ length: 30 }).notNull(),
     descripcion: varchar({ length: 100 }).notNull(),
     cantidad: integer().notNull(),
@@ -770,16 +729,14 @@ export const inventarioHistorialprecioventasalon = pgTable(
   "inventario_historialprecioventasalon",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_historialprecioventasalon_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_historialprecioventasalon_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     precio: numeric({ precision: 7, scale: 2 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
@@ -815,16 +772,14 @@ export const inventarioImage = pgTable(
   "inventario_image",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_image_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_image_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     publicId: varchar("public_id", { length: 50 }).notNull(),
     url: varchar({ length: 200 }).notNull(),
   },
@@ -846,16 +801,14 @@ export const inventarioProductosCantidadCuentaCasa = pgTable(
   "inventario_productos_cantidad_cuenta_casa",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_cantidad_cuenta_casa_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_cantidad_cuenta_casa_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -874,16 +827,14 @@ export const inventarioProductosCantidadCuentaCasa = pgTable(
 
 export const inventarioProveedor = pgTable("inventario_proveedor", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedByDefaultAsIdentity({
-      name: "inventario_proveedor_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "inventario_proveedor_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    maxValue: 9223372036854775807,
+    cache: 1,
+  }),
   nombre: varchar({ length: 100 }).notNull(),
   direccion: varchar({ length: 100 }).notNull(),
   nit: varchar({ length: 30 }).notNull(),
@@ -896,16 +847,14 @@ export const inventarioProductosCafeteria = pgTable(
   "inventario_productos_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     nombre: varchar({ length: 50 }).notNull(),
   }
 );
@@ -914,16 +863,14 @@ export const inventarioProductoinfo = pgTable(
   "inventario_productoinfo",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productoinfo_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productoinfo_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     descripcion: varchar({ length: 100 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     categoriaId: bigint("categoria_id", { mode: "number" }).notNull(),
@@ -957,16 +904,14 @@ export const inventarioInventarioAlmacenCafeteria = pgTable(
   "inventario_inventario_almacen_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_inventario_producto_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_inventario_producto_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -987,16 +932,14 @@ export const inventarioInventarioAreaCafeteria = pgTable(
   "inventario_inventario_area_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_inventario_area_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_inventario_area_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -1017,16 +960,14 @@ export const inventarioMermacafeteriaElaboraciones = pgTable(
   "inventario_mermacafeteria_elaboraciones",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_mermacafeteria_elaboraciones_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_mermacafeteria_elaboraciones_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     mermacafeteriaId: bigint("mermacafeteria_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -1063,16 +1004,14 @@ export const inventarioMermacafeteria = pgTable(
   "inventario_mermacafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_mermacafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_mermacafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1098,16 +1037,14 @@ export const inventarioSalidaalmacen = pgTable(
   "inventario_salidaalmacen",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_salidaalmacen_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_salidaalmacen_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1147,16 +1084,14 @@ export const inventarioProductosVentasCafeteria = pgTable(
   "inventario_productos_ventas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_ventas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_ventas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 7, scale: 2 }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -1178,16 +1113,14 @@ export const inventarioProductosSalidasCafeteria = pgTable(
   "inventario_productos_salidas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_salidas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_salidas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -1209,16 +1142,14 @@ export const inventarioVendedorexterno = pgTable(
   "inventario_vendedorexterno",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_vendedorexterno_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_vendedorexterno_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     nombre: varchar({ length: 50 }).notNull(),
     telefono: varchar({ length: 50 }).notNull(),
     codigoReferido: varchar("codigo_referido", { length: 8 }).notNull(),
@@ -1238,16 +1169,14 @@ export const inventarioSalidaalmacenrevoltosa = pgTable(
   "inventario_salidaalmacenrevoltosa",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_salidaalmacenrevoltosa_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_salidaalmacenrevoltosa_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1272,16 +1201,14 @@ export const inventarioSalidasCafeteriaElaboraciones = pgTable(
   "inventario_salidas_cafeteria_elaboraciones",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_salidas_cafeteria_elaboraciones_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_salidas_cafeteria_elaboraciones_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     salidasCafeteriaId: bigint("salidas_cafeteria_id", {
       mode: "number",
@@ -1329,16 +1256,14 @@ export const inventarioSalidasCafeteriaProductos = pgTable(
   "inventario_salidas_cafeteria_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_salidas_cafeteria_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_salidas_cafeteria_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     salidasCafeteriaId: bigint("salidas_cafeteria_id", {
       mode: "number",
@@ -1379,16 +1304,14 @@ export const inventarioSalidasCafeteria = pgTable(
   "inventario_salidas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_salidas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_salidas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1413,16 +1336,14 @@ export const inventarioVentasCafeteria = pgTable(
   "inventario_ventas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ventas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ventas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1450,16 +1371,14 @@ export const inventarioTransferencia = pgTable(
   "inventario_transferencia",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_transferencia_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_transferencia_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1506,16 +1425,14 @@ export const inventarioTransferenciaProductos = pgTable(
   "inventario_transferencia_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_transferencia_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_transferencia_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     transferenciaId: bigint("transferencia_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -1550,16 +1467,14 @@ export const inventarioUserGroups = pgTable(
   "inventario_user_groups",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_user_groups_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_user_groups_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     userId: bigint("user_id", { mode: "number" }).notNull(),
     groupId: integer("group_id").notNull(),
@@ -1594,16 +1509,14 @@ export const inventarioUserUserPermissions = pgTable(
   "inventario_user_user_permissions",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_user_user_permissions_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_user_user_permissions_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     userId: bigint("user_id", { mode: "number" }).notNull(),
     permissionId: integer("permission_id").notNull(),
@@ -1638,16 +1551,14 @@ export const inventarioVentasCafeteriaElaboraciones = pgTable(
   "inventario_ventas_cafeteria_elaboraciones",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ventas_cafeteria_elaboraciones_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ventas_cafeteria_elaboraciones_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventasCafeteriaId: bigint("ventas_cafeteria_id", {
       mode: "number",
@@ -1689,16 +1600,14 @@ export const inventarioTransacciones = pgTable(
   "inventario_transacciones",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_trnsferenciastarjetas_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_trnsferenciastarjetas_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -1791,16 +1700,14 @@ export const inventarioTransacciones = pgTable(
 export const authPermission = pgTable(
   "auth_permission",
   {
-    id: integer()
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "auth_permission_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
+      name: "auth_permission_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     name: varchar({ length: 255 }).notNull(),
     contentTypeId: integer("content_type_id").notNull(),
     codename: varchar({ length: 100 }).notNull(),
@@ -1826,16 +1733,14 @@ export const authGroupPermissions = pgTable(
   "auth_group_permissions",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "auth_group_permissions_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "auth_group_permissions_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     groupId: integer("group_id").notNull(),
     permissionId: integer("permission_id").notNull(),
   },
@@ -1869,16 +1774,14 @@ export const inventarioUser = pgTable(
   "inventario_user",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_user_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_user_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     password: varchar({ length: 128 }).notNull(),
     lastLogin: timestamp("last_login", { withTimezone: true, mode: "string" }),
     isSuperuser: boolean("is_superuser").notNull(),
@@ -1911,16 +1814,14 @@ export const inventarioProducto = pgTable(
   "inventario_producto",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_producto_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_producto_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     color: varchar({ length: 100 }),
     numero: numeric({ precision: 3, scale: 1 }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -2029,16 +1930,14 @@ export const inventarioIngredienteCantidad = pgTable(
   "inventario_ingrediente_cantidad",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ingrediente_cantidad_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ingrediente_cantidad_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 3 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ingredienteId: bigint("ingrediente_id", { mode: "number" }).notNull(),
@@ -2060,16 +1959,14 @@ export const inventarioElaboracionesSalidasAlmacenCafeteria = pgTable(
   "inventario_elaboraciones_salidas_almacen_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_elaboraciones_salidas_almacen_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_elaboraciones_salidas_almacen_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -2091,16 +1988,14 @@ export const inventarioEntradaalmacen = pgTable(
   "inventario_entradaalmacen",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_entradaalmacen_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_entradaalmacen_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     metodoPago: varchar("metodo_pago", { length: 30 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     proveedorId: bigint("proveedor_id", { mode: "number" }),
@@ -2142,16 +2037,14 @@ export const inventarioEntradasCafeteria = pgTable(
   "inventario_entradas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_entradas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_entradas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -2197,16 +2090,14 @@ export const inventarioEntradasCafeteriaProductos = pgTable(
   "inventario_entradas_cafeteria_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_entradas_cafeteria_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_entradas_cafeteria_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     entradasCafeteriaId: bigint("entradas_cafeteria_id", {
       mode: "number",
@@ -2247,16 +2138,14 @@ export const inventarioProductosEntradasCafeteria = pgTable(
   "inventario_productos_entradas_cafeteria",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_entradas_cafeteria_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_entradas_cafeteria_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -2278,16 +2167,14 @@ export const inventarioMermacafeteriaProductos = pgTable(
   "inventario_mermacafeteria_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_mermacafeteria_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_mermacafeteria_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     mermacafeteriaId: bigint("mermacafeteria_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -2323,16 +2210,14 @@ export const inventarioProductosCantidadMerma = pgTable(
   "inventario_productos_cantidad_merma",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_productos_cantidad_merma_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_productos_cantidad_merma_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
@@ -2354,16 +2239,14 @@ export const inventarioPrecioelaboracion = pgTable(
   "inventario_precioelaboracion",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_precioelaboracion_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_precioelaboracion_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     precio: numeric({ precision: 7, scale: 2 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
@@ -2400,16 +2283,14 @@ export const inventarioVentas = pgTable(
   "inventario_ventas",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ventas_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ventas_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     metodoPago: varchar("metodo_pago", { length: 30 }).notNull(),
     createdAt: timestamp("created_at", {
       withTimezone: true,
@@ -2448,16 +2329,14 @@ export const inventarioVentasCafeteriaProductos = pgTable(
   "inventario_ventas_cafeteria_productos",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" })
-      .primaryKey()
-      .generatedByDefaultAsIdentity({
-        name: "inventario_ventas_cafeteria_productos_id_seq",
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 9223372036854775807,
-        cache: 1,
-      }),
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_ventas_cafeteria_productos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventasCafeteriaId: bigint("ventas_cafeteria_id", {
       mode: "number",

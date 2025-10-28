@@ -66,13 +66,10 @@ import {
   TipoMovimiento,
 } from "@/app/(with-layout)/search/types";
 import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
-import { searchParamsCache } from "./searchParams";
-import { forbidden } from "next/navigation";
 import {
   createSubqueryUltimoPrecioCostoProducto,
   createSubqueryUltimoPrecioVentaProducto,
 } from "@/db/subquerys";
-import { info } from "console";
 import { ValidationError } from "@/lib/errors";
 import { InventarioSearch } from "@/components/functionals/SearchDisponibles";
 
@@ -121,13 +118,20 @@ export async function searchProductById(id: number) {
       isNull(inventarioAjusteinventarioProductos.productoId)
     );
 
+    const areaExpression = sql<string>`
+    CASE
+      WHEN ${inventarioProducto.areaVentaId} IS NULL AND ${inventarioProducto.almacenRevoltosa} THEN 'Almacen Revoltosa'
+      WHEN ${inventarioProducto.areaVentaId} IS NULL THEN 'Almacén'
+      ELSE ${inventarioAreaventa.nombre}
+    END`;
+
     if (zapato) {
       inventario = await db
         .select({
-          area: sql<string>`COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`,
+          area: areaExpression,
           productos: sql<
             Array<{ id: number; color: string; numero: number }>
-          >`JSON_AGG(JSON_BUILD_OBJECT('id', ${inventarioProducto.id}, 'color', ${inventarioProducto.color}, 'numero', ${inventarioProducto.numero}))`,
+          >`JSON_AGG(JSON_BUILD_OBJECT('id', ${inventarioProducto.id}, 'color', ${inventarioProducto.color}, 'numero', ${inventarioProducto.numero}) ORDER BY ${inventarioProducto.id} ASC)`,
         })
         .from(inventarioProducto)
         .leftJoin(
@@ -142,14 +146,14 @@ export async function searchProductById(id: number) {
           )
         )
         .where(commonWhere)
-        .groupBy(sql`COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`)
+        .groupBy(areaExpression)
         .orderBy(
-          sql`CASE WHEN COALESCE(${inventarioAreaventa.nombre}, 'Almacén') = 'Almacén' THEN 1 ELSE 0 END, COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`
+          sql`CASE WHEN ${areaExpression} = 'Almacén' THEN 2 WHEN ${areaExpression} = 'Almacen Revoltosa' THEN 1 ELSE 0 END, ${areaExpression}`
         );
     } else {
       inventario = await db
         .select({
-          area: sql<string>`COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`,
+          area: areaExpression,
           cantidad: sql<number>`count(${inventarioProducto.id})`.mapWith(
             Number
           ),
@@ -167,9 +171,9 @@ export async function searchProductById(id: number) {
           )
         )
         .where(commonWhere)
-        .groupBy(sql`COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`)
+        .groupBy(areaExpression)
         .orderBy(
-          sql`CASE WHEN COALESCE(${inventarioAreaventa.nombre}, 'Almacén') = 'Almacén' THEN 1 ELSE 0 END, COALESCE(${inventarioAreaventa.nombre}, 'Almacén')`
+          sql`CASE WHEN ${areaExpression} = 'Almacén' THEN 2 WHEN ${areaExpression} = 'Almacen Revoltosa' THEN 1 ELSE 0 END, ${areaExpression}`
         );
     }
 

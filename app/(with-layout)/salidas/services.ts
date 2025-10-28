@@ -126,7 +126,8 @@ export async function getSalidas(): Promise<{
         id: inventarioAreaventa.id,
         nombre: inventarioAreaventa.nombre,
       })
-      .from(inventarioAreaventa);
+      .from(inventarioAreaventa)
+      .where(eq(inventarioAreaventa.active, true));
 
     return {
       data: { salidas, productos: productos_en_almacen_principal, areasVenta },

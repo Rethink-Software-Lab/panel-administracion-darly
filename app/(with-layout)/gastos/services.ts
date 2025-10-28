@@ -19,7 +19,8 @@ export async function getGastos(): Promise<{
         id: inventarioAreaventa.id,
         nombre: inventarioAreaventa.nombre,
       })
-      .from(inventarioAreaventa);
+      .from(inventarioAreaventa)
+      .where(eq(inventarioAreaventa.active, true));
 
     const cuentas = await db
       .select({
