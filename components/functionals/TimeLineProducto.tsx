@@ -1,7 +1,7 @@
 import {
   getMovimientosProducto,
   getMovimientosProductoCafeteria,
-} from "@/app/(with-layout)/search/services";
+} from "@/app/(with-layout)/search/[id]/services";
 import { Movimiento, TipoMovimiento } from "@/app/(with-layout)/search/types";
 import {
   ArrowDownLeft,
@@ -199,7 +199,7 @@ export async function TimeLineProducto({
   infoId,
   isCafeteria,
 }: {
-  infoId: string;
+  infoId: number;
   isCafeteria: boolean;
 }) {
   const { data } = await (isCafeteria

@@ -1,10 +1,4 @@
-import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
-import {
-  FrecuenciasGastos,
-  TiposGastos,
-} from "@/app/(with-layout)/gastos/types";
 import { LOCALACIONES } from "@/app/(with-layout)/merma/type";
-import { Banco, TipoTransferencia } from "@/app/(with-layout)/cuentas/types";
 import { ROLES } from "@/app/(with-layout)/users/types";
 import {
   enum_,
@@ -20,7 +14,6 @@ import {
   nonEmpty,
   forward,
   partialCheck,
-  maxValue,
   integer,
   boolean,
   custom,
@@ -457,5 +450,17 @@ export const ReferidoSchema = object({
   telefono: pipe(
     string("El telefono es requerido"),
     nonEmpty("El telefono es requerido")
+  ),
+});
+
+export const searchByNumberSchema = object({
+  numeros: pipe(
+    array(
+      object({
+        id: pipe(string(), nonEmpty()),
+        text: pipe(string(), nonEmpty()),
+      })
+    ),
+    minLength(1, "Ingrese al menos un número")
   ),
 });

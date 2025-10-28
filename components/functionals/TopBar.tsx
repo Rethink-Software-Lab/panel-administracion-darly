@@ -4,17 +4,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { CircleUser, LifeBuoy, LogOut } from 'lucide-react';
-import { logout } from '@/lib/actions';
-import { AreaVenta } from '@/app/(with-layout)/areas-de-venta/types';
-import { Session } from '@/lib/getSession';
-import { NoRepresentados } from './NoRepresentados';
-import NavbarMobile from './NavbarMobile';
-import { SearchCommand } from './search-command';
-import { getProductosToSearch } from '@/app/(with-layout)/services';
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { CircleUser, LifeBuoy, LogOut } from "lucide-react";
+import { logout } from "@/lib/actions";
+import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
+import { Session } from "@/lib/getSession";
+import { NoRepresentados } from "./NoRepresentados";
+import NavbarMobile from "./NavbarMobile";
+import { SearchCommand } from "./search-command";
+import { getProductosToSearch } from "@/app/(with-layout)/services";
+import { BusquedaPorNumero } from "@/components/functionals/BusquedaPorNumero";
 
 interface Props {
   session: Session;
@@ -26,11 +27,11 @@ export default async function TopBar({ session, areasVenta }: Props) {
 
   return (
     <header className="flex justify-between h-14 items-center gap-2 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-      {/* TODO : Arreglar navegacion en vista mobile */}
-
       <NavbarMobile session={session} areasVenta={areasVenta} />
       <div className="flex flex-1 gap-2 justify-end">
         <SearchCommand productos={productos || []} />
+
+        <BusquedaPorNumero />
 
         <Link
           target="blank"
