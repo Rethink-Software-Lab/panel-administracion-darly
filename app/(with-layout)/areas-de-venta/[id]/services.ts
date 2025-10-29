@@ -1,4 +1,3 @@
-import { EndpointOneAreaVenta } from "./types";
 import { db } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
@@ -55,7 +54,7 @@ export async function getAreaVenta(id: number) {
           LIMIT 1
         )`,
         cantidad: count(inventarioProducto.id),
-        categoria_nombre: inventarioCategorias.nombre,
+        categoria__nombre: inventarioCategorias.nombre,
       })
       .from(inventarioProductoinfo)
       .innerJoin(

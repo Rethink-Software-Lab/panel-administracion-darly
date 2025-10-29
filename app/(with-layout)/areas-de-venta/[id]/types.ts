@@ -13,7 +13,7 @@ export interface Productos {
   descripcion: string;
   precio_venta: string;
   cantidad: number;
-  categoria_nombre: string | null;
+  categoria__nombre: string | null;
 }
 
 export interface Inventario {
