@@ -27,9 +27,9 @@ export const columns: ColumnDef<Salida>[] = [
     header: "Cantidad total",
   },
   {
+    id: "destino",
     accessorKey: "destino.nombre",
     header: "Destino",
-    cell: ({ row }) => row.original.destino.nombre ?? "Almacén Revoltosa",
   },
 
   {

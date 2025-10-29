@@ -30,7 +30,10 @@ export async function getSalidas(): Promise<{
         id: inventarioSalidaalmacen.id,
         createdAt: inventarioSalidaalmacen.createdAt,
         usuario: sql<string>`COALESCE (${inventarioUser.username}, 'Usuario eliminado')`,
-        destino: sql<any>`COALESCE(json_build_object('id', ${inventarioAreaventa.id}, 'nombre', ${inventarioAreaventa.nombre}), json_build_object('id', 0, 'nombre', 'Almacen Revoltosa'))`,
+        destino: {
+          id: sql<number>`COALESCE(${inventarioAreaventa.id}, 0)`,
+          nombre: sql<string>`COALESCE(${inventarioAreaventa.nombre}, 'Almacén Revoltosa')`,
+        },
         producto: countDistinct(inventarioProductoinfo),
         cantidad: count(inventarioProducto),
         detalle: sql<any>`COALESCE((
