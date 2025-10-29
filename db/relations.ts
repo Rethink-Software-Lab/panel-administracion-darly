@@ -15,15 +15,15 @@ import {
   inventarioElaboracionesIngredientesCantidad,
   inventarioIngredienteCantidad,
   inventarioElaboracionesCantidadMerma,
+  inventarioCuentas,
+  inventarioAreaventa,
   inventarioElaboracionesVentasCafeteria,
   inventarioProductosCafeteria,
   inventarioHistorialprecioventacafeteria,
   inventarioHistorialpreciocostocafeteria,
   inventarioProductoinfo,
   inventarioHistorialpreciocostosalon,
-  inventarioAreaventa,
   inventarioGastos,
-  inventarioCuentas,
   inventarioHistorialprecioventasalon,
   inventarioCategorias,
   inventarioImage,
@@ -324,6 +324,38 @@ export const inventarioElaboracionesCantidadMermaRelations = relations(
   })
 );
 
+export const inventarioAreaventaRelations = relations(
+  inventarioAreaventa,
+  ({ one, many }) => ({
+    inventarioCuenta: one(inventarioCuentas, {
+      fields: [inventarioAreaventa.cuentaId],
+      references: [inventarioCuentas.id],
+    }),
+    inventarioGastos: many(inventarioGastos),
+    inventarioSalidaalmacens: many(inventarioSalidaalmacen),
+    inventarioTransferencias_deId: many(inventarioTransferencia, {
+      relationName: "inventarioTransferencia_deId_inventarioAreaventa_id",
+    }),
+    inventarioTransferencias_paraId: many(inventarioTransferencia, {
+      relationName: "inventarioTransferencia_paraId_inventarioAreaventa_id",
+    }),
+    inventarioUsers: many(inventarioUser),
+    inventarioProductos_areaVentaId: many(inventarioProducto, {
+      relationName: "inventarioProducto_areaVentaId_inventarioAreaventa_id",
+    }),
+    inventarioVentas: many(inventarioVentas),
+  })
+);
+
+export const inventarioCuentasRelations = relations(
+  inventarioCuentas,
+  ({ many }) => ({
+    inventarioAreaventas: many(inventarioAreaventa),
+    inventarioGastos: many(inventarioGastos),
+    inventarioTransacciones: many(inventarioTransacciones),
+  })
+);
+
 export const inventarioElaboracionesVentasCafeteriaRelations = relations(
   inventarioElaboracionesVentasCafeteria,
   ({ one, many }) => ({
@@ -447,33 +479,6 @@ export const inventarioGastosRelations = relations(
       fields: [inventarioGastos.cuentaId],
       references: [inventarioCuentas.id],
     }),
-    inventarioTransacciones: many(inventarioTransacciones),
-  })
-);
-
-export const inventarioAreaventaRelations = relations(
-  inventarioAreaventa,
-  ({ many }) => ({
-    inventarioGastos: many(inventarioGastos),
-    inventarioSalidaalmacens: many(inventarioSalidaalmacen),
-    inventarioTransferencias_deId: many(inventarioTransferencia, {
-      relationName: "inventarioTransferencia_deId_inventarioAreaventa_id",
-    }),
-    inventarioTransferencias_paraId: many(inventarioTransferencia, {
-      relationName: "inventarioTransferencia_paraId_inventarioAreaventa_id",
-    }),
-    inventarioUsers: many(inventarioUser),
-    inventarioProductos_areaVentaId: many(inventarioProducto, {
-      relationName: "inventarioProducto_areaVentaId_inventarioAreaventa_id",
-    }),
-    inventarioVentas: many(inventarioVentas),
-  })
-);
-
-export const inventarioCuentasRelations = relations(
-  inventarioCuentas,
-  ({ many }) => ({
-    inventarioGastos: many(inventarioGastos),
     inventarioTransacciones: many(inventarioTransacciones),
   })
 );

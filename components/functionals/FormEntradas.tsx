@@ -5,6 +5,7 @@ import {
   LoaderCircle,
   MinusCircle,
   PlusCircle,
+  Printer,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -186,18 +187,19 @@ function NestedArray({
           {index + 1 === row.length && (
             <>
               <div className="col-span-1 text-center">
-                {productosIndex > 0 && (
-                  <Button
-                    onClick={() => removeProducto(productosIndex)}
-                    size="sm"
-                    variant="ghost"
-                    className="gap-1"
-                  >
-                    <MinusCircle className="h-3.5 w-3.5" />
-                    <span className="hidden md:inline">Eliminar </span>
-                    <span>producto</span>
-                  </Button>
-                )}
+                {productosIndex > 0 &&
+                  nestedIndex === nestedIndexRow.length - 1 && (
+                    <Button
+                      onClick={() => removeProducto(productosIndex)}
+                      size="sm"
+                      variant="ghost"
+                      className="gap-1"
+                    >
+                      <MinusCircle className="h-3.5 w-3.5" />
+                      <span className="hidden md:inline">Eliminar </span>
+                      <span>producto</span>
+                    </Button>
+                  )}
               </div>
               <div className="col-span-1 text-center">
                 {nestedIndex === nestedIndexRow.length - 1 && (
@@ -408,44 +410,59 @@ export default function FormEntradas({
               Estos datos se quedan almacenados en la tabla de Entradas.
             </AlertDialogDescription>
 
-            {dataModal?.map((z) => (
-              <Fragment key={z.zapato}>
-                <h2 className="font-semibold pt-2 mb-0">{z.zapato}</h2>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Color</TableHead>
-                      <TableHead className="grid grid-cols-2 items-center">
-                        <p>Número</p>
-                        <p>IDs</p>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {z.variantes?.map((res, index) => (
-                      <TableRow key={`${res?.color}-${index}`}>
-                        <TableCell className="align-top">
-                          {res?.color}
-                        </TableCell>
-                        <TableCell>
-                          {res?.numeros?.map((n, index) => (
-                            <div
-                              key={`${n}-${index}`}
-                              className="grid grid-cols-2"
-                            >
-                              <p>{n?.numero}</p>
-                              <p>{n?.ids}</p>
-                            </div>
-                          ))}
-                        </TableCell>
+            <div
+              id="tablaParaImprimir"
+              className="print:w-full print:h-full print:p-0 space-y-4"
+            >
+              {dataModal?.map((z) => (
+                <div key={z.zapato}>
+                  <h2 className="font-semibold pt-2 mb-0">{z.zapato}</h2>
+                  <Table>
+                    <TableHeader className="print:border-b-2 print:border-gray-500/30">
+                      <TableRow>
+                        <TableHead>Color</TableHead>
+                        <TableHead className="grid grid-cols-2 items-center">
+                          <p>Número</p>
+                          <p>IDs</p>
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Fragment>
-            ))}
+                    </TableHeader>
+                    <TableBody>
+                      {z.variantes?.map((res, index) => (
+                        <TableRow key={`${res?.color}-${index}`}>
+                          <TableCell className="align-top">
+                            {res?.color}
+                          </TableCell>
+                          <TableCell>
+                            {res?.numeros?.map((n, index) => (
+                              <div
+                                key={`${n}-${index}`}
+                                className="grid grid-cols-2"
+                              >
+                                <p>{n?.numero}</p>
+                                <p>{n?.ids}</p>
+                              </div>
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ))}
+            </div>
           </AlertDialogHeader>
           <AlertDialogFooter>
+            {dataModal && dataModal?.length > 0 && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => window.print()}
+              >
+                <Printer className="size-4" />
+                <span className="sr-only">Imprimir</span>
+              </Button>
+            )}
             <AlertDialogCancel
               onClick={() => {
                 router.push("/entradas");

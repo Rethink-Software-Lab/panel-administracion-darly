@@ -11,10 +11,7 @@ import {
 } from "@/db/schema";
 import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
-export async function getAjustesInventario(): Promise<{
-  data: ResponseAjusteInventario | null;
-  error: string | null;
-}> {
+export async function getAjustesInventario() {
   try {
     const [ajustes, productosPorAjuste, areas_ventas, productos_info] =
       await Promise.all([
@@ -58,7 +55,10 @@ export async function getAjustesInventario(): Promise<{
           ),
 
         db
-          .select()
+          .select({
+            id: inventarioAreaventa.id,
+            nombre: inventarioAreaventa.nombre,
+          })
           .from(inventarioAreaventa)
           .where(eq(inventarioAreaventa.active, true)),
 

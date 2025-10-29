@@ -6,7 +6,7 @@ import { Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModalAreasVenta from "@/components/functionals/ModalAreasVenta";
 import { AreaVenta } from "./types";
-import { Badge } from "@/components/ui/badge";
+import { AreaVentaTableMeta } from "@/components/functionals/data-tables/data-table-areas-ventas";
 
 export const columns: ColumnDef<AreaVenta>[] = [
   {
@@ -25,25 +25,22 @@ export const columns: ColumnDef<AreaVenta>[] = [
     ),
   },
   {
-    accessorKey: "isMesa",
-    header: "Es Mesa",
-    cell: ({ row }) => {
-      const isMesa = row.getValue("isMesa");
-      return isMesa ? (
-        <Badge variant="outline">Sí</Badge>
-      ) : (
-        <Badge variant="outline">No</Badge>
-      );
-    },
+    accessorKey: "cuenta.nombre",
+    header: "Cuenta",
   },
+
   {
     header: " ",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       if (row.original.nombre !== "Revoltosa") {
         return (
           <div className="flex items-center justify-end gap-2">
             <ModalAreasVenta
               data={row.original}
+              cuentasEfectivo={
+                (table.options.meta as AreaVentaTableMeta)?.cuentasEfectivo ||
+                []
+              }
               trigger={
                 <Button variant="outline" size="icon">
                   <span className="sr-only">Editar</span>

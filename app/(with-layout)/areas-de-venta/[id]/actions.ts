@@ -26,17 +26,16 @@ import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types
 import { TipoCuenta, TipoTransferencia } from "../../cuentas/types";
 import { getSession } from "@/lib/getSession";
 import { AuthorizationError, ValidationError } from "@/lib/errors";
-import { CAJA_MESAS, CAJA_SALON } from "@/lib/utils";
-import { AreaVentaInResponseOneAreaVenta } from "./types";
 import { ResultPattern } from "@/lib/types";
+import { AreaVenta } from "../types";
 
 interface DataVenta
   extends Omit<InferInput<typeof VentasSchema>, "zapatos_id"> {
   zapatos_id?: number[];
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
 }
 
-export async function addVenta(data: DataVenta): Promise<ResultPattern> {
+export async function addVenta(data: DataVenta) {
   const { userId } = await getSession();
 
   if (!userId) throw new Error("No autorizado");
@@ -69,6 +68,12 @@ export async function addVenta(data: DataVenta): Promise<ResultPattern> {
 
       if (data.cuentas.length === 1) {
         data.cuentas[0].cantidad = sum_precio_venta;
+      }
+
+      if (!data.areaVenta.cuenta) {
+        throw new ValidationError(
+          "El area de venta no tiene una cuenta asociada."
+        );
       }
 
       await validar_cuentas_para_pago(
@@ -332,10 +337,16 @@ async function rebajar_de_las_cuentas({
   tx: DrizzleTransaction;
   ids: number[];
   descripcion_producto: string;
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: {
+    id: number;
+    nombre: string;
+    cuenta: { id: number; nombre: string } | null;
+  };
   venta: InferSelectModel<typeof inventarioVentas>[];
   userId: string;
 }) {
+  if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
+
   for (let index = 0; index < cuentas.length; index++) {
     const cuenta = cuentas[index];
     let deltaCents =
@@ -377,7 +388,7 @@ async function rebajar_de_las_cuentas({
         await tx.insert(inventarioTransacciones).values({
           createdAt: new Date().toISOString(),
           descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
-          cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
+          cuentaId: areaVenta.cuenta?.id,
           ventaId: venta[0].id,
           tipo: TipoTransferencia.PAGO_TRABAJADOR,
           cantidad: String(cantidadDescuento),
@@ -418,8 +429,9 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
   userId: string;
   ids: number[];
   descripcion_producto: string;
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
 }) {
+  if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
   const pagoTrabajador = Math.round(sum_pago_trabajador * 100);
   await tx
     .update(inventarioCuentas)
@@ -428,17 +440,12 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
         `(${pagoTrabajador}::numeric / 100.0)`
       )}`,
     })
-    .where(
-      eq(
-        inventarioCuentas.id,
-        areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON)
-      )
-    );
+    .where(eq(inventarioCuentas.id, areaVenta.cuenta?.id));
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
     descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
-    cuentaId: areaVenta.isMesa ? Number(CAJA_MESAS) : Number(CAJA_SALON),
+    cuentaId: areaVenta.cuenta.id,
     ventaId: venta[0].id,
     tipo: TipoTransferencia.PAGO_TRABAJADOR,
     cantidad: String(sum_pago_trabajador),
@@ -463,7 +470,7 @@ async function crear_transacciones_de_venta({
   ids: number[];
   descripcion_producto: string;
   tx: DrizzleTransaction;
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
   venta: InferSelectModel<typeof inventarioVentas>[];
   userId: string;
 }) {

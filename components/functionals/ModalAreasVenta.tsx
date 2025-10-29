@@ -18,7 +18,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
@@ -31,24 +30,49 @@ import {
   updateArea,
 } from "@/app/(with-layout)/areas-de-venta/actions";
 import { toast } from "sonner";
-import { LoaderCircle } from "lucide-react";
-import { ReactNode, useState } from "react";
-import { Switch } from "../ui/switch";
+import { CheckIcon, ChevronDown, LoaderCircle } from "lucide-react";
+import { ReactNode, useRef, useState } from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
 import { AreaVentaSchema } from "@/app/(with-layout)/areas-de-venta/schema";
+import { Label } from "../ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { cn } from "@/lib/utils";
+
+export interface CuentaEfectivoForCommandCreateArea {
+  id: number;
+  nombre: string;
+}
 
 export default function ModalAreasVenta({
   data,
+  cuentasEfectivo: cuentas,
   trigger,
 }: {
   data?: AreaVenta;
+  cuentasEfectivo: CuentaEfectivoForCommandCreateArea[];
   trigger: ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openPopover, setOpenPopover] = useState(false);
+
+  const formRef = useRef<HTMLFormElement>(null);
+
   const form = useForm<InferInput<typeof AreaVentaSchema>>({
     resolver: valibotResolver(AreaVentaSchema),
-    defaultValues: { ...data, isMesa: data?.isMesa || false },
+    defaultValues: {
+      nombre: data?.nombre || "",
+      color: data?.color || "",
+      cuenta: data?.cuenta?.id.toString() || "",
+    },
   });
 
   const onSubmit = async (dataForm: InferInput<typeof AreaVentaSchema>) => {
@@ -67,6 +91,11 @@ export default function ModalAreasVenta({
     }
   };
 
+  const getNombreCuenta = (id: string) => {
+    const cuenta = cuentas?.find((cuenta) => cuenta?.id.toString() === id);
+    return cuenta?.nombre || "Selecciona una cuenta";
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -77,13 +106,17 @@ export default function ModalAreasVenta({
         <DialogDescription>Todos los campos son requeridos</DialogDescription>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            ref={formRef}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="nombre"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre</FormLabel>
+                  <Label>Nombre</Label>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -96,7 +129,7 @@ export default function ModalAreasVenta({
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <Label>Color</Label>
                   <FormControl>
                     <Input type="color" {...field} />
                   </FormControl>
@@ -106,17 +139,79 @@ export default function ModalAreasVenta({
             />
             <FormField
               control={form.control}
-              name="isMesa"
+              name="cuenta"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between p-3">
-                  <FormLabel>Es mesa?</FormLabel>
-                  <FormControl>
-                    <Switch
-                      style={{ marginTop: 0 }}
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
+                <FormItem className="flex flex-col">
+                  <Label>Cuenta</Label>
+                  <Popover open={openPopover} onOpenChange={setOpenPopover}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between contain-strict",
+                            !field.value && "text-muted-foreground"
+                          )}
+                          disabled={!cuentas || cuentas.length < 1}
+                        >
+                          <div className="flex">
+                            {field.value && (
+                              <div className="hidden md:block w-6 aspect-square rounded-full bg-gradient-to-br mr-2 shrink-0 from-blue-500 to-blue-700" />
+                            )}
+
+                            {getNombreCuenta(field.value)}
+                          </div>
+
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      containerRef={formRef}
+                      className="w-[320px] p-0"
+                    >
+                      <Command className="rounded-lg border shadow-md">
+                        <CommandInput placeholder="Seleccione una cuenta" />
+                        <CommandList>
+                          <CommandEmpty>
+                            Ningún resultado encontrado.
+                          </CommandEmpty>
+                          <CommandGroup heading="Sugerencias">
+                            {cuentas?.map((cuenta) => (
+                              <CommandItem
+                                key={cuenta.id}
+                                value={cuenta.id.toString()}
+                                keywords={[cuenta.nombre]}
+                                onSelect={(currentValue) => {
+                                  field.onChange(
+                                    currentValue === field.value
+                                      ? ""
+                                      : currentValue
+                                  );
+                                  setOpenPopover(false);
+                                }}
+                              >
+                                <div className="flex gap-2 items-center ">
+                                  <div className="w-6 aspect-square rounded-full bg-gradient-to-br from-blue-500 to-blue-700"></div>
+                                  <p>{cuenta.nombre}</p>
+                                </div>
+                                <CheckIcon
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    cuenta.id.toString() === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
                 </FormItem>
               )}
             />

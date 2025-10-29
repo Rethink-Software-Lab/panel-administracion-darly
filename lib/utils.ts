@@ -27,6 +27,4 @@ export function canDeleteVenta(
   return userId === userInVentaId || isStaff;
 }
 
-export const CAJA_SALON = "25";
-export const CAJA_MESAS = "70";
 export const CAJA_CAFETERIA = "71";

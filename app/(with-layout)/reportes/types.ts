@@ -1,7 +1,7 @@
 import { AreaVenta } from "../areas-de-venta/types";
 import { Categoria } from "../categorias/types";
 
-export type AreaVentaInReporteFormData = Omit<AreaVenta, "color" | "isMesa">;
+export type AreaVentaInReporteFormData = Pick<AreaVenta, "id" | "nombre">;
 
 export interface ReporteFormData {
   areas: AreaVentaInReporteFormData[];

@@ -394,41 +394,20 @@ export default function NavbarMobile({ session, areasVenta }: Props) {
               )}
               {!session.isVendedorCafeteria && (
                 <>
-                  {areasVenta?.map(
-                    (area) =>
-                      !area.isMesa && (
-                        <Link
-                          key={area.id}
-                          href={`/areas-de-venta/${area.id}`}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                            path === `/areas-de-venta/${area.id}` &&
-                              "bg-muted text-primary"
-                          )}
-                        >
-                          <Store className="h-4 w-4" />
-                          <span className="line-clamp-1">{area.nombre}</span>
-                        </Link>
-                      )
-                  )}
-                  <span className="p-2">Mesas</span>
-                  {areasVenta?.map(
-                    (area) =>
-                      area.isMesa && (
-                        <Link
-                          key={area.id}
-                          href={`/areas-de-venta/${area.id}`}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                            path === `/areas-de-venta/${area.id}` &&
-                              "bg-muted text-primary"
-                          )}
-                        >
-                          <Table className="h-4 w-4" />
-                          <span className="line-clamp-1">{area.nombre}</span>
-                        </Link>
-                      )
-                  )}
+                  {areasVenta?.map((area) => (
+                    <Link
+                      key={area.id}
+                      href={`/areas-de-venta/${area.id}`}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                        path === `/areas-de-venta/${area.id}` &&
+                          "bg-muted text-primary"
+                      )}
+                    >
+                      <Store className="h-4 w-4" />
+                      <span className="line-clamp-1">{area.nombre}</span>
+                    </Link>
+                  ))}
                 </>
               )}
             </>

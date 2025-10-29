@@ -14,9 +14,10 @@ import {
   Ventas,
 } from "@/app/(with-layout)/areas-de-venta/[id]/types";
 import { getSession } from "@/lib/getSession";
+import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
 
 interface Props {
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
   ventas: Ventas[];
   productos: AllProductos[];
   cuentasBancarias: CuentasBancarias[];

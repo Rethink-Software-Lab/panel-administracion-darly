@@ -37,7 +37,7 @@ export interface Gasto {
   diaSemana: number | null;
 }
 
-export type AreaVentaForSelectGasto = Omit<AreaVenta, "color" | "isMesa">;
+export type AreaVentaForSelectGasto = Pick<AreaVenta, "id" | "nombre">;
 
 export type CuentaForSelectGasto = Omit<
   Tarjetas,

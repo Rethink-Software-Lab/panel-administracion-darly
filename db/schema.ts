@@ -491,21 +491,36 @@ export const inventarioCategorias = pgTable("inventario_categorias", {
   nombre: varchar({ length: 50 }).notNull(),
 });
 
-export const inventarioAreaventa = pgTable("inventario_areaventa", {
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-    name: "inventario_areaventa_id_seq",
-    startWith: 1,
-    increment: 1,
-    minValue: 1,
-    maxValue: 9223372036854775807,
-    cache: 1,
-  }),
-  nombre: varchar({ length: 50 }).notNull(),
-  color: varchar({ length: 10 }).notNull(),
-  isMesa: boolean().default(false).notNull(),
-  active: boolean().default(true).notNull(),
-});
+export const inventarioAreaventa = pgTable(
+  "inventario_areaventa",
+  {
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_areaventa_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
+    nombre: varchar({ length: 50 }).notNull(),
+    color: varchar({ length: 10 }).notNull(),
+    active: boolean().default(true).notNull(),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cuentaId: bigint("cuenta_id", { mode: "number" }),
+  },
+  (table) => [
+    index("inventario_areaventa_cuenta_id_b3e1295e").using(
+      "btree",
+      table.cuentaId.asc().nullsLast().op("int8_ops")
+    ),
+    foreignKey({
+      columns: [table.cuentaId],
+      foreignColumns: [inventarioCuentas.id],
+      name: "inventario_areaventa_cuenta_id_b3e1295e_fk_inventari",
+    }),
+  ]
+);
 
 export const inventarioElaboracionesVentasCafeteria = pgTable(
   "inventario_elaboraciones_ventas_cafeteria",
