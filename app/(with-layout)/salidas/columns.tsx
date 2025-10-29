@@ -4,8 +4,6 @@ import { deleteSalida } from "./actions";
 import { DateTime } from "luxon";
 import { ColumnDef } from "@tanstack/react-table";
 import { Salida } from "./types";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 import { SheetInfoSalidaAlmacenPrincipal } from "@/components/functionals/sheets/SheetInfoSalidaAlmacenPrincipal";
 import { SheetSalidaAlmacenPrincipal } from "@/components/functionals/sheets/SheetSalidaAlmacenPrincipal";
 
@@ -31,6 +29,7 @@ export const columns: ColumnDef<Salida>[] = [
   {
     accessorKey: "destino.nombre",
     header: "Destino",
+    cell: ({ row }) => row.original.destino.nombre ?? "Almacén Revoltosa",
   },
 
   {
