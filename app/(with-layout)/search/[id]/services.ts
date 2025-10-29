@@ -336,7 +336,10 @@ export async function getMovimientosProducto(
       .where(inArray(inventarioSalidaalmacen.id, salidasIds))
       .innerJoin(
         inventarioProducto,
-        eq(inventarioProducto.salidaId, inventarioSalidaalmacen.id)
+        and(
+          eq(inventarioProducto.salidaId, inventarioSalidaalmacen.id),
+          eq(inventarioProducto.infoId, infoId)
+        )
       )
       .leftJoin(
         inventarioUser,
