@@ -58,7 +58,8 @@ export async function GET(request: NextRequest) {
           diaSemanaActual !== 0) ||
         (frecuencia === FrecuenciasGastos.SEMANAL &&
           diaSemana === diaSemanaActual) ||
-        (frecuencia === FrecuenciasGastos.MENSUAL && diaMes === diaMesActual);
+        (frecuencia === FrecuenciasGastos.MENSUAL && diaMes === diaMesActual) ||
+        frecuencia === FrecuenciasGastos.DIARIO;
 
       if (debeProcesarseHoy) {
         await db.transaction(async (tx) => {

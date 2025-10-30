@@ -357,14 +357,17 @@ export default function SheetGastos({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={FrecuenciasGastos.LUNES_SABADO}>
-                            Lunes - Sábado
+                          <SelectItem value={FrecuenciasGastos.DIARIO}>
+                            Diario
+                          </SelectItem>
+                          <SelectItem value={FrecuenciasGastos.SEMANAL}>
+                            Semanal
                           </SelectItem>
                           <SelectItem value={FrecuenciasGastos.MENSUAL}>
                             Mensual
                           </SelectItem>
-                          <SelectItem value={FrecuenciasGastos.SEMANAL}>
-                            Semanal
+                          <SelectItem value={FrecuenciasGastos.LUNES_SABADO}>
+                            Lunes - Sábado
                           </SelectItem>
                         </SelectContent>
                       </Select>

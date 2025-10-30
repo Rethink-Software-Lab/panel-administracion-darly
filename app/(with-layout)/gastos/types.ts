@@ -7,9 +7,10 @@ export enum TiposGastos {
 }
 
 export enum FrecuenciasGastos {
-  LUNES_SABADO = "LUNES_SABADO",
+  DIARIO = "DIARIO",
   SEMANAL = "SEMANAL",
   MENSUAL = "MENSUAL",
+  LUNES_SABADO = "LUNES_SABADO",
 }
 
 interface AreaVentaInGasto {
