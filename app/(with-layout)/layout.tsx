@@ -17,9 +17,9 @@ export default async function RootLayout(props: LayoutProps<"/">) {
   return (
     <>
       <div className="flex min-h-screen max-w-full box-content w-full">
-        <SideBar areasVenta={data || []} session={session} />
+        <SideBar areasVenta={data?.areas || []} session={session} />
         <div className="flex flex-col w-full">
-          <TopBar session={session} areasVenta={data || []} />
+          <TopBar session={session} areasVenta={data?.areas || []} />
           <NuqsAdapter>{props.children}</NuqsAdapter>
         </div>
       </div>

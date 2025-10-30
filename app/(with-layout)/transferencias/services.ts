@@ -82,7 +82,10 @@ export async function getTransferencias(): Promise<{
         )
         .orderBy(desc(inventarioTransferencia.id)),
       await db
-        .select()
+        .select({
+          id: inventarioAreaventa.id,
+          nombre: inventarioAreaventa.nombre,
+        })
         .from(inventarioAreaventa)
         .where(eq(inventarioAreaventa.active, true)),
       await db

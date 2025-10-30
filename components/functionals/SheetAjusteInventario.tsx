@@ -58,7 +58,7 @@ export default function SheetTransferencias({
   areas,
   productosInfo,
 }: {
-  areas: AreaVenta[];
+  areas: { id: number; nombre: string }[];
   productosInfo: ProductoInfoParaAjuste[];
 }) {
   const [open, setOpen] = useState(false);

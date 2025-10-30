@@ -33,7 +33,6 @@ import {
 } from "../ui/select";
 import { useFieldArray, useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
 import { TransferenciaSchema } from "@/lib/schemas";
 import {
   Table,
@@ -52,13 +51,16 @@ import { useRef, useState } from "react";
 
 import SelectProductoTransferencias from "./SelectProductoTransferencias";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { ProductoInfoInTransferencia } from "@/app/(with-layout)/transferencias/types";
+import {
+  AreaVentaInTransferencia,
+  ProductoInfoInTransferencia,
+} from "@/app/(with-layout)/transferencias/types";
 
 export default function SheetTransferencias({
   areas,
   productosInfo,
 }: {
-  areas: AreaVenta[];
+  areas: AreaVentaInTransferencia[];
   productosInfo: ProductoInfoInTransferencia[];
 }) {
   const [open, setOpen] = useState(false);

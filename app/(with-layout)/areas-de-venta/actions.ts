@@ -9,7 +9,11 @@ import { AreaVentaSchema } from "./schema";
 
 export async function addArea(data: InferInput<typeof AreaVentaSchema>) {
   try {
-    await db.insert(inventarioAreaventa).values(data);
+    await db.insert(inventarioAreaventa).values({
+      nombre: data.nombre,
+      color: data.color,
+      cuentaId: Number(data.cuenta),
+    });
   } catch (e) {
     console.error(e);
     return {
@@ -32,7 +36,11 @@ export async function updateArea(
   try {
     await db
       .update(inventarioAreaventa)
-      .set(data)
+      .set({
+        nombre: data.nombre,
+        color: data.color,
+        cuentaId: Number(data.cuenta),
+      })
       .where(eq(inventarioAreaventa.id, id));
   } catch (e) {
     console.error(e);

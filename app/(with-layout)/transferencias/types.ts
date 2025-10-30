@@ -21,8 +21,10 @@ export interface ProductoInfoInTransferencia {
   isZapato: boolean;
 }
 
+export type AreaVentaInTransferencia = Pick<AreaVenta, "id" | "nombre">;
+
 export interface ResponseTransferencias {
   transferencias: Transferencia[];
-  areas_ventas: AreaVenta[];
+  areas_ventas: AreaVentaInTransferencia[];
   productos_info: ProductoInfoInTransferencia[];
 }

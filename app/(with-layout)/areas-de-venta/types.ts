@@ -2,5 +2,5 @@ export interface AreaVenta {
   id: number;
   nombre: string;
   color: string;
-  isMesa: boolean;
+  cuenta: { id: number; nombre: string } | null;
 }

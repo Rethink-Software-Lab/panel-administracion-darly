@@ -36,7 +36,7 @@ import {
   PackagePlus,
 } from "lucide-react";
 
-import { CAJA_MESAS, CAJA_SALON, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -58,7 +58,7 @@ import { InferOutput } from "valibot";
 
 import { toast } from "sonner";
 import { CircleX, LoaderCircle } from "lucide-react";
-import { Fragment, ReactNode, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -66,18 +66,18 @@ import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-c
 import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import {
   AllProductos,
-  AreaVentaInResponseOneAreaVenta,
   CuentasBancarias,
 } from "@/app/(with-layout)/areas-de-venta/[id]/types";
 import { addVenta } from "@/app/(with-layout)/areas-de-venta/[id]/actions";
 import { Tag, TagInput } from "emblor";
+import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
 
 export default function ModalVentas({
   areaVenta,
   productosInfo,
   cuentasBancarias,
 }: {
-  areaVenta: AreaVentaInResponseOneAreaVenta;
+  areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
   productosInfo: AllProductos[];
   cuentasBancarias: CuentasBancarias[];
 }) {
@@ -144,29 +144,19 @@ export default function ModalVentas({
         (cuenta) => cuenta?.id.toString() === selectedValue
       ) || {};
 
-    if (selectedValue === CAJA_SALON || selectedValue === CAJA_MESAS) {
-      return "from-blue-500 to-blue-700";
-    } else {
-      switch (banco) {
-        case Banco.BANDEC:
-          return "from-[#6c0207] to-[#bc1f26]";
-        case Banco.BPA:
-          return "from-[#1d6156] to-[#1d6156]";
-      }
+    switch (banco) {
+      case Banco.BANDEC:
+        return "from-[#6c0207] to-[#bc1f26]";
+      case Banco.BPA:
+        return "from-[#1d6156] to-[#1d6156]";
     }
   };
 
   const getNombreCuenta = (id: string) => {
-    if (id === CAJA_SALON) {
-      return "Caja Salón";
-    } else if (id === CAJA_MESAS) {
-      return "Caja Mesas";
-    } else {
-      const cuenta = cuentasBancarias?.find(
-        (cuenta) => cuenta?.id.toString() === id
-      );
-      return cuenta?.nombre || "Selecciona una cuenta";
-    }
+    const cuenta = cuentasBancarias?.find(
+      (cuenta) => cuenta?.id.toString() === id
+    );
+    return cuenta?.nombre || "Selecciona una cuenta";
   };
 
   return (
@@ -210,9 +200,7 @@ export default function ModalVentas({
                         case METODOS_PAGO.EFECTIVO:
                           form.setValue("cuentas", [
                             {
-                              cuenta: areaVenta.isMesa
-                                ? CAJA_MESAS
-                                : CAJA_SALON,
+                              cuenta: areaVenta.cuenta?.id.toString() || "",
                               cantidad: undefined,
                               tipo: TipoCuenta.EFECTIVO,
                             },
@@ -230,9 +218,7 @@ export default function ModalVentas({
                         case METODOS_PAGO.MIXTO:
                           form.setValue("cuentas", [
                             {
-                              cuenta: areaVenta.isMesa
-                                ? CAJA_MESAS
-                                : CAJA_SALON,
+                              cuenta: areaVenta.cuenta?.id.toString() || "",
                               cantidad: 0,
                               tipo: TipoCuenta.EFECTIVO,
                             },
@@ -312,8 +298,8 @@ export default function ModalVentas({
                                       !field.value && "text-muted-foreground"
                                     )}
                                     disabled={
-                                      field.value === CAJA_SALON ||
-                                      field.value === CAJA_MESAS
+                                      field.value ===
+                                      areaVenta.cuenta?.id.toString()
                                     }
                                   >
                                     <div className="flex">
@@ -321,12 +307,18 @@ export default function ModalVentas({
                                         <div
                                           className={cn(
                                             "hidden md:block w-6 aspect-square rounded-full bg-gradient-to-br mr-2 shrink-0",
-                                            getColors(field.value)
+                                            field.value ===
+                                              areaVenta.cuenta?.id.toString()
+                                              ? "from-blue-500 to-blue-700"
+                                              : getColors(field.value)
                                           )}
                                         />
                                       )}
 
-                                      {getNombreCuenta(field.value)}
+                                      {field.value ===
+                                      areaVenta.cuenta?.id.toString()
+                                        ? areaVenta.cuenta.nombre
+                                        : getNombreCuenta(field.value)}
                                     </div>
 
                                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

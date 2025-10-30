@@ -3,7 +3,7 @@ import { CloudOff, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModalAreasVenta from "@/components/functionals/ModalAreasVenta";
 
-import DataTable from "@/components/functionals/data-tables/data-table-general";
+import DataTable from "@/components/functionals/data-tables/data-table-areas-ventas";
 import { columns } from "./columns";
 import { AreaVenta } from "./types";
 import { getAreasVentas } from "./services";
@@ -17,6 +17,7 @@ export default async function AreasVenta() {
         <h1 className="text-lg font-semibold md:text-2xl">Áreas de Venta</h1>
 
         <ModalAreasVenta
+          cuentasEfectivo={data?.cuentasEfectivo || []}
           trigger={
             <Button className="gap-1 items-center">
               <PlusCircle size={18} />
@@ -29,7 +30,11 @@ export default async function AreasVenta() {
       </div>
 
       {data ? (
-        <DataTable<AreaVenta> columns={columns} data={data} />
+        <DataTable<AreaVenta>
+          columns={columns}
+          data={data.areas}
+          cuentasEfectivo={data?.cuentasEfectivo || []}
+        />
       ) : (
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
           <div className="flex flex-col items-center gap-1 text-center">

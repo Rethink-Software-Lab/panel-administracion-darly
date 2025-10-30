@@ -1,4 +1,4 @@
-import { boolean, custom, nonEmpty, object, pipe, string } from "valibot";
+import { custom, nonEmpty, object, pipe, string } from "valibot";
 
 export const AreaVentaSchema = object({
   nombre: pipe(
@@ -9,6 +9,12 @@ export const AreaVentaSchema = object({
       'El nombre no puede ser "Revoltosa"'
     )
   ),
-  color: pipe(string("Campo requerido."), nonEmpty("Campo requerido.")),
-  isMesa: boolean("Booleano requerido."),
+  color: pipe(
+    string("El color es requerido."),
+    nonEmpty("El color es requerido.")
+  ),
+  cuenta: pipe(
+    string("La cuenta es requerida."),
+    nonEmpty("La cuenta es requerida.")
+  ),
 });

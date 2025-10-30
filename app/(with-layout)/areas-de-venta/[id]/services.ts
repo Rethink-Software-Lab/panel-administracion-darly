@@ -15,17 +15,22 @@ import {
 import { and, eq, gte, isNull, not, sql, count, desc, gt } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
 
-export async function getAreaVenta(
-  id: number
-): Promise<{ data: EndpointOneAreaVenta | null; error: string | null }> {
+export async function getAreaVenta(id: number) {
   try {
     const areaVenta = await db
       .select({
         id: inventarioAreaventa.id,
         nombre: inventarioAreaventa.nombre,
-        isMesa: inventarioAreaventa.isMesa,
+        cuenta: {
+          id: inventarioCuentas.id,
+          nombre: inventarioCuentas.nombre,
+        },
       })
       .from(inventarioAreaventa)
+      .leftJoin(
+        inventarioCuentas,
+        eq(inventarioAreaventa.cuentaId, inventarioCuentas.id)
+      )
       .where(
         and(
           eq(inventarioAreaventa.id, id),

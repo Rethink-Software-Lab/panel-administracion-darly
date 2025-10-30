@@ -141,4 +141,18 @@
     left: 0;
     top: 0;
   }
+
+  [role="dialog"],
+  [data-state="open"],
+  .fixed,
+  .inset-0 {
+    position: static !important;
+    transform: none !important;
+    background: none !important;
+  }
+
+  .bg-black\/80,
+  .bg-opacity-80 {
+    display: none !important;
+  }
 }
