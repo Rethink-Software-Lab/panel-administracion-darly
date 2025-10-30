@@ -46,6 +46,7 @@ export interface CuentasBancarias {
 export interface AllProductos {
   id: number;
   descripcion: string;
+  precioVenta: string;
   isZapato: boolean;
 }
 
