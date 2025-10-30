@@ -63,7 +63,7 @@ export async function GetTarjetas(): Promise<{
   }
 }
 
-export async function getTransacciones(): Promise<ResponseTransacciones> {
+export async function getTransacciones() {
   const {
     p: page,
     l: limit,
@@ -103,7 +103,6 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
 
     const transaccionesConConteo = await db
       .select({
-        // Tus campos existentes no cambian
         id: inventarioTransacciones.id,
         cuenta: inventarioCuentas.nombre,
         tipo: inventarioTransacciones.tipo,
@@ -111,14 +110,6 @@ export async function getTransacciones(): Promise<ResponseTransacciones> {
         createdAt: inventarioTransacciones.createdAt,
         cantidad: inventarioTransacciones.cantidad,
         descripcion: inventarioTransacciones.descripcion,
-        canDelete: sql<boolean>`CASE 
-          WHEN ${inventarioTransacciones.ventaId} IS NULL 
-          AND ${inventarioTransacciones.ventaCafeteriaId} IS NULL 
-          AND ${inventarioTransacciones.entradaId} IS NULL 
-          AND ${inventarioTransacciones.entradaCafeteriaId} IS NULL
-          THEN TRUE 
-          ELSE FALSE 
-        END`,
         totalCount: sql<number>`COUNT(*) OVER()`.as("total_count"),
       })
       .from(inventarioTransacciones)

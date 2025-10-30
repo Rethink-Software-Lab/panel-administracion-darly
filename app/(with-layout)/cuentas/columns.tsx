@@ -155,7 +155,10 @@ export const columns: ColumnDef<Transacciones>[] = [
   {
     header: " ",
     cell: ({ row }) => {
-      if (row.original.canDelete) {
+      if (
+        row.original.tipo === TipoTransferencia.INGRESO ||
+        row.original.tipo === TipoTransferencia.EGRESO
+      ) {
         return (
           <TableDeleteV2
             id={row.original.id}
