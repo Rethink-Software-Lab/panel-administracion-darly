@@ -18,7 +18,7 @@ import {
   boolean,
   custom,
   maxLength,
-  transform,
+  trim,
 } from "valibot";
 
 export const UserSchema = pipe(
@@ -66,7 +66,8 @@ export const UserSchema = pipe(
 export const LoginSchema = object({
   username: pipe(
     string("El nombre de ususario es requerido"),
-    nonEmpty("El nombre de ususario es requerido")
+    nonEmpty("El nombre de ususario es requerido"),
+    trim()
   ),
   password: pipe(
     string("La contraseña es requerida"),

@@ -1,9 +1,6 @@
 "use server";
 
-import { db } from "@/db/initial";
-import { inventarioUser } from "@/db/schema";
 import { LoginSchema } from "@/lib/schemas";
-import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { InferInput } from "valibot";

@@ -1,16 +1,16 @@
-import { columns as columnsNew } from '@/app/(with-layout)/areas-de-venta/[id]/columns';
-import { columns as columnsZapatos } from '@/app/(with-layout)/areas-de-venta/[id]/columns-zapatos';
-import DataTableZapatos from '@/components/functionals/data-tables/data-table-zapatos';
-import { DataTable as DataTableNew } from '@/components/ui/data-table-inventario-almacen-2';
-import { CloudOff, FileText } from 'lucide-react';
+import { columns as columnsNew } from "@/app/(with-layout)/areas-de-venta/[id]/columns";
+import { columns as columnsZapatos } from "@/app/(with-layout)/areas-de-venta/[id]/columns-zapatos";
+import DataTableZapatos from "@/components/functionals/data-tables/data-table-zapatos";
+import { DataTable as DataTableNew } from "@/components/ui/data-table-inventario-almacen-2";
+import { CloudOff, FileText } from "lucide-react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Link from 'next/link';
-import { Button } from '../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { Button } from "../ui/button";
 import {
   Inventario,
   Zapatos,
-} from '@/app/(with-layout)/areas-de-venta/[id]/types';
+} from "@/app/(with-layout)/areas-de-venta/[id]/types";
 
 export default async function InventarioAreaVenta({
   data,
@@ -28,9 +28,9 @@ export default async function InventarioAreaVenta({
         <h1 className="text-lg font-semibold md:text-2xl">Inventario</h1>
         <Link
           href={{
-            pathname: '/reportes',
+            pathname: "/reportes",
             query: {
-              type: 'inventario',
+              type: "inventario",
               area: area_id,
             },
           }}
