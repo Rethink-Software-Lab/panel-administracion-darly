@@ -47,7 +47,6 @@ export interface Transacciones {
   cuenta: string;
   tipo: string;
   usuario: string | null;
-  canDelete: boolean;
 }
 
 export interface Meta {
