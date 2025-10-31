@@ -518,9 +518,8 @@ export default function ModalVentas({
                           )}
                         >
                           {field.value
-                            ? productosInfo?.find(
-                                (producto) => producto?.id === field.value.id
-                              )?.descripcion
+                            ? productosInfo.find((p) => p.id === field.value.id)
+                                ?.descripcion
                             : "Selecciona un producto"}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -528,7 +527,7 @@ export default function ModalVentas({
                     </PopoverTrigger>
                     <PopoverContent
                       containerRef={formRef}
-                      className="w-[320px] p-0"
+                      className="w-[320px] md:w-fit p-0"
                     >
                       <Command className="rounded-lg border shadow-md">
                         <CommandInput placeholder="Escribe un código..." />
@@ -565,15 +564,22 @@ export default function ModalVentas({
                                   setOpen(false);
                                 }}
                               >
-                                {producto.descripcion}
-                                <CheckIcon
-                                  className={cn(
-                                    "ml-auto h-4 w-4",
-                                    producto.id === field.value?.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                <div className="flex gap-2 justify-between items-center w-full">
+                                  <span className="line-clamp-1">
+                                    {producto.descripcion}
+                                  </span>
+                                  {producto.id === field.value?.id ? (
+                                    <CheckIcon className="ml-auto h-4 w-4" />
+                                  ) : (
+                                    <span className="text-sm text-muted-foreground">
+                                      {Intl.NumberFormat("es-ES", {
+                                        style: "currency",
+                                        currency: "CUP",
+                                        currencyDisplay: "code",
+                                      }).format(Number(producto.precioVenta))}
+                                    </span>
                                   )}
-                                />
+                                </div>
                               </CommandItem>
                             ))}
                           </CommandGroup>

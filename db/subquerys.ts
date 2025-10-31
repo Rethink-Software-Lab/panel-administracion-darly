@@ -7,6 +7,7 @@ import {
   inventarioHistorialprecioventasalon,
   inventarioPrecioelaboracion,
 } from "@/db/schema";
+import { PgColumn } from "drizzle-orm/pg-core";
 
 export const createSubqueryUltimoPrecioElaboracion = (productoId: number) =>
   db
@@ -45,7 +46,9 @@ export const createSubqueryUltimoPrecioCostoProductoCafeteria = (
     .limit(1)
     .as("precioCosto");
 
-export const createSubqueryUltimoPrecioVentaProducto = (productoId: number) =>
+export const createSubqueryUltimoPrecioVentaProducto = (
+  productoId: number | PgColumn
+) =>
   db
     .select({
       precio: inventarioHistorialprecioventasalon.precio,

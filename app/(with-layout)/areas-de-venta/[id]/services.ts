@@ -13,6 +13,7 @@ import {
 } from "@/db/schema";
 import { and, eq, gte, isNull, not, sql, count, desc, gt } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
+import { createSubqueryUltimoPrecioVentaProducto } from "@/db/subquerys";
 
 export async function getAreaVenta(id: number) {
   try {
@@ -117,10 +118,14 @@ export async function getAreaVenta(id: number) {
       )
       .orderBy(desc(inventarioProducto.id));
 
+    const subqueryHistoricoPrecioVenta =
+      createSubqueryUltimoPrecioVentaProducto(inventarioProductoinfo.id);
+
     const allProductos = await db
       .select({
         id: inventarioProductoinfo.id,
         descripcion: inventarioProductoinfo.descripcion,
+        precioVenta: subqueryHistoricoPrecioVenta.precio,
         isZapato: sql<boolean>`CASE WHEN ${inventarioCategorias.nombre} = 'Zapatos' THEN TRUE ELSE FALSE END`,
       })
       .from(inventarioProductoinfo)
@@ -139,6 +144,7 @@ export async function getAreaVenta(id: number) {
           inventarioAjusteinventarioProductos.productoId
         )
       )
+      .innerJoinLateral(subqueryHistoricoPrecioVenta, sql`true`)
       .where(
         and(
           eq(inventarioProducto.areaVentaId, Number(id)),
@@ -149,7 +155,8 @@ export async function getAreaVenta(id: number) {
       .groupBy(
         inventarioProductoinfo.id,
         inventarioProductoinfo.descripcion,
-        inventarioCategorias.id
+        inventarioCategorias.id,
+        subqueryHistoricoPrecioVenta.precio
       );
 
     const categorias = await db.select().from(inventarioCategorias);

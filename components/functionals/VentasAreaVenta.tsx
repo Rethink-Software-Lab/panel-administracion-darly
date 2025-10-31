@@ -1,4 +1,4 @@
-import { CloudOff, FileText, PackagePlus } from "lucide-react";
+import { CloudOff, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import ModalVentas from "@/components/functionals/ModalVentas";
@@ -9,7 +9,6 @@ import { columns } from "@/app/(with-layout)/areas-de-venta/[id]/columns-ventas"
 import Link from "next/link";
 import {
   AllProductos,
-  AreaVentaInResponseOneAreaVenta,
   CuentasBancarias,
   Ventas,
 } from "@/app/(with-layout)/areas-de-venta/[id]/types";
