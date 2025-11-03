@@ -375,10 +375,6 @@ export const inventarioElaboracionesVentasCafeteriaRelations = relations(
 export const inventarioGastosRelations = relations(
   inventarioGastos,
   ({ one, many }) => ({
-    inventarioAreaventa: one(inventarioAreaventa, {
-      fields: [inventarioGastos.areaVentaId],
-      references: [inventarioAreaventa.id],
-    }),
     inventarioUser: one(inventarioUser, {
       fields: [inventarioGastos.usuarioId],
       references: [inventarioUser.id],

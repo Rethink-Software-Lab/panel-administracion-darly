@@ -574,18 +574,12 @@ export const inventarioGastos = pgTable(
     diaSemana: integer("dia_semana"),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     usuarioId: bigint("usuario_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    areaVentaId: bigint("area_venta_id", { mode: "number" }),
     isCafeteria: boolean("is_cafeteria").notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }),
     isGeneral: boolean("is_general").notNull(),
   },
   (table) => [
-    index("inventario_gastos_area_venta_id_1b18e8f5").using(
-      "btree",
-      table.areaVentaId.asc().nullsLast().op("int8_ops")
-    ),
     index("inventario_gastos_cuenta_id_80353ee6").using(
       "btree",
       table.cuentaId.asc().nullsLast().op("int8_ops")
@@ -594,11 +588,6 @@ export const inventarioGastos = pgTable(
       "btree",
       table.usuarioId.asc().nullsLast().op("int8_ops")
     ),
-    foreignKey({
-      columns: [table.areaVentaId],
-      foreignColumns: [inventarioAreaventa.id],
-      name: "inventario_gastos_area_venta_id_1b18e8f5_fk_inventari",
-    }),
     foreignKey({
       columns: [table.usuarioId],
       foreignColumns: [inventarioUser.id],
