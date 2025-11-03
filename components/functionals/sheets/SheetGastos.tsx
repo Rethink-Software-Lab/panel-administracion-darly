@@ -58,6 +58,8 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { GastosSchema } from "@/app/(with-layout)/gastos/schema";
+import MultipleSelector from "@/components/ui/multiselect";
+import { Switch } from "@/components/ui/switch";
 
 export default function SheetGastos({
   data,
@@ -78,17 +80,22 @@ export default function SheetGastos({
     defaultValues: {
       descripcion: data?.descripcion || "",
       cuenta: data?.cuenta?.id.toLocaleString() || "",
-      area_venta: data?.area_venta?.id?.toLocaleString() || "",
       tipo: data?.tipo,
       frecuencia: data?.frecuencia || undefined,
       cantidad: data?.cantidad || 0,
       diaMes: data?.diaMes || undefined,
       diaSemana: data?.diaSemana?.toLocaleString() || undefined,
+      isGeneral: data?.isGeneral ?? true,
+      areas_venta:
+        data?.areas_venta.map((a) => {
+          return { label: a.nombre, value: a.id.toString() };
+        }) || undefined,
     },
   });
 
   const tipo = useWatch({ control: form.control, name: "tipo" });
   const frecuencia = useWatch({ control: form.control, name: "frecuencia" });
+  const isGeneralWatch = useWatch({ control: form.control, name: "isGeneral" });
 
   const onSubmit = async (
     dataForm: InferInput<typeof GastosSchema>
@@ -266,38 +273,59 @@ export default function SheetGastos({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="area_venta"
+                name="isGeneral"
                 render={({ field }) => (
-                  <FormItem className="w-full">
-                    <Label>Área de venta</Label>
-                    <Select
-                      disabled={!areas || areas.length < 1}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            className="line-clamp-1"
-                            placeholder="Selecciona un área de venta"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="cafeteria">Cafetería</SelectItem>
-                        {areas?.map((area) => (
-                          <SelectItem key={area.id} value={area.id?.toString()}>
-                            {area.nombre}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <FormItem className="flex items-center justify-between border p-4 rounded-lg space-y-0">
+                    <Label>Mostar en reporte general?</Label>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(value) => {
+                          field.onChange(value);
+                          value
+                            ? form.setValue("areas_venta", undefined)
+                            : form.setValue("areas_venta", []);
+                        }}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {!isGeneralWatch && (
+                <FormField
+                  control={form.control}
+                  name="areas_venta"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label>Áreas de venta</Label>
+                      <FormControl>
+                        <MultipleSelector
+                          {...field}
+                          defaultOptions={
+                            (areas || []).map((area) => ({
+                              label: area?.nombre,
+                              value: area.id.toString(),
+                            })) ?? []
+                          }
+                          placeholder="Seleccione áreas de venta..."
+                          emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                              no results found.
+                            </p>
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="tipo"
@@ -308,8 +336,8 @@ export default function SheetGastos({
                       onValueChange={(value) => {
                         if (value === TiposGastos.VARIABLE) {
                           form.setValue("frecuencia", undefined);
-                          form.setValue("diaSemana", undefined),
-                            form.setValue("diaMes", undefined);
+                          form.setValue("diaSemana", undefined);
+                          form.setValue("diaMes", undefined);
                         }
                         field.onChange(value);
                       }}
@@ -345,6 +373,13 @@ export default function SheetGastos({
                             form.setValue("diaSemana", undefined);
                           }
                           if (value === FrecuenciasGastos.SEMANAL) {
+                            form.setValue("diaMes", undefined);
+                          }
+                          if (
+                            value === FrecuenciasGastos.LUNES_SABADO ||
+                            value === FrecuenciasGastos.DIARIO
+                          ) {
+                            form.setValue("diaSemana", undefined);
                             form.setValue("diaMes", undefined);
                           }
                           field.onChange(value);

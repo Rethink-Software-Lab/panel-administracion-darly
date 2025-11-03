@@ -1,7 +1,10 @@
 import {
+  array,
+  boolean,
   custom,
   forward,
   maxValue,
+  minLength,
   minValue,
   nonEmpty,
   number,
@@ -10,7 +13,6 @@ import {
   partialCheck,
   pipe,
   string,
-  transform,
 } from "valibot";
 import { FrecuenciasGastos, TiposGastos } from "./types";
 
@@ -24,9 +26,23 @@ export const GastosSchema = pipe(
       string("La cuenta es requerida."),
       nonEmpty("La cuenta es requerida.")
     ),
-    area_venta: pipe(
-      string("El área de destino es requerida."),
-      nonEmpty("El área de destino es requerida")
+    isGeneral: boolean(),
+    areas_venta: optional(
+      pipe(
+        array(
+          object({
+            label: pipe(
+              string("El área de venta es requerida."),
+              nonEmpty("El área de venta es requerida")
+            ),
+            value: pipe(
+              string("El área de venta es requerida."),
+              nonEmpty("El área de venta es requerida")
+            ),
+          })
+        ),
+        minLength(1, "El área de venta es requerida")
+      )
     ),
     tipo: pipe(
       string("Tipo de gasto requerido."),
@@ -98,5 +114,21 @@ export const GastosSchema = pipe(
       "El dia de la semana es requerido."
     ),
     ["diaSemana"]
+  ),
+  forward(
+    partialCheck(
+      [["isGeneral"], ["areas_venta"]],
+      (input) => {
+        if (
+          !input.isGeneral &&
+          (!input.areas_venta || input.areas_venta.length === 0)
+        ) {
+          return false;
+        }
+        return true;
+      },
+      "Se requiere al menos un área de venta."
+    ),
+    ["areas_venta"]
   )
 );

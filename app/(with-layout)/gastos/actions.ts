@@ -4,6 +4,7 @@ import { db } from "@/db/initial";
 import {
   inventarioCuentas,
   inventarioGastos,
+  inventarioGastosAreasVenta,
   inventarioTransacciones,
 } from "@/db/schema";
 import { ValidationError } from "@/lib/errors";
@@ -21,18 +22,35 @@ export async function addGasto(
   const { userId } = await getSession();
   try {
     await db.transaction(async (tx) => {
-      await tx.insert(inventarioGastos).values({
-        ...gasto,
-        diaSemana: Number(gasto.diaSemana) || undefined,
-        isCafeteria: gasto.area_venta === "cafeteria",
-        createdAt: new Date().toISOString(),
-        cuentaId: Number(gasto.cuenta),
-        areaVentaId:
-          gasto.area_venta === "cafeteria"
-            ? undefined
-            : Number(gasto.area_venta),
-        usuarioId: Number(userId),
-      });
+      const isCafeteria = gasto.areas_venta
+        ? gasto.areas_venta.some((a) => a.value === "cafeteria")
+        : false;
+
+      const [gastoInsertado] = await tx
+        .insert(inventarioGastos)
+        .values({
+          ...gasto,
+          diaSemana: Number(gasto.diaSemana) || undefined,
+          isGeneral: gasto.isGeneral,
+          isCafeteria,
+          createdAt: new Date().toISOString(),
+          cuentaId: Number(gasto.cuenta),
+          usuarioId: Number(userId),
+        })
+        .returning({ id: inventarioGastos.id });
+
+      if (!gasto.isGeneral && gasto.areas_venta) {
+        const areas = isCafeteria
+          ? gasto.areas_venta.filter((a) => a.value !== "cafeteria")
+          : gasto.areas_venta;
+
+        for (const area of areas) {
+          await tx.insert(inventarioGastosAreasVenta).values({
+            gastosId: gastoInsertado.id,
+            areaventaId: Number(area.value),
+          });
+        }
+      }
 
       if (gasto.tipo === TiposGastos.VARIABLE) {
         const [cuenta] = await tx
@@ -93,29 +111,50 @@ export async function editGasto(
 ): Promise<{ data: string | null; error: string | null }> {
   const { userId } = await getSession();
   try {
-    const gastoEditado = await db
-      .update(inventarioGastos)
-      .set({
-        ...gasto,
-        diaSemana: Number(gasto.diaSemana) || undefined,
-        isCafeteria: gasto.area_venta === "cafeteria",
-        cuentaId: Number(gasto.cuenta),
-        areaVentaId:
-          gasto.area_venta === "cafeteria"
-            ? undefined
-            : Number(gasto.area_venta),
-        usuarioId: Number(userId),
-      })
-      .where(
-        and(
-          eq(inventarioGastos.id, id),
-          eq(inventarioGastos.tipo, TiposGastos.FIJO)
-        )
-      )
-      .returning({ id: inventarioGastos.id });
+    const isCafeteria = gasto.areas_venta
+      ? gasto.areas_venta.some((a) => a.value === "cafeteria")
+      : false;
 
-    if (gastoEditado.length === 0)
-      throw new ValidationError("El Gasto no fue encontrado.");
+    await db.transaction(async (tx) => {
+      const gastoEditado = await db
+        .update(inventarioGastos)
+        .set({
+          ...gasto,
+          diaSemana: gasto.diaSemana ? Number(gasto.diaSemana) : null,
+          diaMes: gasto.diaMes ? Number(gasto.diaMes) : null,
+          isCafeteria,
+          isGeneral: gasto.isGeneral,
+          cuentaId: Number(gasto.cuenta),
+          usuarioId: Number(userId),
+        })
+        .where(
+          and(
+            eq(inventarioGastos.id, id),
+            eq(inventarioGastos.tipo, TiposGastos.FIJO)
+          )
+        )
+        .returning({ id: inventarioGastos.id });
+
+      if (gastoEditado.length === 0)
+        throw new ValidationError("El Gasto no fue encontrado.");
+
+      await tx
+        .delete(inventarioGastosAreasVenta)
+        .where(eq(inventarioGastosAreasVenta.gastosId, gastoEditado[0].id));
+
+      if (!gasto.isGeneral && gasto.areas_venta) {
+        const areas = isCafeteria
+          ? gasto.areas_venta.filter((a) => a.value !== "cafeteria")
+          : gasto.areas_venta;
+
+        for (const area of areas) {
+          await tx.insert(inventarioGastosAreasVenta).values({
+            gastosId: gastoEditado[0].id,
+            areaventaId: Number(area.value),
+          });
+        }
+      }
+    });
 
     revalidatePath("/gastos");
     return {

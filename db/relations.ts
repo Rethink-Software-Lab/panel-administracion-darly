@@ -18,12 +18,12 @@ import {
   inventarioCuentas,
   inventarioAreaventa,
   inventarioElaboracionesVentasCafeteria,
+  inventarioGastos,
   inventarioProductosCafeteria,
   inventarioHistorialprecioventacafeteria,
   inventarioHistorialpreciocostocafeteria,
   inventarioProductoinfo,
   inventarioHistorialpreciocostosalon,
-  inventarioGastos,
   inventarioHistorialprecioventasalon,
   inventarioCategorias,
   inventarioImage,
@@ -39,7 +39,11 @@ import {
   inventarioSalidasCafeteriaElaboraciones,
   inventarioSalidasCafeteria,
   inventarioSalidasCafeteriaProductos,
+  inventarioEntradasCafeteria,
+  inventarioTransacciones,
+  inventarioEntradaalmacen,
   inventarioVentasCafeteria,
+  inventarioVentas,
   inventarioTransferencia,
   inventarioTransferenciaProductos,
   authGroup,
@@ -47,10 +51,6 @@ import {
   authPermission,
   inventarioUserUserPermissions,
   inventarioVentasCafeteriaElaboraciones,
-  inventarioEntradasCafeteria,
-  inventarioTransacciones,
-  inventarioEntradaalmacen,
-  inventarioVentas,
   authGroupPermissions,
   inventarioProveedor,
   inventarioEntradasCafeteriaProductos,
@@ -59,6 +59,7 @@ import {
   inventarioProductosCantidadMerma,
   inventarioPrecioelaboracion,
   inventarioVentasCafeteriaProductos,
+  inventarioGastosAreasVenta,
 } from "./schema";
 
 export const inventarioAjusteinventarioRelations = relations(
@@ -80,6 +81,7 @@ export const inventarioUserRelations = relations(
     inventarioAjusteinventarios: many(inventarioAjusteinventario),
     djangoAdminLogs: many(djangoAdminLog),
     inventarioCuentacasas: many(inventarioCuentacasa),
+    inventarioGastos: many(inventarioGastos),
     inventarioHistorialprecioventacafeterias: many(
       inventarioHistorialprecioventacafeteria
     ),
@@ -89,7 +91,6 @@ export const inventarioUserRelations = relations(
     inventarioHistorialpreciocostosalons: many(
       inventarioHistorialpreciocostosalon
     ),
-    inventarioGastos: many(inventarioGastos),
     inventarioHistorialprecioventasalons: many(
       inventarioHistorialprecioventasalon
     ),
@@ -97,11 +98,11 @@ export const inventarioUserRelations = relations(
     inventarioSalidaalmacens: many(inventarioSalidaalmacen),
     inventarioSalidaalmacenrevoltosas: many(inventarioSalidaalmacenrevoltosa),
     inventarioSalidasCafeterias: many(inventarioSalidasCafeteria),
+    inventarioTransacciones: many(inventarioTransacciones),
     inventarioVentasCafeterias: many(inventarioVentasCafeteria),
     inventarioTransferencias: many(inventarioTransferencia),
     inventarioUserGroups: many(inventarioUserGroups),
     inventarioUserUserPermissions: many(inventarioUserUserPermissions),
-    inventarioTransacciones: many(inventarioTransacciones),
     inventarioAreaventa: one(inventarioAreaventa, {
       fields: [inventarioUser.areaVentaId],
       references: [inventarioAreaventa.id],
@@ -199,6 +200,7 @@ export const inventarioCuentacasaRelations = relations(
     }),
     inventarioCuentacasaProductos: many(inventarioCuentacasaProductos),
     inventarioCuentacasaElaboraciones: many(inventarioCuentacasaElaboraciones),
+    inventarioTransacciones: many(inventarioTransacciones),
   })
 );
 
@@ -344,6 +346,7 @@ export const inventarioAreaventaRelations = relations(
       relationName: "inventarioProducto_areaVentaId_inventarioAreaventa_id",
     }),
     inventarioVentas: many(inventarioVentas),
+    inventarioGastosAreasVentas: many(inventarioGastosAreasVenta),
   })
 );
 
@@ -366,6 +369,26 @@ export const inventarioElaboracionesVentasCafeteriaRelations = relations(
     inventarioVentasCafeteriaElaboraciones: many(
       inventarioVentasCafeteriaElaboraciones
     ),
+  })
+);
+
+export const inventarioGastosRelations = relations(
+  inventarioGastos,
+  ({ one, many }) => ({
+    inventarioAreaventa: one(inventarioAreaventa, {
+      fields: [inventarioGastos.areaVentaId],
+      references: [inventarioAreaventa.id],
+    }),
+    inventarioUser: one(inventarioUser, {
+      fields: [inventarioGastos.usuarioId],
+      references: [inventarioUser.id],
+    }),
+    inventarioCuenta: one(inventarioCuentas, {
+      fields: [inventarioGastos.cuentaId],
+      references: [inventarioCuentas.id],
+    }),
+    inventarioTransacciones: many(inventarioTransacciones),
+    inventarioGastosAreasVentas: many(inventarioGastosAreasVenta),
   })
 );
 
@@ -461,25 +484,6 @@ export const inventarioProductoinfoRelations = relations(
     inventarioProductos_infoId: many(inventarioProducto, {
       relationName: "inventarioProducto_infoId_inventarioProductoinfo_id",
     }),
-  })
-);
-
-export const inventarioGastosRelations = relations(
-  inventarioGastos,
-  ({ one, many }) => ({
-    inventarioAreaventa: one(inventarioAreaventa, {
-      fields: [inventarioGastos.areaVentaId],
-      references: [inventarioAreaventa.id],
-    }),
-    inventarioUser: one(inventarioUser, {
-      fields: [inventarioGastos.usuarioId],
-      references: [inventarioUser.id],
-    }),
-    inventarioCuenta: one(inventarioCuentas, {
-      fields: [inventarioGastos.cuentaId],
-      references: [inventarioCuentas.id],
-    }),
-    inventarioTransacciones: many(inventarioTransacciones),
   })
 );
 
@@ -689,9 +693,84 @@ export const inventarioSalidasCafeteriaProductosRelations = relations(
   })
 );
 
+export const inventarioTransaccionesRelations = relations(
+  inventarioTransacciones,
+  ({ one }) => ({
+    inventarioEntradasCafeteria: one(inventarioEntradasCafeteria, {
+      fields: [inventarioTransacciones.entradaCafeteriaId],
+      references: [inventarioEntradasCafeteria.id],
+    }),
+    inventarioEntradaalmacen: one(inventarioEntradaalmacen, {
+      fields: [inventarioTransacciones.entradaId],
+      references: [inventarioEntradaalmacen.id],
+    }),
+    inventarioVentasCafeteria: one(inventarioVentasCafeteria, {
+      fields: [inventarioTransacciones.ventaCafeteriaId],
+      references: [inventarioVentasCafeteria.id],
+    }),
+    inventarioVenta: one(inventarioVentas, {
+      fields: [inventarioTransacciones.ventaId],
+      references: [inventarioVentas.id],
+    }),
+    inventarioCuenta: one(inventarioCuentas, {
+      fields: [inventarioTransacciones.cuentaId],
+      references: [inventarioCuentas.id],
+    }),
+    inventarioUser: one(inventarioUser, {
+      fields: [inventarioTransacciones.usuarioId],
+      references: [inventarioUser.id],
+    }),
+    inventarioGasto: one(inventarioGastos, {
+      fields: [inventarioTransacciones.gastoId],
+      references: [inventarioGastos.id],
+    }),
+    inventarioCuentacasa: one(inventarioCuentacasa, {
+      fields: [inventarioTransacciones.cuentaCasaId],
+      references: [inventarioCuentacasa.id],
+    }),
+  })
+);
+
+export const inventarioEntradasCafeteriaRelations = relations(
+  inventarioEntradasCafeteria,
+  ({ one, many }) => ({
+    inventarioTransacciones: many(inventarioTransacciones),
+    inventarioProveedor: one(inventarioProveedor, {
+      fields: [inventarioEntradasCafeteria.proveedorId],
+      references: [inventarioProveedor.id],
+    }),
+    inventarioUser: one(inventarioUser, {
+      fields: [inventarioEntradasCafeteria.usuarioId],
+      references: [inventarioUser.id],
+    }),
+    inventarioEntradasCafeteriaProductos: many(
+      inventarioEntradasCafeteriaProductos
+    ),
+  })
+);
+
+export const inventarioEntradaalmacenRelations = relations(
+  inventarioEntradaalmacen,
+  ({ one, many }) => ({
+    inventarioTransacciones: many(inventarioTransacciones),
+    inventarioProductos_entradaId: many(inventarioProducto, {
+      relationName: "inventarioProducto_entradaId_inventarioEntradaalmacen_id",
+    }),
+    inventarioProveedor: one(inventarioProveedor, {
+      fields: [inventarioEntradaalmacen.proveedorId],
+      references: [inventarioProveedor.id],
+    }),
+    inventarioUser: one(inventarioUser, {
+      fields: [inventarioEntradaalmacen.usuarioId],
+      references: [inventarioUser.id],
+    }),
+  })
+);
+
 export const inventarioVentasCafeteriaRelations = relations(
   inventarioVentasCafeteria,
   ({ one, many }) => ({
+    inventarioTransacciones: many(inventarioTransacciones),
     inventarioUser: one(inventarioUser, {
       fields: [inventarioVentasCafeteria.usuarioId],
       references: [inventarioUser.id],
@@ -699,10 +778,27 @@ export const inventarioVentasCafeteriaRelations = relations(
     inventarioVentasCafeteriaElaboraciones: many(
       inventarioVentasCafeteriaElaboraciones
     ),
-    inventarioTransacciones: many(inventarioTransacciones),
     inventarioVentasCafeteriaProductos: many(
       inventarioVentasCafeteriaProductos
     ),
+  })
+);
+
+export const inventarioVentasRelations = relations(
+  inventarioVentas,
+  ({ one, many }) => ({
+    inventarioTransacciones: many(inventarioTransacciones),
+    inventarioProductos_ventaId: many(inventarioProducto, {
+      relationName: "inventarioProducto_ventaId_inventarioVentas_id",
+    }),
+    inventarioAreaventa: one(inventarioAreaventa, {
+      fields: [inventarioVentas.areaVentaId],
+      references: [inventarioAreaventa.id],
+    }),
+    inventarioUser: one(inventarioUser, {
+      fields: [inventarioVentas.usuarioId],
+      references: [inventarioUser.id],
+    }),
   })
 );
 
@@ -801,94 +897,6 @@ export const inventarioVentasCafeteriaElaboracionesRelations = relations(
     inventarioVentasCafeteria: one(inventarioVentasCafeteria, {
       fields: [inventarioVentasCafeteriaElaboraciones.ventasCafeteriaId],
       references: [inventarioVentasCafeteria.id],
-    }),
-  })
-);
-
-export const inventarioTransaccionesRelations = relations(
-  inventarioTransacciones,
-  ({ one }) => ({
-    inventarioEntradasCafeteria: one(inventarioEntradasCafeteria, {
-      fields: [inventarioTransacciones.entradaCafeteriaId],
-      references: [inventarioEntradasCafeteria.id],
-    }),
-    inventarioEntradaalmacen: one(inventarioEntradaalmacen, {
-      fields: [inventarioTransacciones.entradaId],
-      references: [inventarioEntradaalmacen.id],
-    }),
-    inventarioVentasCafeteria: one(inventarioVentasCafeteria, {
-      fields: [inventarioTransacciones.ventaCafeteriaId],
-      references: [inventarioVentasCafeteria.id],
-    }),
-    inventarioVenta: one(inventarioVentas, {
-      fields: [inventarioTransacciones.ventaId],
-      references: [inventarioVentas.id],
-    }),
-    inventarioCuenta: one(inventarioCuentas, {
-      fields: [inventarioTransacciones.cuentaId],
-      references: [inventarioCuentas.id],
-    }),
-    inventarioUser: one(inventarioUser, {
-      fields: [inventarioTransacciones.usuarioId],
-      references: [inventarioUser.id],
-    }),
-    inventarioGasto: one(inventarioGastos, {
-      fields: [inventarioTransacciones.gastoId],
-      references: [inventarioGastos.id],
-    }),
-  })
-);
-
-export const inventarioEntradasCafeteriaRelations = relations(
-  inventarioEntradasCafeteria,
-  ({ one, many }) => ({
-    inventarioTransacciones: many(inventarioTransacciones),
-    inventarioProveedor: one(inventarioProveedor, {
-      fields: [inventarioEntradasCafeteria.proveedorId],
-      references: [inventarioProveedor.id],
-    }),
-    inventarioUser: one(inventarioUser, {
-      fields: [inventarioEntradasCafeteria.usuarioId],
-      references: [inventarioUser.id],
-    }),
-    inventarioEntradasCafeteriaProductos: many(
-      inventarioEntradasCafeteriaProductos
-    ),
-  })
-);
-
-export const inventarioEntradaalmacenRelations = relations(
-  inventarioEntradaalmacen,
-  ({ one, many }) => ({
-    inventarioTransacciones: many(inventarioTransacciones),
-    inventarioProductos_entradaId: many(inventarioProducto, {
-      relationName: "inventarioProducto_entradaId_inventarioEntradaalmacen_id",
-    }),
-    inventarioProveedor: one(inventarioProveedor, {
-      fields: [inventarioEntradaalmacen.proveedorId],
-      references: [inventarioProveedor.id],
-    }),
-    inventarioUser: one(inventarioUser, {
-      fields: [inventarioEntradaalmacen.usuarioId],
-      references: [inventarioUser.id],
-    }),
-  })
-);
-
-export const inventarioVentasRelations = relations(
-  inventarioVentas,
-  ({ one, many }) => ({
-    inventarioTransacciones: many(inventarioTransacciones),
-    inventarioProductos_ventaId: many(inventarioProducto, {
-      relationName: "inventarioProducto_ventaId_inventarioVentas_id",
-    }),
-    inventarioAreaventa: one(inventarioAreaventa, {
-      fields: [inventarioVentas.areaVentaId],
-      references: [inventarioAreaventa.id],
-    }),
-    inventarioUser: one(inventarioUser, {
-      fields: [inventarioVentas.usuarioId],
-      references: [inventarioUser.id],
     }),
   })
 );
@@ -999,6 +1007,20 @@ export const inventarioVentasCafeteriaProductosRelations = relations(
     inventarioVentasCafeteria: one(inventarioVentasCafeteria, {
       fields: [inventarioVentasCafeteriaProductos.ventasCafeteriaId],
       references: [inventarioVentasCafeteria.id],
+    }),
+  })
+);
+
+export const inventarioGastosAreasVentaRelations = relations(
+  inventarioGastosAreasVenta,
+  ({ one }) => ({
+    inventarioGasto: one(inventarioGastos, {
+      fields: [inventarioGastosAreasVenta.gastosId],
+      references: [inventarioGastos.id],
+    }),
+    inventarioAreaventa: one(inventarioAreaventa, {
+      fields: [inventarioGastosAreasVenta.areaventaId],
+      references: [inventarioAreaventa.id],
     }),
   })
 );
