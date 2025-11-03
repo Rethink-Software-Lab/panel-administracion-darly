@@ -29,8 +29,9 @@ export interface Gasto {
   created_at: string;
   cantidad: number;
   cuenta: CuentaInGasto | null;
-  area_venta: AreaVentaInGasto | null;
+  areas_venta: AreaVentaInGasto[];
   is_cafeteria: boolean;
+  isGeneral: boolean;
   tipo: string;
   frecuencia: string | null;
   diaMes: number | null;

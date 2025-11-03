@@ -26,17 +26,20 @@ export const columns: ColumnDef<Gasto>[] = [
   },
   { accessorKey: "cuenta.nombre", header: "Cuenta" },
   {
-    accessorKey: "area_venta.nombre",
-    header: "Área de venta",
+    header: "Áreas de venta",
     cell: ({ row }: { row: Row<Gasto> }) => {
-      const area = row.original.area_venta?.nombre;
+      const areas = row.original.areas_venta;
       const is_cafeteria = row.original.is_cafeteria;
-      if (area) {
-        return area;
-      } else if (!area && is_cafeteria) {
-        return "Cafetería";
+      const isGeneral = row.original.isGeneral;
+      if (areas && areas.length > 0) {
+        return areas.map((area) => area.nombre).join(", ");
       } else {
-        return <Badge variant="outline">Área de venta eliminada</Badge>;
+        if (is_cafeteria) {
+          return "Cafetería";
+        }
+        if (isGeneral) {
+          return "General";
+        }
       }
     },
   },
@@ -52,9 +55,8 @@ export const columns: ColumnDef<Gasto>[] = [
     header: "Día",
     cell: ({ row }) =>
       row.original.diaMes ||
-      (row.original.diaSemana && DiasSemana[row.original.diaSemana]) || (
-        <Badge variant="outline">Vacío</Badge>
-      ),
+      (row.original.diaSemana && DiasSemana[row.original.diaSemana]) ||
+      " - ",
   },
   {
     accessorKey: "cantidad",

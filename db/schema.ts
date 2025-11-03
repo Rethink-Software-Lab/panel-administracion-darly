@@ -507,7 +507,7 @@ export const inventarioAreaventa = pgTable(
     color: varchar({ length: 10 }).notNull(),
     active: boolean().default(true).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    cuentaId: bigint("cuenta_id", { mode: "number" }),
+    cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
   },
   (table) => [
     index("inventario_areaventa_cuenta_id_b3e1295e").using(
@@ -546,6 +546,57 @@ export const inventarioElaboracionesVentasCafeteria = pgTable(
       columns: [table.productoId],
       foreignColumns: [inventarioElaboraciones.id],
       name: "inventario_elaboraci_producto_id_7f688893_fk_inventari",
+    }),
+  ]
+);
+
+export const inventarioGastos = pgTable(
+  "inventario_gastos",
+  {
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_gastos_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
+    tipo: varchar({ length: 30 }).notNull(),
+    descripcion: varchar({ length: 100 }).notNull(),
+    cantidad: integer().notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    frecuencia: varchar({ length: 30 }),
+    diaMes: integer("dia_mes"),
+    diaSemana: integer("dia_semana"),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    usuarioId: bigint("usuario_id", { mode: "number" }),
+    isCafeteria: boolean("is_cafeteria").notNull(),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cuentaId: bigint("cuenta_id", { mode: "number" }),
+    isGeneral: boolean("is_general").notNull(),
+  },
+  (table) => [
+    index("inventario_gastos_cuenta_id_80353ee6").using(
+      "btree",
+      table.cuentaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_gastos_usuario_id_c9d7d796").using(
+      "btree",
+      table.usuarioId.asc().nullsLast().op("int8_ops")
+    ),
+    foreignKey({
+      columns: [table.usuarioId],
+      foreignColumns: [inventarioUser.id],
+      name: "inventario_gastos_usuario_id_c9d7d796_fk_inventario_user_id",
+    }),
+    foreignKey({
+      columns: [table.cuentaId],
+      foreignColumns: [inventarioCuentas.id],
+      name: "inventario_gastos_cuenta_id_80353ee6_fk_inventario_cuentas_id",
     }),
   ]
 );
@@ -675,67 +726,6 @@ export const inventarioHistorialpreciocostosalon = pgTable(
       columns: [table.usuarioId],
       foreignColumns: [inventarioUser.id],
       name: "inventario_historial_usuario_id_5305b961_fk_inventari",
-    }),
-  ]
-);
-
-export const inventarioGastos = pgTable(
-  "inventario_gastos",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "inventario_gastos_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
-    tipo: varchar({ length: 30 }).notNull(),
-    descripcion: varchar({ length: 100 }).notNull(),
-    cantidad: integer().notNull(),
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    frecuencia: varchar({ length: 30 }),
-    diaMes: integer("dia_mes"),
-    diaSemana: integer("dia_semana"),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    usuarioId: bigint("usuario_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    areaVentaId: bigint("area_venta_id", { mode: "number" }),
-    isCafeteria: boolean("is_cafeteria").notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    cuentaId: bigint("cuenta_id", { mode: "number" }),
-  },
-  (table) => [
-    index("inventario_gastos_area_venta_id_1b18e8f5").using(
-      "btree",
-      table.areaVentaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_gastos_cuenta_id_80353ee6").using(
-      "btree",
-      table.cuentaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_gastos_usuario_id_c9d7d796").using(
-      "btree",
-      table.usuarioId.asc().nullsLast().op("int8_ops")
-    ),
-    foreignKey({
-      columns: [table.areaVentaId],
-      foreignColumns: [inventarioAreaventa.id],
-      name: "inventario_gastos_area_venta_id_1b18e8f5_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.usuarioId],
-      foreignColumns: [inventarioUser.id],
-      name: "inventario_gastos_usuario_id_c9d7d796_fk_inventario_user_id",
-    }),
-    foreignKey({
-      columns: [table.cuentaId],
-      foreignColumns: [inventarioCuentas.id],
-      name: "inventario_gastos_cuenta_id_80353ee6_fk_inventario_cuentas_id",
     }),
   ]
 );
@@ -1347,6 +1337,118 @@ export const inventarioSalidasCafeteria = pgTable(
   ]
 );
 
+export const inventarioTransacciones = pgTable(
+  "inventario_transacciones",
+  {
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_trnsferenciastarjetas_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
+    descripcion: varchar({ length: 50 }).notNull(),
+    tipo: varchar({ length: 30 }).notNull(),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    usuarioId: bigint("usuario_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    ventaId: bigint("venta_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    ventaCafeteriaId: bigint("venta_cafeteria_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    entradaId: bigint("entrada_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    entradaCafeteriaId: bigint("entrada_cafeteria_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    gastoId: bigint("gasto_id", { mode: "number" }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cuentaCasaId: bigint("cuenta_casa_id", { mode: "number" }),
+  },
+  (table) => [
+    index("inventario_transacciones_cuenta_casa_id_cffd046d").using(
+      "btree",
+      table.cuentaCasaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transacciones_entrada_cafeteria_id_1ae4637b").using(
+      "btree",
+      table.entradaCafeteriaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transacciones_entrada_id_d57aa1ad").using(
+      "btree",
+      table.entradaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transacciones_gasto_id_29bc9d69").using(
+      "btree",
+      table.gastoId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transacciones_venta_cafeteria_id_4458ecb0").using(
+      "btree",
+      table.ventaCafeteriaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transacciones_venta_id_156db011").using(
+      "btree",
+      table.ventaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transferenciastarjetas_cuenta_id_a32c09b5").using(
+      "btree",
+      table.cuentaId.asc().nullsLast().op("int8_ops")
+    ),
+    index("inventario_transferenciastarjetas_usuario_id_7c62afec").using(
+      "btree",
+      table.usuarioId.asc().nullsLast().op("int8_ops")
+    ),
+    foreignKey({
+      columns: [table.entradaCafeteriaId],
+      foreignColumns: [inventarioEntradasCafeteria.id],
+      name: "inventario_transacci_entrada_cafeteria_id_1ae4637b_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.entradaId],
+      foreignColumns: [inventarioEntradaalmacen.id],
+      name: "inventario_transacci_entrada_id_d57aa1ad_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.ventaCafeteriaId],
+      foreignColumns: [inventarioVentasCafeteria.id],
+      name: "inventario_transacci_venta_cafeteria_id_4458ecb0_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.ventaId],
+      foreignColumns: [inventarioVentas.id],
+      name: "inventario_transacci_venta_id_156db011_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.cuentaId],
+      foreignColumns: [inventarioCuentas.id],
+      name: "inventario_transfere_cuenta_id_a32c09b5_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.usuarioId],
+      foreignColumns: [inventarioUser.id],
+      name: "inventario_transfere_usuario_id_7c62afec_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.gastoId],
+      foreignColumns: [inventarioGastos.id],
+      name: "inventario_transacci_gasto_id_29bc9d69_fk_inventari",
+    }),
+    foreignKey({
+      columns: [table.cuentaCasaId],
+      foreignColumns: [inventarioCuentacasa.id],
+      name: "inventario_transacci_cuenta_casa_id_cffd046d_fk_inventari",
+    }),
+  ]
+);
+
 export const inventarioVentasCafeteria = pgTable(
   "inventario_ventas_cafeteria",
   {
@@ -1608,107 +1710,6 @@ export const inventarioVentasCafeteriaElaboraciones = pgTable(
     unique(
       "inventario_ventas_cafete_ventas_cafeteria_id_elab_7b9f8dea_uniq"
     ).on(table.ventasCafeteriaId, table.elaboracionesVentasCafeteriaId),
-  ]
-);
-
-export const inventarioTransacciones = pgTable(
-  "inventario_transacciones",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "inventario_trnsferenciastarjetas_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 9223372036854775807,
-      cache: 1,
-    }),
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
-    descripcion: varchar({ length: 50 }).notNull(),
-    tipo: varchar({ length: 30 }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    usuarioId: bigint("usuario_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    ventaId: bigint("venta_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    ventaCafeteriaId: bigint("venta_cafeteria_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    entradaId: bigint("entrada_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    entradaCafeteriaId: bigint("entrada_cafeteria_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    gastoId: bigint("gasto_id", { mode: "number" }),
-  },
-  (table) => [
-    index("inventario_transacciones_entrada_cafeteria_id_1ae4637b").using(
-      "btree",
-      table.entradaCafeteriaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transacciones_entrada_id_d57aa1ad").using(
-      "btree",
-      table.entradaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transacciones_gasto_id_29bc9d69").using(
-      "btree",
-      table.gastoId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transacciones_venta_cafeteria_id_4458ecb0").using(
-      "btree",
-      table.ventaCafeteriaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transacciones_venta_id_156db011").using(
-      "btree",
-      table.ventaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transferenciastarjetas_cuenta_id_a32c09b5").using(
-      "btree",
-      table.cuentaId.asc().nullsLast().op("int8_ops")
-    ),
-    index("inventario_transferenciastarjetas_usuario_id_7c62afec").using(
-      "btree",
-      table.usuarioId.asc().nullsLast().op("int8_ops")
-    ),
-    foreignKey({
-      columns: [table.entradaCafeteriaId],
-      foreignColumns: [inventarioEntradasCafeteria.id],
-      name: "inventario_transacci_entrada_cafeteria_id_1ae4637b_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.entradaId],
-      foreignColumns: [inventarioEntradaalmacen.id],
-      name: "inventario_transacci_entrada_id_d57aa1ad_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventaCafeteriaId],
-      foreignColumns: [inventarioVentasCafeteria.id],
-      name: "inventario_transacci_venta_cafeteria_id_4458ecb0_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventaId],
-      foreignColumns: [inventarioVentas.id],
-      name: "inventario_transacci_venta_id_156db011_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.cuentaId],
-      foreignColumns: [inventarioCuentas.id],
-      name: "inventario_transfere_cuenta_id_a32c09b5_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.usuarioId],
-      foreignColumns: [inventarioUser.id],
-      name: "inventario_transfere_usuario_id_7c62afec_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.gastoId],
-      foreignColumns: [inventarioGastos.id],
-      name: "inventario_transacci_gasto_id_29bc9d69_fk_inventari",
-    }),
   ]
 );
 
@@ -2386,4 +2387,35 @@ export const inventarioVentasCafeteriaProductos = pgTable(
       "inventario_ventas_cafete_ventas_cafeteria_id_prod_9d58c5c7_uniq"
     ).on(table.ventasCafeteriaId, table.productosVentasCafeteriaId),
   ]
+);
+
+export const inventarioGastosAreasVenta = pgTable(
+  "inventario_gastos_areas_venta",
+  {
+    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+      name: "inventario_gastos_areas_venta_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 9223372036854775807,
+      cache: 1,
+    }),
+    gastosId: bigint("gastos_id", { mode: "number" })
+      .notNull()
+      .references(() => inventarioGastos.id, { onDelete: "cascade" }),
+    areaventaId: bigint("areaventa_id", { mode: "number" })
+      .notNull()
+      .references(() => inventarioAreaventa.id, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    areaventaIdIndex: index(
+      "inventario_gastos_areas_venta_areaventa_id_9604b7d7"
+    ).on(table.areaventaId),
+    gastosIdIndex: index("inventario_gastos_areas_venta_gastos_id_e7bb2864").on(
+      table.gastosId
+    ),
+    gastosAreaVentaUniq: unique(
+      "inventario_gastos_areas__gastos_id_areaventa_id_f35c84e6_uniq"
+    ).on(table.gastosId, table.areaventaId),
+  })
 );

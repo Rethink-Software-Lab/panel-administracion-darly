@@ -93,6 +93,7 @@ export async function GET(request: NextRequest) {
             createdAt: new Date().toISOString(),
             descripcion: descripcion,
             gastoId: id,
+            usuarioId: 1,
           });
         });
       }
