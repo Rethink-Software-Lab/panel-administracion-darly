@@ -14,6 +14,7 @@ import {
   numeric,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { Moneda } from "@/app/(with-layout)/cuentas/types";
 
 export const inventarioAjusteinventario = pgTable(
   "inventario_ajusteinventario",
@@ -475,7 +476,9 @@ export const inventarioCuentas = pgTable("inventario_cuentas", {
   tipo: varchar({ length: 30 }).notNull(),
   saldo: numeric({ precision: 12, scale: 2 }).notNull(),
   banco: varchar({ length: 50 }),
-  moneda: varchar({ length: 3 }).default("CUP").notNull(),
+  moneda: varchar({ length: 3 })
+    .$default(() => Moneda.CUP)
+    .notNull(),
 });
 
 export const inventarioCategorias = pgTable("inventario_categorias", {
@@ -505,7 +508,9 @@ export const inventarioAreaventa = pgTable(
     }),
     nombre: varchar({ length: 50 }).notNull(),
     color: varchar({ length: 10 }).notNull(),
-    active: boolean().default(true).notNull(),
+    active: boolean()
+      .$default(() => true)
+      .notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
   },
@@ -1353,7 +1358,9 @@ export const inventarioTransacciones = pgTable(
       mode: "string",
     }).notNull(),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
-    moneda: varchar({ length: 3 }).default("CUP").notNull(),
+    moneda: varchar({ length: 3 })
+      .$default(() => Moneda.CUP)
+      .notNull(),
     descripcion: varchar({ length: 50 }).notNull(),
     tipo: varchar({ length: 30 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
