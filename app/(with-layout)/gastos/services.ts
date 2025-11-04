@@ -44,7 +44,6 @@ export async function getGastos() {
           { id: number; nombre: string }[]
         >`COALESCE(json_agg(json_build_object('id', ${inventarioAreaventa.id}, 'nombre', ${inventarioAreaventa.nombre})) FILTER (WHERE ${inventarioAreaventa.id} IS NOT NULL), '[]'::json)`,
         is_cafeteria: inventarioGastos.isCafeteria,
-        isGeneral: inventarioGastos.isGeneral,
         frecuencia: inventarioGastos.frecuencia,
         usuario: inventarioUser.username,
         diaMes: inventarioGastos.diaMes,

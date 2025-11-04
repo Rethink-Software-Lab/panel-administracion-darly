@@ -26,23 +26,17 @@ export const GastosSchema = pipe(
       string("La cuenta es requerida."),
       nonEmpty("La cuenta es requerida.")
     ),
-    isGeneral: boolean(),
-    areas_venta: optional(
-      pipe(
-        array(
-          object({
-            label: pipe(
-              string("El área de venta es requerida."),
-              nonEmpty("El área de venta es requerida")
-            ),
-            value: pipe(
-              string("El área de venta es requerida."),
-              nonEmpty("El área de venta es requerida")
-            ),
-          })
+    areas_venta: array(
+      object({
+        label: pipe(
+          string("El área de venta es requerida."),
+          nonEmpty("El área de venta es requerida")
         ),
-        minLength(1, "El área de venta es requerida")
-      )
+        value: pipe(
+          string("El área de venta es requerida."),
+          nonEmpty("El área de venta es requerida")
+        ),
+      })
     ),
     tipo: pipe(
       string("Tipo de gasto requerido."),
@@ -114,21 +108,5 @@ export const GastosSchema = pipe(
       "El dia de la semana es requerido."
     ),
     ["diaSemana"]
-  ),
-  forward(
-    partialCheck(
-      [["isGeneral"], ["areas_venta"]],
-      (input) => {
-        if (
-          !input.isGeneral &&
-          (!input.areas_venta || input.areas_venta.length === 0)
-        ) {
-          return false;
-        }
-        return true;
-      },
-      "Se requiere al menos un área de venta."
-    ),
-    ["areas_venta"]
   )
 );

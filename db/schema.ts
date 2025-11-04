@@ -577,7 +577,6 @@ export const inventarioGastos = pgTable(
     isCafeteria: boolean("is_cafeteria").notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }),
-    isGeneral: boolean("is_general").notNull(),
   },
   (table) => [
     index("inventario_gastos_cuenta_id_80353ee6").using(
@@ -1369,7 +1368,10 @@ export const inventarioTransacciones = pgTable(
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     entradaCafeteriaId: bigint("entrada_cafeteria_id", { mode: "number" }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    gastoId: bigint("gasto_id", { mode: "number" }),
+    gastoId: bigint("gasto_id", { mode: "number" }).references(
+      () => inventarioGastos.id,
+      { onDelete: "set null" }
+    ),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaCasaId: bigint("cuenta_casa_id", { mode: "number" }),
   },

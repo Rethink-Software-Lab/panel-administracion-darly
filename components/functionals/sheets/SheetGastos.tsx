@@ -59,7 +59,6 @@ import {
 } from "@/components/ui/command";
 import { GastosSchema } from "@/app/(with-layout)/gastos/schema";
 import MultipleSelector from "@/components/ui/multiselect";
-import { Switch } from "@/components/ui/switch";
 
 export default function SheetGastos({
   data,
@@ -85,17 +84,15 @@ export default function SheetGastos({
       cantidad: data?.cantidad || 0,
       diaMes: data?.diaMes || undefined,
       diaSemana: data?.diaSemana?.toLocaleString() || undefined,
-      isGeneral: data?.isGeneral ?? true,
       areas_venta:
         data?.areas_venta.map((a) => {
           return { label: a.nombre, value: a.id.toString() };
-        }) || undefined,
+        }) || [],
     },
   });
 
   const tipo = useWatch({ control: form.control, name: "tipo" });
   const frecuencia = useWatch({ control: form.control, name: "frecuencia" });
-  const isGeneralWatch = useWatch({ control: form.control, name: "isGeneral" });
 
   const onSubmit = async (
     dataForm: InferInput<typeof GastosSchema>
@@ -276,55 +273,36 @@ export default function SheetGastos({
 
               <FormField
                 control={form.control}
-                name="isGeneral"
+                name="areas_venta"
                 render={({ field }) => (
-                  <FormItem className="flex items-center justify-between border p-4 rounded-lg space-y-0">
-                    <Label>Mostar en reporte general?</Label>
+                  <FormItem>
+                    <Label>
+                      Mostar en reporte de las siguientes áreas de venta
+                    </Label>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(value) => {
-                          field.onChange(value);
-                          value
-                            ? form.setValue("areas_venta", undefined)
-                            : form.setValue("areas_venta", []);
-                        }}
+                      <MultipleSelector
+                        {...field}
+                        defaultOptions={
+                          [
+                            { nombre: "Cafeteria", id: "cafeteria" },
+                            ...areas,
+                          ].map((area) => ({
+                            label: area?.nombre,
+                            value: area.id.toString(),
+                          })) ?? []
+                        }
+                        placeholder="Seleccione áreas de venta..."
+                        emptyIndicator={
+                          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                            no results found.
+                          </p>
+                        }
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {!isGeneralWatch && (
-                <FormField
-                  control={form.control}
-                  name="areas_venta"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label>Áreas de venta</Label>
-                      <FormControl>
-                        <MultipleSelector
-                          {...field}
-                          defaultOptions={
-                            (areas || []).map((area) => ({
-                              label: area?.nombre,
-                              value: area.id.toString(),
-                            })) ?? []
-                          }
-                          placeholder="Seleccione áreas de venta..."
-                          emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                              no results found.
-                            </p>
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
 
               <FormField
                 control={form.control}
