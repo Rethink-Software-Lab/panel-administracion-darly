@@ -219,6 +219,7 @@ export async function addTransferencia(
       await tx.insert(inventarioTransacciones).values({
         tipo: TipoTransferencia.TRANSFERENCIA,
         cantidad: data.cantidad.toString(),
+        moneda: cuentaDestino.moneda,
         createdAt: new Date().toISOString(),
         descripcion: descripcion,
         usuarioId: Number(userId),

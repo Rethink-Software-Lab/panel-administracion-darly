@@ -122,12 +122,13 @@ export const columns: ColumnDef<Transacciones>[] = [
   },
   {
     accessorKey: "cantidad",
-    header: "Valor",
+    header: "Cantidad",
     cell: ({ row }) =>
       Intl.NumberFormat("es-ES", {
         style: "currency",
-        currency: "CUP",
-      }).format(row.getValue("cantidad")),
+        currency: row.original.moneda,
+        currencyDisplay: "code",
+      }).format(Number(row.original.cantidad)),
   },
   {
     accessorKey: "descripcion",

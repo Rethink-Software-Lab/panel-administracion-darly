@@ -475,7 +475,7 @@ export const inventarioCuentas = pgTable("inventario_cuentas", {
   tipo: varchar({ length: 30 }).notNull(),
   saldo: numeric({ precision: 12, scale: 2 }).notNull(),
   banco: varchar({ length: 50 }),
-  moneda: varchar({ length: 3 }).notNull(),
+  moneda: varchar({ length: 3 }).default("CUP").notNull(),
 });
 
 export const inventarioCategorias = pgTable("inventario_categorias", {
@@ -1353,6 +1353,7 @@ export const inventarioTransacciones = pgTable(
       mode: "string",
     }).notNull(),
     cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
+    moneda: varchar({ length: 3 }).default("CUP").notNull(),
     descripcion: varchar({ length: 50 }).notNull(),
     tipo: varchar({ length: 30 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
