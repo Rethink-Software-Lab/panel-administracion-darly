@@ -42,6 +42,7 @@ export interface ResponseTarjetas {
 export interface Transacciones {
   id: number;
   cantidad: string;
+  moneda: string;
   descripcion: string;
   createdAt: string;
   cuenta: string;

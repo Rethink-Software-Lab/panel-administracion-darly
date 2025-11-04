@@ -109,6 +109,7 @@ export async function getTransacciones() {
         usuario: inventarioUser.username,
         createdAt: inventarioTransacciones.createdAt,
         cantidad: inventarioTransacciones.cantidad,
+        moneda: inventarioTransacciones.moneda,
         descripcion: inventarioTransacciones.descripcion,
         totalCount: sql<number>`COUNT(*) OVER()`.as("total_count"),
       })

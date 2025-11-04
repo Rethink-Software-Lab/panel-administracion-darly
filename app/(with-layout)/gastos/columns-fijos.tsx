@@ -27,17 +27,15 @@ export const columns: ColumnDef<Gasto>[] = [
   { accessorKey: "cuenta.nombre", header: "Cuenta" },
   {
     header: "Áreas de venta",
-    cell: ({ row }: { row: Row<Gasto> }) => {
+    cell: ({ row }) => {
       const areas = row.original.areas_venta;
       const is_cafeteria = row.original.is_cafeteria;
-      const isGeneral = row.original.isGeneral;
       if (areas && areas.length > 0) {
         return areas.map((area) => area.nombre).join(", ");
       } else {
         if (is_cafeteria) {
           return "Cafetería";
-        }
-        if (isGeneral) {
+        } else {
           return "General";
         }
       }
@@ -62,9 +60,10 @@ export const columns: ColumnDef<Gasto>[] = [
     accessorKey: "cantidad",
     header: "Monto",
     cell: ({ row }) =>
-      Intl.NumberFormat("es-CU", {
+      Intl.NumberFormat("es-ES", {
         style: "currency",
         currency: "CUP",
+        currencyDisplay: "code",
       }).format(row.getValue("cantidad")),
   },
   {

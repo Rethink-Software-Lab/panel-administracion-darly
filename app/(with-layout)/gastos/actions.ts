@@ -22,16 +22,15 @@ export async function addGasto(
   const { userId } = await getSession();
   try {
     await db.transaction(async (tx) => {
-      const isCafeteria = gasto.areas_venta
-        ? gasto.areas_venta.some((a) => a.value === "cafeteria")
-        : false;
+      const isCafeteria = gasto.areas_venta.some(
+        (a) => a.value === "cafeteria"
+      );
 
       const [gastoInsertado] = await tx
         .insert(inventarioGastos)
         .values({
           ...gasto,
           diaSemana: Number(gasto.diaSemana) || undefined,
-          isGeneral: gasto.isGeneral,
           isCafeteria,
           createdAt: new Date().toISOString(),
           cuentaId: Number(gasto.cuenta),
@@ -39,7 +38,7 @@ export async function addGasto(
         })
         .returning({ id: inventarioGastos.id });
 
-      if (!gasto.isGeneral && gasto.areas_venta) {
+      if (gasto.areas_venta?.length > 0) {
         const areas = isCafeteria
           ? gasto.areas_venta.filter((a) => a.value !== "cafeteria")
           : gasto.areas_venta;
@@ -111,9 +110,7 @@ export async function editGasto(
 ): Promise<{ data: string | null; error: string | null }> {
   const { userId } = await getSession();
   try {
-    const isCafeteria = gasto.areas_venta
-      ? gasto.areas_venta.some((a) => a.value === "cafeteria")
-      : false;
+    const isCafeteria = gasto.areas_venta.some((a) => a.value === "cafeteria");
 
     await db.transaction(async (tx) => {
       const gastoEditado = await db
@@ -123,7 +120,6 @@ export async function editGasto(
           diaSemana: gasto.diaSemana ? Number(gasto.diaSemana) : null,
           diaMes: gasto.diaMes ? Number(gasto.diaMes) : null,
           isCafeteria,
-          isGeneral: gasto.isGeneral,
           cuentaId: Number(gasto.cuenta),
           usuarioId: Number(userId),
         })
@@ -142,7 +138,7 @@ export async function editGasto(
         .delete(inventarioGastosAreasVenta)
         .where(eq(inventarioGastosAreasVenta.gastosId, gastoEditado[0].id));
 
-      if (!gasto.isGeneral && gasto.areas_venta) {
+      if (gasto.areas_venta.length > 0) {
         const areas = isCafeteria
           ? gasto.areas_venta.filter((a) => a.value !== "cafeteria")
           : gasto.areas_venta;
