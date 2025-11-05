@@ -1447,11 +1447,6 @@ export const inventarioTransacciones = pgTable(
       name: "inventario_transfere_usuario_id_7c62afec_fk_inventari",
     }),
     foreignKey({
-      columns: [table.gastoId],
-      foreignColumns: [inventarioGastos.id],
-      name: "inventario_transacci_gasto_id_29bc9d69_fk_inventari",
-    }),
-    foreignKey({
       columns: [table.cuentaCasaId],
       foreignColumns: [inventarioCuentacasa.id],
       name: "inventario_transacci_cuenta_casa_id_cffd046d_fk_inventari",
