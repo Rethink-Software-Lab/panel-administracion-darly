@@ -94,22 +94,24 @@ export const EntradaCafeteriaSchema = pipe(
       object({
         producto: pipe(
           string("El producto es requerido"),
-          nonEmpty("El producto es requerido")
+          transform(Number),
+          minValue(1, "El producto es requerido")
         ),
         cantidad: pipe(
           string("La cantidad es requerida"),
-          nonEmpty("La cantidad es requerida")
+          transform(parseFloat),
+          minValue(0.1, "La cantidad debe ser mayor que 0")
         ),
-        precio_costo: optional(
-          pipe(
-            string("La cantidad es requerida"),
-            nonEmpty("La cantidad es requerida")
-          )
+        importe: pipe(
+          string("La cantidad es requerida"),
+          transform(parseFloat),
+          minValue(0, "El importe debe ser mayor que 0")
         ),
         precio_venta: optional(
           pipe(
             string("La cantidad es requerida"),
-            nonEmpty("La cantidad es requerida")
+            transform(parseFloat),
+            minValue(0.1, "El precio de venta debe ser mayor que 0")
           )
         ),
       })

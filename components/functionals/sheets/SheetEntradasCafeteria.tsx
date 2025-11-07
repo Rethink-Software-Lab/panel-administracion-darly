@@ -36,7 +36,7 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 
 import { Input } from "@/components/ui/input";
-import { InferInput } from "valibot";
+import { InferInput, InferOutput } from "valibot";
 import { toast } from "sonner";
 import { Fragment, useRef, useState } from "react";
 
@@ -95,9 +95,10 @@ export default function SheetEntradasCafeteria({
   const form = useForm<InferInput<typeof EntradaCafeteriaSchema>>({
     resolver: valibotResolver(EntradaCafeteriaSchema),
     defaultValues: {
+      proveedor: "",
       comprador: "",
       productos: [
-        { producto: "", cantidad: "0", precio_costo: "0", precio_venta: "0" },
+        { producto: "", cantidad: "0", importe: "0", precio_venta: "0" },
       ],
     },
   });
@@ -122,7 +123,7 @@ export default function SheetEntradasCafeteria({
   });
 
   const onSubmit = async (
-    dataForm: InferInput<typeof EntradaCafeteriaSchema>
+    dataForm: InferOutput<typeof EntradaCafeteriaSchema>
   ): Promise<void> => {
     const { data: dataRes, error } = await addEntradaCafeteria(dataForm);
 
@@ -209,7 +210,7 @@ export default function SheetEntradasCafeteria({
           <Form {...form}>
             <form
               ref={formRef}
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit as any)}
               className="space-y-4"
             >
               <ComboboxProveedorCafeteria
@@ -308,7 +309,7 @@ export default function SheetEntradasCafeteria({
                   <FormItem className="w-full text-left">
                     <Label>Comprador</Label>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="Comprador..." />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -434,7 +435,7 @@ export default function SheetEntradasCafeteria({
                                   className="w-[320px] p-0"
                                 >
                                   <Command className="rounded-lg border shadow-md">
-                                    <CommandInput placeholder="Escribe un código..." />
+                                    <CommandInput placeholder="Buscar cuenta..." />
                                     <CommandList>
                                       <CommandEmpty>
                                         Ningún resultado encontrado.
@@ -549,7 +550,6 @@ export default function SheetEntradasCafeteria({
                                       <Input
                                         {...field}
                                         type="number"
-                                        step={0.01}
                                         onChange={(e) => {
                                           const value = parseFloat(
                                             e.target.value
@@ -642,18 +642,16 @@ export default function SheetEntradasCafeteria({
                         />
                         <FormField
                           control={form.control}
-                          name={`productos.${index}.precio_costo`}
+                          name={`productos.${index}.importe`}
                           render={({ field }) => (
                             <FormItem className="space-y-1">
                               <Label className="text-sm font-medium text-muted-foreground">
-                                Precio Costo
+                                Importe
                               </Label>
                               <FormControl>
                                 <Input
                                   style={{ marginTop: 0 }}
                                   type="number"
-                                  min={0.01}
-                                  step="0.01"
                                   {...field}
                                 />
                               </FormControl>
@@ -670,12 +668,7 @@ export default function SheetEntradasCafeteria({
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <Input
-                                  type="number"
-                                  min={0.01}
-                                  step="0.01"
-                                  {...field}
-                                />
+                                <Input type="number" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -691,11 +684,9 @@ export default function SheetEntradasCafeteria({
                               </Label>
                               <FormControl>
                                 <Input
+                                  {...field}
                                   style={{ marginTop: 0 }}
                                   type="number"
-                                  min={0.01}
-                                  step="0.01"
-                                  {...field}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -726,7 +717,7 @@ export default function SheetEntradasCafeteria({
                       append({
                         producto: "",
                         cantidad: "0",
-                        precio_costo: "0",
+                        importe: "0",
                         precio_venta: "0",
                       })
                     }

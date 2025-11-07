@@ -136,24 +136,29 @@ async function procesarProductos({
     if (!productoData)
       throw new Error(`Producto con ID ${productoId} no encontrado.`);
 
-    if (item.precio_costo && productoData.precioCosto !== item.precio_costo)
+    const precio_costo = item.importe / item.cantidad;
+
+    if (parseFloat(productoData.precioCosto) !== precio_costo)
       await tx.insert(inventarioHistorialpreciocostocafeteria).values({
         productoId,
-        precio: item.precio_costo,
+        precio: precio_costo.toString(),
         fechaInicio: new Date().toISOString(),
         usuarioId: userId,
       });
-    if (item.precio_venta && productoData.precioVenta !== item.precio_venta)
+    if (
+      item.precio_venta &&
+      parseFloat(productoData.precioVenta) !== item.precio_venta
+    )
       await tx.insert(inventarioHistorialprecioventacafeteria).values({
         productoId,
-        precio: item.precio_venta,
+        precio: item.precio_venta.toString(),
         fechaInicio: new Date().toISOString(),
         usuarioId: userId,
       });
 
     totalCosto +=
-      item.precio_costo && productoData.precioCosto !== item.precio_costo
-        ? parseFloat(item.precio_costo ?? "0") * cantidad
+      parseFloat(productoData.precioCosto) !== precio_costo
+        ? precio_costo * cantidad
         : parseFloat(productoData.precioCosto) * cantidad;
     totalCantidadProductos += cantidad;
 

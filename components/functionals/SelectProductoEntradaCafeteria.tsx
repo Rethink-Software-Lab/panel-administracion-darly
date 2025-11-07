@@ -70,7 +70,7 @@ export default function SelectProductoEntradaCafeteria({
             </PopoverTrigger>
             <PopoverContent containerRef={formRef} className="w-[320px] p-0">
               <Command className="rounded-lg border shadow-md">
-                <CommandInput placeholder="Escribe un código..." />
+                <CommandInput placeholder="Buscar producto..." />
                 <CommandList>
                   <CommandEmpty>Ningún resultado encontrado.</CommandEmpty>
                   <CommandGroup heading="Sugerencias">
@@ -80,10 +80,6 @@ export default function SelectProductoEntradaCafeteria({
                         value={producto.id.toString()}
                         keywords={[producto.nombre]}
                         onSelect={(currentValue) => {
-                          form.setValue(
-                            `productos.${index}.precio_costo`,
-                            producto.precio_costo.toString()
-                          );
                           form.setValue(
                             `productos.${index}.precio_venta`,
                             producto.precio_venta.toString()
