@@ -3,7 +3,6 @@ import {
   boolean,
   enum_,
   forward,
-  maxValue,
   minLength,
   minValue,
   nonEmpty,
@@ -35,13 +34,7 @@ export const EntradaSchema = pipe(
             string("La cuenta es requerida."),
             nonEmpty("La cuenta es requerida.")
           ),
-          cantidad: optional(
-            pipe(
-              number(),
-              minValue(1, "Valor mínimo 1"),
-              maxValue(100000, "Valor máximo 100.000")
-            )
-          ),
+          cantidad: optional(pipe(number(), minValue(1, "Valor mínimo 1"))),
           tipo: pipe(string(), nonEmpty("Tipo de cuenta requerido.")),
         })
       ),
@@ -54,13 +47,7 @@ export const EntradaSchema = pipe(
             string("El producto es requerido."),
             nonEmpty("El producto es requerido.")
           ),
-          cantidad: optional(
-            pipe(
-              number(),
-              minValue(1, "Valor mínimo 1"),
-              maxValue(2000, "Valor máximo 2000")
-            )
-          ),
+          cantidad: optional(pipe(number(), minValue(1, "Valor mínimo 1"))),
           isZapato: boolean(),
           variantes: optional(
             pipe(
