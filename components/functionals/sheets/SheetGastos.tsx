@@ -74,6 +74,10 @@ export default function SheetGastos({
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
+  const areasDefaultValues = data?.areas_venta.map((a) => {
+    return { label: a.nombre, value: a.id.toString() };
+  });
+
   const form = useForm<InferInput<typeof GastosSchema>>({
     resolver: valibotResolver(GastosSchema),
     defaultValues: {
@@ -84,10 +88,11 @@ export default function SheetGastos({
       cantidad: data?.cantidad || 0,
       diaMes: data?.diaMes || undefined,
       diaSemana: data?.diaSemana?.toLocaleString() || undefined,
-      areas_venta:
-        data?.areas_venta.map((a) => {
-          return { label: a.nombre, value: a.id.toString() };
-        }) || [],
+      areas_venta: data?.is_cafeteria
+        ? areasDefaultValues?.concat([
+            { label: "Cafetería", value: "cafeteria" },
+          ])
+        : areasDefaultValues || [],
     },
   });
 
