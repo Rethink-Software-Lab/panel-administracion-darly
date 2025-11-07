@@ -3,7 +3,6 @@ import {
   enum_,
   forward,
   maxLength,
-  maxValue,
   minLength,
   minValue,
   nonEmpty,
@@ -77,13 +76,7 @@ export const EntradaCafeteriaSchema = pipe(
             string("La cuenta es requerida."),
             nonEmpty("La cuenta es requerida.")
           ),
-          cantidad: optional(
-            pipe(
-              number(),
-              minValue(1, "Valor mínimo 1"),
-              maxValue(100000, "Valor máximo 100.000")
-            )
-          ),
+          cantidad: optional(pipe(number(), minValue(1, "Valor mínimo 1"))),
           tipo: pipe(string(), nonEmpty("Tipo de cuenta requerido.")),
         })
       ),
