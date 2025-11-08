@@ -94,14 +94,16 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
                 {Intl.NumberFormat("es-CU", {
                   style: "currency",
                   currency: "CUP",
-                }).format(Number(producto.producto.precio_costo))}
+                  maximumFractionDigits: 10,
+                }).format(parseFloat(producto.producto.precio_costo))}
               </TableCell>
               <TableCell className="text-right">
                 {Intl.NumberFormat("es-CU", {
                   style: "currency",
                   currency: "CUP",
+                  maximumFractionDigits: 10,
                 }).format(
-                  producto.cantidad * Number(producto.producto.precio_costo)
+                  producto.cantidad * parseFloat(producto.producto.precio_costo)
                 )}
               </TableCell>
             </TableRow>

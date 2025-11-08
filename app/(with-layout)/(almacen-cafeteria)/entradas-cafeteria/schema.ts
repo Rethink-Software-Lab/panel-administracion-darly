@@ -104,7 +104,7 @@ export const EntradaCafeteriaSchema = pipe(
           pipe(
             string("La cantidad es requerida"),
             transform(parseFloat),
-            minValue(0.1, "El precio de venta debe ser mayor que 0")
+            minValue(0, "El precio de venta debe ser mayor que 0")
           )
         ),
       })
