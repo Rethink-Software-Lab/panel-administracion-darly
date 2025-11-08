@@ -617,7 +617,7 @@ export const inventarioHistorialprecioventacafeteria = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    precio: numeric({ precision: 7, scale: 2 }).notNull(),
+    precio: numeric({ precision: 20, scale: 10 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
       mode: "string",
@@ -660,7 +660,7 @@ export const inventarioHistorialpreciocostocafeteria = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    precio: numeric({ precision: 7, scale: 2 }).notNull(),
+    precio: numeric({ precision: 20, scale: 10 }).notNull(),
     fechaInicio: timestamp("fecha_inicio", {
       withTimezone: true,
       mode: "string",

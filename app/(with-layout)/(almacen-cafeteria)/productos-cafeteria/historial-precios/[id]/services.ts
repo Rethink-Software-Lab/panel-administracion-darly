@@ -5,12 +5,8 @@ import {
   inventarioUser,
 } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { EndPointHistorialPrecios } from "./types";
 
-export async function getHistorialCafeteria(id: string): Promise<{
-  data: EndPointHistorialPrecios | null;
-  error: string | null;
-}> {
+export async function getHistorialCafeteria(id: string) {
   try {
     const precios_costo = await db
       .select({
