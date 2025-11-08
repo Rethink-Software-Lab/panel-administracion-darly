@@ -67,6 +67,7 @@ export function FormTransferencia({
     defaultValues: {
       cuentaOrigen: "",
       cuentaDestino: "",
+      descripcion: "",
       cantidad: "",
       tipoCambio: undefined,
     },
@@ -335,12 +336,25 @@ export function FormTransferencia({
           </div>
           <FormField
             control={form.control}
+            name="descripcion"
+            render={({ field }) => (
+              <FormItem className="w-full text-left">
+                <Label>Descripción</Label>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="cantidad"
             render={({ field }) => (
               <FormItem className="w-full text-left">
                 <Label>Cantidad</Label>
                 <FormControl>
-                  <Input {...field} type="number" step={0.01} />
+                  <Input {...field} type="number" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

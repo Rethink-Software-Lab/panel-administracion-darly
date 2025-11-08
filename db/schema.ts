@@ -1361,7 +1361,7 @@ export const inventarioTransacciones = pgTable(
     moneda: varchar({ length: 3 })
       .$default(() => Moneda.CUP)
       .notNull(),
-    descripcion: varchar({ length: 50 }).notNull(),
+    descripcion: varchar({ length: 100 }).notNull(),
     tipo: varchar({ length: 30 }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     usuarioId: bigint("usuario_id", { mode: "number" }),

@@ -83,6 +83,7 @@ export const TransferenciaSchema = pipe(
       transform((value: string) => parseInt(value)),
       minValue(1, "La cuenta destino es requerida.")
     ),
+    descripcion: string(),
     cantidad: pipe(
       string("La cantidad es requerida."),
       nonEmpty("La cantidad es requerida."),
@@ -128,6 +129,7 @@ export const createTransferenciaSchema = (cuentas: Tarjetas[]) =>
         transform((value: string) => parseInt(value)),
         minValue(1, "La cuenta destino es requerida.")
       ),
+      descripcion: string(),
       cantidad: pipe(
         string("La cantidad es requerida."),
         nonEmpty("La cantidad es requerida."),

@@ -195,15 +195,18 @@ export async function addTransferencia(
       );
     }
 
-    const { cantidadDestino, descripcion } = calcularDetallesTransferencia(
-      cuentaOrigen,
-      cuentaDestino,
-      data.cantidad,
-      data.tipoCambio
-    );
+    const { cantidadOrigenARestar, descripcion } =
+      calcularDetallesTransferencia(
+        cuentaOrigen,
+        cuentaDestino,
+        data.cantidad,
+        data.tipoCambio,
+        data.descripcion
+      );
 
-    const nuevoSaldoOrigen = parseFloat(cuentaOrigen.saldo) - data.cantidad;
-    const nuevoSaldoDestino = parseFloat(cuentaDestino.saldo) + cantidadDestino;
+    const nuevoSaldoOrigen =
+      parseFloat(cuentaOrigen.saldo) - cantidadOrigenARestar;
+    const nuevoSaldoDestino = parseFloat(cuentaDestino.saldo) + data.cantidad;
 
     await db.transaction(async (tx) => {
       await tx
@@ -250,15 +253,16 @@ export async function addTransferencia(
 function calcularDetallesTransferencia(
   origen: { nombre: string; moneda: string },
   destino: { nombre: string; moneda: string },
-  cantidadOrigen: number,
-  tipoCambio?: number
+  cantidadATransferir: number,
+  tipoCambio?: number,
+  descripcion?: string
 ) {
   const sonMonedasIguales = origen.moneda === destino.moneda;
 
   if (sonMonedasIguales) {
     return {
-      cantidadDestino: cantidadOrigen,
-      descripcion: `Transferencia de ${origen.nombre} a ${destino.nombre}`,
+      cantidadOrigenARestar: cantidadATransferir,
+      descripcion: `${origen.nombre} -> ${destino.nombre} : ${descripcion}`,
     };
   }
 
@@ -269,7 +273,7 @@ function calcularDetallesTransferencia(
   }
 
   return {
-    cantidadDestino: cantidadOrigen * tipoCambio,
-    descripcion: `Transferencia de ${origen.nombre} a ${destino.nombre} (T/C: ${tipoCambio})`,
+    cantidadOrigenARestar: cantidadATransferir / tipoCambio,
+    descripcion: `${origen.nombre} -> ${destino.nombre} (T/C: ${tipoCambio}) : ${descripcion}`,
   };
 }
