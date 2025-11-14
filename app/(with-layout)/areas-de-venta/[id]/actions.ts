@@ -99,7 +99,7 @@ export async function addVenta(data: DataVenta) {
         userId,
       });
 
-      if (data.metodoPago === METODOS_PAGO.TRANSFERENCIA) {
+      if (sum_pago_trabajador > 0) {
         await rebajar_pago_trabajador_de_caja_y_crear_transaccion({
           areaVenta: data.areaVenta,
           tx,
