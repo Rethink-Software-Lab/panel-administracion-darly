@@ -350,10 +350,8 @@ async function rebajar_de_las_cuentas({
   for (let index = 0; index < cuentas.length; index++) {
     const cuenta = cuentas[index];
     let deltaCents =
-      Math.round((cuenta.cantidad ?? 0) * 100) -
-      (metodoPago === METODOS_PAGO.EFECTIVO
-        ? Math.round(sum_pago_trabajador * 100)
-        : 0);
+      (cuenta.cantidad ?? 0) * 100 -
+      (metodoPago === METODOS_PAGO.EFECTIVO ? sum_pago_trabajador * 100 : 0);
 
     if (metodoPago === METODOS_PAGO.MIXTO && index === 0) {
       const cantidadAsignada = cuenta?.cantidad ?? 0;
@@ -399,7 +397,7 @@ async function rebajar_de_las_cuentas({
       }
 
       if (cantidadAsignada > sum_pago_trabajador) {
-        deltaCents -= Math.round(sum_pago_trabajador * 100);
+        deltaCents -= sum_pago_trabajador * 100;
       }
     }
 
@@ -432,23 +430,25 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
   areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
 }) {
   if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
-  const pagoTrabajador = Math.round(sum_pago_trabajador * 100);
-  await tx
-    .update(inventarioCuentas)
-    .set({
-      saldo: sql`${inventarioCuentas.saldo} + ${sql.raw(
-        `(${pagoTrabajador}::numeric / 100.0)`
-      )}`,
-    })
-    .where(eq(inventarioCuentas.id, areaVenta.cuenta?.id));
+
+  if (venta[0].metodoPago === METODOS_PAGO.TRANSFERENCIA) {
+    await tx
+      .update(inventarioCuentas)
+      .set({
+        saldo: sql`${inventarioCuentas.saldo} - ${sum_pago_trabajador}`,
+      })
+      .where(eq(inventarioCuentas.id, areaVenta.cuenta?.id));
+  }
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
-    descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
+    descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)} - ${
+      areaVenta.nombre
+    }`,
     cuentaId: areaVenta.cuenta.id,
     ventaId: venta[0].id,
     tipo: TipoTransferencia.PAGO_TRABAJADOR,
-    cantidad: String(sum_pago_trabajador),
+    cantidad: sum_pago_trabajador.toString(),
     usuarioId: Number(userId),
   });
 }
