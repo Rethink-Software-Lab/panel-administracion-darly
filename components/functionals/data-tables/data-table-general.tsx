@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   getPaginationRowModel,
@@ -11,7 +11,7 @@ import {
   SortingState,
   ColumnFiltersState,
   TableOptions,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -20,10 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { Dispatch, SetStateAction, useState } from 'react';
-import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import { Dispatch, SetStateAction, useState } from "react";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -49,7 +49,7 @@ export default function DataTableGeneral<TData>({
     getCoreRowModel: getCoreRowModel(),
     initialState: {
       pagination: {
-        pageSize: 10,
+        pageSize: 50,
       },
     },
     onSortingChange: setSorting,
@@ -96,7 +96,7 @@ export default function DataTableGeneral<TData>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell

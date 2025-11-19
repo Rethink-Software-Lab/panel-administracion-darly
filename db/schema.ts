@@ -865,6 +865,9 @@ export const inventarioProductosCafeteria = pgTable(
       cache: 1,
     }),
     nombre: varchar({ length: 50 }).notNull(),
+    isIngrediente: boolean("is_ingrediente")
+      .$default(() => false)
+      .notNull(),
   }
 );
 
@@ -1367,8 +1370,9 @@ export const inventarioTransacciones = pgTable(
     usuarioId: bigint("usuario_id", { mode: "number" }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventaId: bigint("venta_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    ventaCafeteriaId: bigint("venta_cafeteria_id", { mode: "number" }),
+    ventaCafeteriaId: bigint("venta_cafeteria_id", {
+      mode: "number",
+    }).references(() => inventarioVentasCafeteria.id, { onDelete: "cascade" }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -1425,11 +1429,6 @@ export const inventarioTransacciones = pgTable(
       columns: [table.entradaId],
       foreignColumns: [inventarioEntradaalmacen.id],
       name: "inventario_transacci_entrada_id_d57aa1ad_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventaCafeteriaId],
-      foreignColumns: [inventarioVentasCafeteria.id],
-      name: "inventario_transacci_venta_cafeteria_id_4458ecb0_fk_inventari",
     }),
     foreignKey({
       columns: [table.ventaId],
@@ -1681,11 +1680,11 @@ export const inventarioVentasCafeteriaElaboraciones = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventasCafeteriaId: bigint("ventas_cafeteria_id", {
       mode: "number",
-    }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    })
+      .notNull()
+      .references(() => inventarioVentasCafeteria.id, { onDelete: "cascade" }),
     elaboracionesVentasCafeteriaId: bigint(
       "elaboraciones_ventas_cafeteria_id",
       { mode: "number" }
@@ -1706,11 +1705,6 @@ export const inventarioVentasCafeteriaElaboraciones = pgTable(
       columns: [table.elaboracionesVentasCafeteriaId],
       foreignColumns: [inventarioElaboracionesVentasCafeteria.id],
       name: "inventario_ventas_ca_elaboraciones_ventas_b3bd21fb_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventasCafeteriaId],
-      foreignColumns: [inventarioVentasCafeteria.id],
-      name: "inventario_ventas_ca_ventas_cafeteria_id_1f8764a9_fk_inventari",
     }),
     unique(
       "inventario_ventas_cafete_ventas_cafeteria_id_elab_7b9f8dea_uniq"
@@ -2358,11 +2352,11 @@ export const inventarioVentasCafeteriaProductos = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventasCafeteriaId: bigint("ventas_cafeteria_id", {
       mode: "number",
-    }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    })
+      .notNull()
+      .references(() => inventarioVentasCafeteria.id, { onDelete: "cascade" }),
     productosVentasCafeteriaId: bigint("productos_ventas_cafeteria_id", {
       mode: "number",
     }).notNull(),
@@ -2382,11 +2376,6 @@ export const inventarioVentasCafeteriaProductos = pgTable(
       columns: [table.productosVentasCafeteriaId],
       foreignColumns: [inventarioProductosVentasCafeteria.id],
       name: "inventario_ventas_ca_productos_ventas_caf_dd02a326_fk_inventari",
-    }),
-    foreignKey({
-      columns: [table.ventasCafeteriaId],
-      foreignColumns: [inventarioVentasCafeteria.id],
-      name: "inventario_ventas_ca_ventas_cafeteria_id_89ae285d_fk_inventari",
     }),
     unique(
       "inventario_ventas_cafete_ventas_cafeteria_id_prod_9d58c5c7_uniq"

@@ -15,6 +15,7 @@ import {
   CirclePlus,
   CircleX,
   MinusCircle,
+  Pencil,
   PlusCircle,
   X,
 } from "lucide-react";
@@ -56,12 +57,16 @@ import {
 import { CAJA_CAFETERIA, cn } from "@/lib/utils";
 import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import SelectProductoVentaCafeteria from "../SelectProductoVentasCafeteria";
-import { addVentaCafeteria } from "@/app/(with-layout)/cafeteria/actions";
+import {
+  addVentaCafeteria,
+  editVentaCafeteria,
+} from "@/app/(with-layout)/cafeteria/ventas/actions";
 import {
   Productos_Elaboraciones,
   TarjetasVentas,
+  VentasCafeteria,
 } from "@/app/(with-layout)/cafeteria/types";
-import { VentasCafeteriaSchema } from "@/app/(with-layout)/cafeteria/schema";
+import { VentasCafeteriaSchema } from "@/app/(with-layout)/cafeteria/ventas/schema";
 import {
   Popover,
   PopoverContent,
@@ -79,9 +84,11 @@ import {
 export default function SheetVentasCafeteria({
   productos,
   cuentasBancarias,
+  data,
 }: {
   productos?: Productos_Elaboraciones[];
   cuentasBancarias?: TarjetasVentas[];
+  data?: VentasCafeteria;
 }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -90,10 +97,41 @@ export default function SheetVentasCafeteria({
 
   const formRef = useRef<HTMLFormElement>(null);
 
+  const productosDefault = (data?.productos || []).map((p) => {
+    return {
+      producto: p.id.toString(),
+      cantidad: p.cantidad.toString(),
+      isElaboracion: false,
+    };
+  });
+
+  const elaboraciones = (data?.elaboraciones || []).map((p) => {
+    return {
+      producto: p.id.toString(),
+      cantidad: p.cantidad.toString(),
+      isElaboracion: true,
+    };
+  });
+
+  const productosElaboraciones = [...productosDefault, ...elaboraciones];
+
+  const parsedCuentas = data?.cuentas?.map((c) => {
+    return {
+      cuenta: c.id.toString(),
+      tipo: c.tipo,
+      cantidad: parseFloat(c.cantidad),
+    };
+  });
+
   const form = useForm<InferOutput<typeof VentasCafeteriaSchema>>({
     resolver: valibotResolver(VentasCafeteriaSchema),
     defaultValues: {
-      productos: [{ producto: "", cantidad: "0", isElaboracion: false }],
+      metodoPago: data?.metodoPago || undefined,
+      cuentas: parsedCuentas || undefined,
+      productos:
+        productosElaboraciones.length > 0
+          ? productosElaboraciones
+          : [{ producto: "", cantidad: "0", isElaboracion: false }],
     },
   });
 
@@ -119,7 +157,9 @@ export default function SheetVentasCafeteria({
   const onSubmit = async (
     dataForm: InferOutput<typeof VentasCafeteriaSchema>
   ): Promise<void> => {
-    const { data: dataRes, error } = await addVentaCafeteria(dataForm);
+    const { data: dataRes, error } = await (data
+      ? editVentaCafeteria(dataForm, data.id)
+      : addVentaCafeteria(dataForm));
     if (error) {
       setError(error);
     } else {
@@ -166,18 +206,25 @@ export default function SheetVentasCafeteria({
   return (
     <Sheet open={open} onOpenChange={setOpen} modal={true}>
       <SheetTrigger asChild>
-        <Button className="gap-1 items-center">
-          <PlusCircle size={18} />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Agregar venta
-          </span>
-        </Button>
+        {data ? (
+          <Button variant="outline" size="icon" className="gap-1 items-center">
+            <Pencil size={18} />
+            <span className="sr-only sm:whitespace-nowrap">Editar venta</span>
+          </Button>
+        ) : (
+          <Button className="gap-1 items-center">
+            <PlusCircle size={18} />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Agregar venta
+            </span>
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[600px] overflow-y-scroll">
         <SheetHeader>
-          <SheetTitle>Agregar venta</SheetTitle>
+          <SheetTitle>{data ? "Editar" : "Agregar"} venta</SheetTitle>
           <SheetDescription className="pb-4">
-            Rellene el formulario para agregar una venta.
+            Rellene el formulario para {data ? "editar" : "agregar"} una venta.
           </SheetDescription>
           {error && (
             <Alert className="text-left" variant="destructive">
@@ -275,11 +322,11 @@ export default function SheetVentasCafeteria({
                   <div
                     className={cn(
                       "grid [&>span]:pl-2 mb-2 [&>span]:text-muted-foreground border-b border-muted",
-                      form.getValues("cuentas").length > 1 && "grid-cols-2"
+                      form.getValues("cuentas")?.length > 1 && "grid-cols-2"
                     )}
                   >
                     <span>Cuenta</span>
-                    {form.getValues("cuentas").length > 1 && (
+                    {form.getValues("cuentas")?.length > 1 && (
                       <span>Cantidad</span>
                     )}
                   </div>
@@ -580,7 +627,7 @@ export default function SheetVentasCafeteria({
                 </TableCaption>
               </Table>
               <div className="flex justify-end">
-                <Button type="submit">Agregar</Button>
+                <Button type="submit">{data ? "Editar" : "Agregar"}</Button>
               </div>
             </form>
           </Form>

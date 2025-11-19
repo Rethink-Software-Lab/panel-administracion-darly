@@ -43,18 +43,35 @@ export default function SheetInfoVentasCafeteria({
           <SheetDescription className="flex justify-between items-center gap-2">
             <span className="flex flex-col">
               <span className="text-sm text-muted-foreground">
-                Método de pago: {data.metodo_pago}
+                Método de pago: {data.metodoPago}
               </span>
-              {data.metodo_pago !== METODOS_PAGO.EFECTIVO && (
+              {data.metodoPago !== METODOS_PAGO.EFECTIVO && (
                 <span className="text-sm text-muted-foreground">
-                  Cuenta: {data.cuenta}
+                  Cuenta:{" "}
+                  {data.cuentas.map((cuenta) => cuenta.nombre).join(", ")}
                 </span>
               )}
             </span>
-            {data.metodo_pago === METODOS_PAGO.MIXTO && (
+            {data.metodoPago === METODOS_PAGO.MIXTO && (
               <span className="flex flex-col">
-                <span>Efectivo: {data.efectivo}</span>
-                <span>Transferencia: {data.transferencia}</span>
+                <span>
+                  Efectivo:{" "}
+                  {Intl.NumberFormat("es-ES", {
+                    style: "currency",
+                    currency: "CUP",
+                    currencyDisplay: "code",
+                    maximumFractionDigits: 10,
+                  }).format(parseFloat(data.efectivo))}
+                </span>
+                <span>
+                  Transferencia:{" "}
+                  {Intl.NumberFormat("es-ES", {
+                    style: "currency",
+                    currency: "CUP",
+                    currencyDisplay: "code",
+                    maximumFractionDigits: 10,
+                  }).format(parseFloat(data.transferencia))}
+                </span>
               </span>
             )}
           </SheetDescription>
@@ -67,20 +84,20 @@ export default function SheetInfoVentasCafeteria({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.elaboraciones.map((elaboracion) => (
-              <TableRow key={elaboracion.producto.id}>
+            {data?.elaboraciones?.map((elaboracion) => (
+              <TableRow key={elaboracion.id}>
                 <TableCell className="font-semibold align-top w-1/2">
-                  {elaboracion.producto.nombre}
+                  {elaboracion.nombre}
                 </TableCell>
                 <TableCell className="text-right">
                   {elaboracion.cantidad}
                 </TableCell>
               </TableRow>
             ))}
-            {data.productos.map((producto) => (
-              <TableRow key={producto.producto.id}>
+            {data?.productos?.map((producto) => (
+              <TableRow key={producto.id}>
                 <TableCell className="font-semibold align-top w-1/2">
-                  {producto.producto.nombre}
+                  {producto.nombre}
                 </TableCell>
                 <TableCell className="text-right">
                   {producto.cantidad}
