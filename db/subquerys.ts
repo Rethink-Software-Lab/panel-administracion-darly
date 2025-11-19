@@ -21,7 +21,7 @@ export const createSubqueryUltimoPrecioElaboracion = (productoId: number) =>
     .as("precioElaboracion");
 
 export const createSubqueryUltimoPrecioVentaProductoCafeteria = (
-  productoId: number
+  productoId: number | PgColumn
 ) =>
   db
     .select({
@@ -34,7 +34,7 @@ export const createSubqueryUltimoPrecioVentaProductoCafeteria = (
     .as("precioVenta");
 
 export const createSubqueryUltimoPrecioCostoProductoCafeteria = (
-  productoId: number
+  productoId: number | PgColumn
 ) =>
   db
     .select({

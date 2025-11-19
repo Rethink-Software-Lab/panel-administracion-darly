@@ -1,35 +1,24 @@
-// import {
-//   ChevronLeftIcon,
-//   ChevronRightIcon,
-//   DoubleArrowLeftIcon,
-//   DoubleArrowRightIcon,
-// } from '@radix-ui/react-icons';
-
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeft,
   ChevronsRight,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 export function DataTablePagination({ table }) {
   return (
     <div className="flex items-center justify-between px-2 py-4">
-      {/* <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
       <div className="flex  whitespace-nowrap items-center justify-center text-sm font-medium">
-        Página {table.getState().pagination.pageIndex + 1} de{' '}
+        Página {table.getState().pagination.pageIndex + 1} de{" "}
         {table.getPageCount()}
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
@@ -47,7 +36,7 @@ export function DataTablePagination({ table }) {
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 15, 30, 40, 50].map((pageSize) => (
+              {[50, 75, 100].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
