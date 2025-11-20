@@ -10,13 +10,16 @@ import {
 import { DateTime } from "luxon";
 import { ClipboardX, FolderSearch } from "lucide-react";
 
-import { ProductoCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/inventario-cafeteria/types";
 import { Elaboraciones } from "@/app/(with-layout)/(almacen-cafeteria)/elaboraciones/types";
 import { getSession } from "@/lib/getSession";
 
-interface Producto extends ProductoCafeteria {
+interface Producto {
+  id: number;
+  nombre: string;
   cantidad: string;
   importe: number;
+  precio_costo: number;
+  precio_venta: number;
 }
 
 interface ElaboracionesType extends Elaboraciones {

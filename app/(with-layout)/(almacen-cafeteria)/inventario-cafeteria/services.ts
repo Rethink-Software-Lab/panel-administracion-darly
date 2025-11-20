@@ -1,35 +1,51 @@
-import { cookies } from 'next/headers';
-import { ProductoCafeteria } from './types';
+import { db } from "@/db/initial";
+import {
+  inventarioInventarioAlmacenCafeteria,
+  inventarioProductosCafeteria,
+} from "@/db/schema";
+import { createSubqueryUltimoPrecioVentaProductoCafeteria } from "@/db/subquerys";
+import { eq, gt, sql } from "drizzle-orm";
 
-export async function inventarioAlmacenCafeteria(): Promise<{
-  data: ProductoCafeteria[] | null;
-  error: string | null;
-}> {
-  const token = (await cookies()).get('session')?.value;
+export async function inventarioAlmacenCafeteria() {
   try {
-    const res = await fetch(
-      process.env.BACKEND_URL_V2 + '/almacen-cafeteria/inventario/',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        next: { tags: ['inventario-cafeteria'] },
-      }
-    );
-    if (!res.ok) {
-      if (res.status === 401)
-        return { data: null, error: 'Credenciales inválidas' };
-      return { data: null, error: 'Algo salió mal.' };
-    }
-    const data = await res.json();
+    const subqueryUltimoPrecioVentaProductoCafeteria =
+      createSubqueryUltimoPrecioVentaProductoCafeteria(
+        inventarioProductosCafeteria.id
+      );
+
+    const productosDb = await db
+      .select({
+        id: inventarioProductosCafeteria.id,
+        nombre: inventarioProductosCafeteria.nombre,
+        isIngrediente: inventarioProductosCafeteria.isIngrediente,
+        cantidad: inventarioInventarioAlmacenCafeteria.cantidad,
+        precioVenta: subqueryUltimoPrecioVentaProductoCafeteria.precio,
+      })
+      .from(inventarioProductosCafeteria)
+      .innerJoin(
+        inventarioInventarioAlmacenCafeteria,
+        eq(
+          inventarioInventarioAlmacenCafeteria.productoId,
+          inventarioProductosCafeteria.id
+        )
+      )
+      .innerJoinLateral(subqueryUltimoPrecioVentaProductoCafeteria, sql`true`)
+      .where(gt(inventarioInventarioAlmacenCafeteria.cantidad, "0"));
+
+    const productos = productosDb.map((item) => ({
+      ...item,
+      cantidad: parseFloat(item.cantidad),
+      precioVenta: parseFloat(item.precioVenta),
+    }));
     return {
       error: null,
-      data,
+      data: productos,
     };
   } catch (e) {
+    console.error(e);
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al obtener el inventario del almacén de cafetería",
     };
   }
 }

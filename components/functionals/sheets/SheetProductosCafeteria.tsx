@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Sheet,
@@ -7,33 +7,34 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { CircleX, Pen, PlusCircle } from 'lucide-react';
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { CircleX, Pen, PlusCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { useForm } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { ProductosCafeteriaSchema } from '@/lib/schemas';
+} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { ProductosCafeteriaSchema } from "@/lib/schemas";
 
-import { Input } from '@/components/ui/input';
-import { InferInput } from 'valibot';
-import { toast } from 'sonner';
-import { useRef, useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { InferInput, InferOutput } from "valibot";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import {
   addProductoCafeteria,
   editProductoCafeteria,
-} from '@/app/(with-layout)/(almacen-cafeteria)/productos-cafeteria/actions';
-import { ProductoCafeteria } from '@/app/(with-layout)/(almacen-cafeteria)/productos-cafeteria/types';
+} from "@/app/(with-layout)/(almacen-cafeteria)/productos-cafeteria/actions";
+import { ProductoCafeteria } from "@/app/(with-layout)/(almacen-cafeteria)/productos-cafeteria/types";
+import { Switch } from "@/components/ui/switch";
 
 export default function SheetProductosCafeteria({
   data,
@@ -41,20 +42,21 @@ export default function SheetProductosCafeteria({
   data?: ProductoCafeteria;
 }) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<InferInput<typeof ProductosCafeteriaSchema>>({
     resolver: valibotResolver(ProductosCafeteriaSchema),
     defaultValues: {
-      nombre: data?.nombre || '',
-      precio_costo: data?.precio_costo?.toString() || '0',
-      precio_venta: data?.precio_venta?.toString() || '0',
+      nombre: data?.nombre || "",
+      precioCosto: data?.precioCosto?.toString() || "0",
+      precioVenta: data?.precioVenta?.toString() || "0",
+      isIngrediente: data?.isIngrediente || false,
     },
   });
 
   const onSubmit = async (
-    dataForm: InferInput<typeof ProductosCafeteriaSchema>
+    dataForm: InferOutput<typeof ProductosCafeteriaSchema>
   ): Promise<void> => {
     const { data: dataRes, error } = data
       ? await editProductoCafeteria(dataForm, data.id)
@@ -64,7 +66,7 @@ export default function SheetProductosCafeteria({
       setError(error);
     } else {
       form.reset();
-      setError('');
+      setError("");
       toast.success(dataRes);
       setOpen(false);
     }
@@ -88,7 +90,7 @@ export default function SheetProductosCafeteria({
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[600px] overflow-y-scroll">
         <SheetHeader>
-          <SheetTitle>{data ? 'Editar' : 'Agregar'} producto</SheetTitle>
+          <SheetTitle>{data ? "Editar" : "Agregar"} producto</SheetTitle>
           <SheetDescription className="pb-4">
             Rellene el formulario para agregar un producto.
           </SheetDescription>
@@ -103,7 +105,7 @@ export default function SheetProductosCafeteria({
           <Form {...form}>
             <form
               ref={formRef}
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit as any)}
               className="space-y-4"
             >
               <FormField
@@ -121,12 +123,12 @@ export default function SheetProductosCafeteria({
               />
               <FormField
                 control={form.control}
-                name="precio_costo"
+                name="precioCosto"
                 render={({ field }) => (
                   <FormItem className="w-full text-left">
                     <Label>Precio de costo</Label>
                     <FormControl>
-                      <Input {...field} type="number" step={0.01} min={0} />
+                      <Input {...field} type="number" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,20 +136,39 @@ export default function SheetProductosCafeteria({
               />
               <FormField
                 control={form.control}
-                name="precio_venta"
+                name="precioVenta"
                 render={({ field }) => (
                   <FormItem className="w-full text-left">
                     <Label>Precio de venta</Label>
                     <FormControl>
-                      <Input {...field} type="number" step={0.01} min={0} />
+                      <Input {...field} type="number" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="flex justify-end">
-                <Button type="submit">{data ? 'Editar' : 'Agregar'}</Button>
+              <FormField
+                control={form.control}
+                name="isIngrediente"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between px-1">
+                    <Label>Es ingrediente?</Label>
+                    <FormControl>
+                      <Switch
+                        style={{ marginTop: 0 }}
+                        onCheckedChange={field.onChange}
+                        checked={field.value}
+                        onBlur={field.onBlur}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end pt-4">
+                <Button type="submit">{data ? "Editar" : "Agregar"}</Button>
               </div>
             </form>
           </Form>
