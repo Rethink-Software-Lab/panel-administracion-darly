@@ -10,6 +10,8 @@ export const columns: ColumnDef<ProductoCafeteria>[] = [
   {
     accessorKey: "cantidad",
     header: "Cantidad",
+    cell: ({ row }) =>
+      Intl.NumberFormat().format(parseFloat(row.original.cantidad)),
   },
   {
     accessorKey: "precioVenta",

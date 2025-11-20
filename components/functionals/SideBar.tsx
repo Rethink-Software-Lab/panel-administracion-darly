@@ -369,8 +369,7 @@ export default function SideBar({ areasVenta, session }: Props) {
                     href="/cafeteria/inventario"
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                      path === "/cafeteria/inventario" &&
-                        "bg-muted text-primary"
+                      path.includes("/cafeteria") && "bg-muted text-primary"
                     )}
                   >
                     <CoffeeIcon className="h-4 w-4" />

@@ -89,18 +89,24 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
               <TableCell className="font-medium">
                 {producto.producto.nombre}
               </TableCell>
-              <TableCell>{producto.cantidad}</TableCell>
               <TableCell>
-                {Intl.NumberFormat("es-CU", {
+                {Intl.NumberFormat("es-ES", {
+                  maximumFractionDigits: 10,
+                }).format(producto.cantidad)}
+              </TableCell>
+              <TableCell>
+                {Intl.NumberFormat("es-ES", {
                   style: "currency",
                   currency: "CUP",
+                  currencyDisplay: "code",
                   maximumFractionDigits: 10,
                 }).format(parseFloat(producto.producto.precio_costo))}
               </TableCell>
               <TableCell className="text-right">
-                {Intl.NumberFormat("es-CU", {
+                {Intl.NumberFormat("es-ES", {
                   style: "currency",
                   currency: "CUP",
+                  currencyDisplay: "code",
                   maximumFractionDigits: 10,
                 }).format(
                   producto.cantidad * parseFloat(producto.producto.precio_costo)
@@ -113,17 +119,20 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
           <TableRow>
             <TableCell colSpan={3}>Total</TableCell>
             <TableCell className="text-right">
-              $
-              {data?.productos
-                .reduce(
+              {Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "CUP",
+                currencyDisplay: "code",
+                maximumFractionDigits: 10,
+              }).format(
+                data?.productos.reduce(
                   (total, producto) =>
                     total +
-                    Number(
-                      producto.cantidad * Number(producto.producto.precio_costo)
-                    ),
+                    producto.cantidad *
+                      parseFloat(producto.producto.precio_costo),
                   0
                 )
-                .toFixed(2)}
+              )}
             </TableCell>
           </TableRow>
         </TableFooter>

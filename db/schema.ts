@@ -511,7 +511,6 @@ export const inventarioAreaventa = pgTable(
     active: boolean()
       .$default(() => true)
       .notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
   },
   (table) => [
@@ -855,7 +854,6 @@ export const inventarioProveedor = pgTable("inventario_proveedor", {
 export const inventarioProductosCafeteria = pgTable(
   "inventario_productos_cafeteria",
   {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
       name: "inventario_productos_cafeteria_id_seq",
       startWith: 1,
@@ -867,6 +865,9 @@ export const inventarioProductosCafeteria = pgTable(
     nombre: varchar({ length: 50 }).notNull(),
     isIngrediente: boolean("is_ingrediente")
       .$default(() => false)
+      .notNull(),
+    active: boolean()
+      .$default(() => true)
       .notNull(),
   }
 );
@@ -915,7 +916,6 @@ export const inventarioProductoinfo = pgTable(
 export const inventarioInventarioAlmacenCafeteria = pgTable(
   "inventario_inventario_almacen_cafeteria",
   {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
       name: "inventario_inventario_producto_cafeteria_id_seq",
       startWith: 1,
@@ -924,8 +924,7 @@ export const inventarioInventarioAlmacenCafeteria = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cantidad: numeric({ precision: 20, scale: 10 }).notNull(),
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
   },
   (table) => [
@@ -943,7 +942,6 @@ export const inventarioInventarioAlmacenCafeteria = pgTable(
 export const inventarioInventarioAreaCafeteria = pgTable(
   "inventario_inventario_area_cafeteria",
   {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
       name: "inventario_inventario_area_cafeteria_id_seq",
       startWith: 1,
@@ -952,8 +950,7 @@ export const inventarioInventarioAreaCafeteria = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    cantidad: numeric({ precision: 12, scale: 2 }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cantidad: numeric({ precision: 20, scale: 10 }).notNull(),
     productoId: bigint("producto_id", { mode: "number" }).notNull(),
   },
   (table) => [
@@ -1944,7 +1941,6 @@ export const inventarioProducto = pgTable(
 export const inventarioIngredienteCantidad = pgTable(
   "inventario_ingrediente_cantidad",
   {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
       name: "inventario_ingrediente_cantidad_id_seq",
       startWith: 1,
@@ -1953,8 +1949,7 @@ export const inventarioIngredienteCantidad = pgTable(
       maxValue: 9223372036854775807,
       cache: 1,
     }),
-    cantidad: numeric({ precision: 12, scale: 3 }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    cantidad: numeric({ precision: 20, scale: 10 }).notNull(),
     ingredienteId: bigint("ingrediente_id", { mode: "number" }).notNull(),
   },
   (table) => [

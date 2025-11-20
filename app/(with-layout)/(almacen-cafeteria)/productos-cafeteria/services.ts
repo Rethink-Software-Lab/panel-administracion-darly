@@ -1,35 +1,51 @@
-import { cookies } from 'next/headers';
-import { ProductoCafeteria } from './types';
+import { db } from "@/db/initial";
+import { inventarioProductosCafeteria } from "@/db/schema";
+import {
+  createSubqueryUltimoPrecioCostoProductoCafeteria,
+  createSubqueryUltimoPrecioVentaProductoCafeteria,
+} from "@/db/subquerys";
+import { desc, eq, sql } from "drizzle-orm";
 
-export async function ProductosCafeteria(): Promise<{
-  data: ProductoCafeteria[] | null;
-  error: string | null;
-}> {
-  const token = (await cookies()).get('session')?.value;
+export async function ProductosCafeteria() {
   try {
-    const res = await fetch(
-      process.env.BACKEND_URL_V2 + '/cafeteria/productos/',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        next: { tags: ['productos-cafeteria'] },
-      }
-    );
-    if (!res.ok) {
-      if (res.status === 401)
-        return { data: null, error: 'Credenciales inválidas' };
-      return { data: null, error: 'Algo salió mal.' };
-    }
-    const data = await res.json();
+    const subQueryUltimoPrecioCostoProductoCafeteria =
+      createSubqueryUltimoPrecioCostoProductoCafeteria(
+        inventarioProductosCafeteria.id
+      );
+
+    const subQueryUltimoPrecioVentaProductoCafeteria =
+      createSubqueryUltimoPrecioVentaProductoCafeteria(
+        inventarioProductosCafeteria.id
+      );
+
+    const productosDB = await db
+      .select({
+        id: inventarioProductosCafeteria.id,
+        nombre: inventarioProductosCafeteria.nombre,
+        precioCosto: subQueryUltimoPrecioCostoProductoCafeteria.precio,
+        precioVenta: subQueryUltimoPrecioVentaProductoCafeteria.precio,
+        isIngrediente: inventarioProductosCafeteria.isIngrediente,
+      })
+      .from(inventarioProductosCafeteria)
+      .innerJoinLateral(subQueryUltimoPrecioCostoProductoCafeteria, sql`true`)
+      .innerJoinLateral(subQueryUltimoPrecioVentaProductoCafeteria, sql`true`)
+      .where(eq(inventarioProductosCafeteria.active, true))
+      .orderBy(desc(inventarioProductosCafeteria.id));
+
+    const productos = productosDB.map((item) => ({
+      ...item,
+      precioCosto: parseFloat(item.precioCosto),
+      precioVenta: parseFloat(item.precioVenta),
+    }));
+
     return {
       error: null,
-      data,
+      data: productos,
     };
   } catch (e) {
     return {
       data: null,
-      error: 'Error al conectar con el servidor.',
+      error: "Error al obtener los productos de la cafetería.",
     };
   }
 }

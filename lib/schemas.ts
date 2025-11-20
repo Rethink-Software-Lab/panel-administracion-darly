@@ -19,6 +19,7 @@ import {
   custom,
   maxLength,
   trim,
+  transform,
 } from "valibot";
 
 export const UserSchema = pipe(
@@ -326,14 +327,19 @@ export const ProductosCafeteriaSchema = object({
     string("El nombre es requerido"),
     nonEmpty("El nombre es requerido")
   ),
-  precio_costo: pipe(
+  precioCosto: pipe(
     string("El precio de costo es requerido"),
-    nonEmpty("El precio de costo es requerido")
+    nonEmpty("El precio de costo es requerido"),
+    transform(parseFloat),
+    minValue(0.0000000001, "El precio de costo es requerido")
   ),
-  precio_venta: pipe(
+  precioVenta: pipe(
     string("El precio de venta es requerido"),
-    nonEmpty("El precio de venta es requerido")
+    nonEmpty("El precio de venta es requerido"),
+    transform(parseFloat),
+    minValue(0.0000000001, "El precio de venta es requerido")
   ),
+  isIngrediente: boolean(),
 });
 
 export const SalidaAlmacenCafeteriaSchema = pipe(
