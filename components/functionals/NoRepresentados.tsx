@@ -48,13 +48,7 @@ export async function NoRepresentados() {
           <ScrollArea className="h-[300px] pb-2">
             <div className="flex flex-col gap-2">
               {data?.map((p) => (
-                <Link
-                  key={p.id}
-                  href={{
-                    pathname: `/search`,
-                    query: { id: p.id.toString() },
-                  }}
-                >
+                <Link key={p.id} href={`/search/${p.id}`}>
                   <PopoverClose asChild>
                     <Button
                       variant="ghost"
