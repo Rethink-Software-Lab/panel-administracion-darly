@@ -70,6 +70,7 @@ export async function deleteCuenta(id: number) {
   }
 }
 
+/* Esto son las transacciones [ingreso y egreso] */
 export async function addTransferenciaTarjeta(
   data: InferInput<typeof TransferenciasTarjetas>
 ): Promise<{ data: string | null; error: string | null }> {
@@ -113,47 +114,160 @@ export async function addTransferenciaTarjeta(
   };
 }
 
-export async function deleteTransferenciaTarjeta({ id }: { id: number }) {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
-  const res = await fetch(
-    process.env.BACKEND_URL_V2 + "/tarjetas/transferencia/" + id + "/",
-    {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+export async function deleteTransaccion({ id }: { id: number }) {
+  try {
+    const [transaccion] = await db
+      .select()
+      .from(inventarioTransacciones)
+      .where(eq(inventarioTransacciones.id, id))
+      .limit(1);
+
+    if (!transaccion) {
+      throw new ValidationError("Transacción no encontrada.");
     }
-  );
-  if (!res.ok) {
-    if (res.status === 401)
+
+    const tiposValidos: string[] = [
+      TipoTransferencia.EGRESO,
+      TipoTransferencia.INGRESO,
+      TipoTransferencia.TRANSFERENCIA,
+    ];
+
+    if (!tiposValidos.includes(transaccion.tipo))
+      throw new ValidationError(
+        "La transaccion no es de un tipo valido para eliminar."
+      );
+
+    if (
+      transaccion.tipo === TipoTransferencia.EGRESO ||
+      transaccion.tipo === TipoTransferencia.INGRESO
+    ) {
+      const [cuenta] = await db
+        .select()
+        .from(inventarioCuentas)
+        .where(eq(inventarioCuentas.id, transaccion.cuentaId))
+        .limit(1);
+
+      if (!cuenta) {
+        throw new ValidationError("Cuenta no encontrada.");
+      }
+
+      if (
+        transaccion.tipo === TipoTransferencia.INGRESO &&
+        parseFloat(cuenta.saldo) < parseFloat(transaccion.cantidad)
+      )
+        throw new ValidationError(
+          "Saldo insuficiente para eliminar la transaccion."
+        );
+
+      const nuevoSaldo =
+        transaccion.tipo === TipoTransferencia.EGRESO
+          ? parseFloat(cuenta.saldo) + parseFloat(transaccion.cantidad)
+          : parseFloat(cuenta.saldo) - parseFloat(transaccion.cantidad);
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(inventarioCuentas)
+          .set({ saldo: nuevoSaldo.toString() })
+          .where(eq(inventarioCuentas.id, cuenta.id));
+
+        await tx
+          .delete(inventarioTransacciones)
+          .where(eq(inventarioTransacciones.id, id));
+      });
+    } else if (transaccion.tipo === TipoTransferencia.TRANSFERENCIA) {
+      if (!transaccion.cuentaOrigenId || !transaccion.cuentaDestinoId)
+        throw new Error(
+          "La transaccion no tiene cuenta origen o cuenta destino."
+        );
+
+      const cuentasOrigenYDestino = await db
+        .select()
+        .from(inventarioCuentas)
+        .where(
+          inArray(inventarioCuentas.id, [
+            transaccion.cuentaOrigenId,
+            transaccion.cuentaDestinoId,
+          ])
+        )
+        .limit(2);
+
+      const cuentaOrigen = cuentasOrigenYDestino.find(
+        (c) => transaccion.cuentaOrigenId === c.id
+      );
+
+      const cuentaDestino = cuentasOrigenYDestino.find(
+        (c) => transaccion.cuentaDestinoId === c.id
+      );
+
+      if (!cuentaOrigen) {
+        throw new ValidationError("Cuenta de origen no encontrada.");
+      }
+
+      if (!cuentaDestino) {
+        throw new ValidationError("Cuenta de destino no encontrada.");
+      }
+
+      const sonMonedasIguales = cuentaOrigen.moneda === cuentaDestino.moneda;
+
+      if (parseFloat(cuentaDestino.saldo) < parseFloat(transaccion.cantidad)) {
+        throw new ValidationError(
+          "El saldo de la cuenta destino es insuficiente para eliminar la transferencia."
+        );
+      }
+
+      if (
+        !sonMonedasIguales &&
+        (!transaccion.tipoCambio || parseFloat(transaccion.tipoCambio) < 0)
+      )
+        throw new Error(
+          "El tipo de cambio es requerido para transferencias entre monedas diferentes."
+        );
+
+      const nuevoSaldoOrigen = sonMonedasIguales
+        ? parseFloat(cuentaOrigen.saldo) + parseFloat(transaccion.cantidad)
+        : parseFloat(cuentaOrigen.saldo) +
+          parseFloat(transaccion.cantidad) /
+            parseFloat(transaccion.tipoCambio!);
+      const nuevoSaldoDestino =
+        parseFloat(cuentaDestino.saldo) - parseFloat(transaccion.cantidad);
+
+      console.log(nuevoSaldoOrigen, nuevoSaldoDestino);
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(inventarioCuentas)
+          .set({ saldo: nuevoSaldoOrigen.toString() })
+          .where(eq(inventarioCuentas.id, cuentaOrigen.id));
+
+        await tx
+          .update(inventarioCuentas)
+          .set({ saldo: nuevoSaldoDestino.toString() })
+          .where(eq(inventarioCuentas.id, cuentaDestino.id));
+
+        await tx
+          .delete(inventarioTransacciones)
+          .where(eq(inventarioTransacciones.id, id));
+      });
+    }
+
+    revalidatePath("/cuentas");
+    return {
+      data: "Transferencia eliminada con éxito.",
+      error: null,
+    };
+  } catch (e) {
+    console.error(e);
+    if (e instanceof ValidationError) {
       return {
         data: null,
-        error: "No autorizado",
-      };
-    if (res.status === 400) {
-      const json = await res.json();
-      return {
-        data: null,
-        error: json.detail,
+        error: e.message,
       };
     }
-    if (res.status === 404)
-      return {
-        data: null,
-        error: "Transferencia no encontrada",
-      };
     return {
       data: null,
-      error: "Algo salió mal.",
+      error: "Error al eliminar la transferencia.",
     };
   }
-  revalidateTag("tarjetas");
-  return {
-    data: "Transferencia eliminada con éxito.",
-    error: null,
-  };
 }
 
 export async function addTransferencia(
@@ -189,20 +303,23 @@ export async function addTransferencia(
       );
     }
 
-    if (parseFloat(cuentaOrigen.saldo) < data.cantidad) {
+    const sonMonedasIguales = cuentaOrigen.moneda === cuentaDestino.moneda;
+
+    if (
+      sonMonedasIguales
+        ? parseFloat(cuentaOrigen.saldo) < data.cantidad
+        : parseFloat(cuentaOrigen.saldo) < data.cantidad / data.tipoCambio!
+    ) {
       throw new ValidationError(
         "El saldo de la cuenta de origen es insuficiente."
       );
     }
 
-    const { cantidadOrigenARestar, descripcion } =
-      calcularDetallesTransferencia(
-        cuentaOrigen,
-        cuentaDestino,
-        data.cantidad,
-        data.tipoCambio,
-        data.descripcion
-      );
+    const { cantidadOrigenARestar } = calcularDetallesTransferencia(
+      data.cantidad,
+      sonMonedasIguales,
+      data.tipoCambio
+    );
 
     const nuevoSaldoOrigen =
       parseFloat(cuentaOrigen.saldo) - cantidadOrigenARestar;
@@ -224,9 +341,12 @@ export async function addTransferencia(
         cantidad: data.cantidad.toString(),
         moneda: cuentaDestino.moneda,
         createdAt: new Date().toISOString(),
-        descripcion: descripcion,
+        descripcion: data.descripcion,
         usuarioId: Number(userId),
         cuentaId: cuentaOrigen.id,
+        cuentaOrigenId: cuentaOrigen.id,
+        cuentaDestinoId: cuentaDestino.id,
+        tipoCambio: data.tipoCambio?.toString(),
       });
     });
 
@@ -251,18 +371,13 @@ export async function addTransferencia(
 }
 
 function calcularDetallesTransferencia(
-  origen: { nombre: string; moneda: string },
-  destino: { nombre: string; moneda: string },
   cantidadATransferir: number,
-  tipoCambio?: number,
-  descripcion?: string
+  sonMonedasIguales: boolean,
+  tipoCambio?: number
 ) {
-  const sonMonedasIguales = origen.moneda === destino.moneda;
-
   if (sonMonedasIguales) {
     return {
       cantidadOrigenARestar: cantidadATransferir,
-      descripcion: `${origen.nombre} -> ${destino.nombre} : ${descripcion}`,
     };
   }
 
@@ -274,6 +389,5 @@ function calcularDetallesTransferencia(
 
   return {
     cantidadOrigenARestar: cantidadATransferir / tipoCambio,
-    descripcion: `${origen.nombre} -> ${destino.nombre} (T/C: ${tipoCambio}) : ${descripcion}`,
   };
 }

@@ -1363,26 +1363,28 @@ export const inventarioTransacciones = pgTable(
       .notNull(),
     descripcion: varchar({ length: 100 }).notNull(),
     tipo: varchar({ length: 30 }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     usuarioId: bigint("usuario_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     ventaId: bigint("venta_id", { mode: "number" }),
     ventaCafeteriaId: bigint("venta_cafeteria_id", {
       mode: "number",
     }).references(() => inventarioVentasCafeteria.id, { onDelete: "cascade" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaId: bigint("cuenta_id", { mode: "number" }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     entradaId: bigint("entrada_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     entradaCafeteriaId: bigint("entrada_cafeteria_id", { mode: "number" }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     gastoId: bigint("gasto_id", { mode: "number" }).references(
       () => inventarioGastos.id,
       { onDelete: "set null" }
     ),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     cuentaCasaId: bigint("cuenta_casa_id", { mode: "number" }),
+    cuentaOrigenId: bigint("cuenta_origen_id", { mode: "number" }).references(
+      () => inventarioCuentas.id,
+      { onDelete: "set null" }
+    ),
+    cuentaDestinoId: bigint("cuenta_destino_id", { mode: "number" }).references(
+      () => inventarioCuentas.id,
+      { onDelete: "set null" }
+    ),
+    tipoCambio: numeric("tipo_cambio", { precision: 10, scale: 2 }),
   },
   (table) => [
     index("inventario_transacciones_cuenta_casa_id_cffd046d").using(

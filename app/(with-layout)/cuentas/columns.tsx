@@ -1,12 +1,13 @@
 "use client";
 import TableDeleteV2 from "@/components/functionals/TableDeleteV2";
-import { deleteTransferenciaTarjeta } from "./actions";
+import { deleteTransaccion } from "./actions";
 import { DateTime } from "luxon";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { TipoTransferencia, Transacciones } from "./types";
+import { TipoTransferencia, TransaccionesSelect } from "./types";
 import {
   ArrowDownLeft,
+  ArrowRight,
   ArrowRightLeft,
   ArrowUpRight,
   Banknote,
@@ -84,7 +85,7 @@ const tipoConfig: Record<TipoTransferencia, TipoConfigItem> = {
   },
 };
 
-export const columns: ColumnDef<Transacciones>[] = [
+export const columns: ColumnDef<TransaccionesSelect>[] = [
   {
     accessorKey: "createdAt",
     header: "Fecha",
@@ -134,6 +135,19 @@ export const columns: ColumnDef<Transacciones>[] = [
     accessorKey: "descripcion",
     header: "Descripción",
     size: 700,
+    cell: ({ row }) =>
+      row.original.tipo === TipoTransferencia.TRANSFERENCIA ? (
+        <div className="flex items-center gap-1">
+          {row.original.cuentaOrigen}
+          <ArrowRight className="size-4" />
+          {row.original.cuentaDestino} : {row.original.descripcion}
+          {row.original.tipoCambio && (
+            <Badge variant="outline">T/C: {row.original.tipoCambio}</Badge>
+          )}
+        </div>
+      ) : (
+        row.original.descripcion
+      ),
   },
   {
     accessorKey: "cuenta",
@@ -158,13 +172,11 @@ export const columns: ColumnDef<Transacciones>[] = [
     cell: ({ row }) => {
       if (
         row.original.tipo === TipoTransferencia.INGRESO ||
-        row.original.tipo === TipoTransferencia.EGRESO
+        row.original.tipo === TipoTransferencia.EGRESO ||
+        row.original.tipo === TipoTransferencia.TRANSFERENCIA
       ) {
         return (
-          <TableDeleteV2
-            id={row.original.id}
-            action={deleteTransferenciaTarjeta}
-          />
+          <TableDeleteV2 id={row.original.id} action={deleteTransaccion} />
         );
       }
       return;

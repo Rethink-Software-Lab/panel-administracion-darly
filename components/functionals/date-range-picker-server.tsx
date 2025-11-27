@@ -14,11 +14,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Transacciones } from "@/app/(with-layout)/cuentas/types";
+import { TransaccionesSelect } from "@/app/(with-layout)/cuentas/types";
 import { useEffect, useState } from "react";
 
 interface DateRangePickerProps {
-  table: Table<Transacciones>;
+  table: Table<TransaccionesSelect>;
 }
 
 export function DateRangePickerFilter({ table }: DateRangePickerProps) {

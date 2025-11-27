@@ -20,7 +20,10 @@ import {
 } from "@/components/ui/table";
 
 import { DataTablePagination } from "@/components/functionals/data-table-pagination-server-cursor";
-import { Tarjetas, Transacciones } from "@/app/(with-layout)/cuentas/types";
+import {
+  Tarjetas,
+  TransaccionesSelect,
+} from "@/app/(with-layout)/cuentas/types";
 import { FiltersTransacciones } from "./filters";
 import {
   parseAsArrayOf,
@@ -32,7 +35,7 @@ import {
 import { useMemo } from "react";
 import { DateRange } from "react-day-picker";
 
-export interface TransaccionesTableMeta extends TableMeta<Transacciones> {
+export interface TransaccionesTableMeta extends TableMeta<TransaccionesSelect> {
   cuentas: Tarjetas[];
 }
 
@@ -153,7 +156,7 @@ export default function DataTableTransacciones<TData>({
     defaultColumn: {
       minSize: 5,
     },
-  } as TableOptions<Transacciones>);
+  } as TableOptions<TransaccionesSelect>);
 
   return (
     <div className="">
