@@ -1,8 +1,4 @@
-import {
-  ResponseTarjetas,
-  TipoTransferencia,
-  ResponseTransacciones,
-} from "./types";
+import { TipoTransferencia } from "./types";
 import { db } from "@/db/initial";
 import {
   inventarioCuentas,
@@ -12,11 +8,9 @@ import {
 import { ValidationError } from "@/lib/errors";
 import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { searchParamsCache } from "./searchParams";
+import { alias } from "drizzle-orm/pg-core";
 
-export async function GetTarjetas(): Promise<{
-  data: ResponseTarjetas | null;
-  error: string | null;
-}> {
+export async function GetTarjetas() {
   try {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
@@ -101,6 +95,9 @@ export async function getTransacciones() {
 
     const offset = (page - 1) * safeLimit;
 
+    const aliasCuentaOrigen = alias(inventarioCuentas, "cuenta_origen");
+    const aliasCuentaDestino = alias(inventarioCuentas, "cuenta_destino");
+
     const transaccionesConConteo = await db
       .select({
         id: inventarioTransacciones.id,
@@ -111,6 +108,9 @@ export async function getTransacciones() {
         cantidad: inventarioTransacciones.cantidad,
         moneda: inventarioTransacciones.moneda,
         descripcion: inventarioTransacciones.descripcion,
+        tipoCambio: inventarioTransacciones.tipoCambio,
+        cuentaOrigen: aliasCuentaOrigen.nombre,
+        cuentaDestino: aliasCuentaDestino.nombre,
         totalCount: sql<number>`COUNT(*) OVER()`.as("total_count"),
       })
       .from(inventarioTransacciones)
@@ -121,6 +121,14 @@ export async function getTransacciones() {
       .innerJoin(
         inventarioCuentas,
         eq(inventarioTransacciones.cuentaId, inventarioCuentas.id)
+      )
+      .leftJoin(
+        aliasCuentaOrigen,
+        eq(inventarioTransacciones.cuentaOrigenId, aliasCuentaOrigen.id)
+      )
+      .leftJoin(
+        aliasCuentaDestino,
+        eq(inventarioTransacciones.cuentaDestinoId, aliasCuentaDestino.id)
       )
       .where(whereCondition)
       .orderBy(desc(inventarioTransacciones.id))

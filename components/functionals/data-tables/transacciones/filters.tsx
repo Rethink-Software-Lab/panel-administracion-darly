@@ -11,7 +11,7 @@ import {
 
 import {
   TipoTransferencia,
-  Transacciones,
+  TransaccionesSelect,
 } from "@/app/(with-layout)/cuentas/types";
 import {
   ArrowDownLeft,
@@ -77,7 +77,7 @@ const tipoConfig = {
 export function FiltersTransacciones({
   table,
 }: {
-  table: Table<Transacciones>;
+  table: Table<TransaccionesSelect>;
 }) {
   const type = table.getColumn("tipo")?.getFilterValue() as
     | TipoTransferencia

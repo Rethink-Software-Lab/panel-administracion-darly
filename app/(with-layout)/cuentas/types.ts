@@ -1,3 +1,6 @@
+import { inventarioTransacciones } from "@/db/schema";
+import { InferSelectModel } from "drizzle-orm";
+
 export enum Banco {
   BPA = "BPA",
   BANDEC = "BANDEC",
@@ -62,19 +65,19 @@ export interface CuentasInTransaccionesCompanent {
   banco: string | null;
 }
 
-interface DataInResponseTransacciones {
-  transacciones: Transacciones[];
-  cuentas: CuentasInTransaccionesCompanent[];
-}
-
-export type ResponseTransacciones =
-  | {
-      data: DataInResponseTransacciones;
-      meta: Meta;
-      error: null;
-    }
-  | {
-      data: null;
-      meta: null;
-      error: string;
-    };
+export type TransaccionesSelect = Pick<
+  InferSelectModel<typeof inventarioTransacciones>,
+  | "id"
+  | "cantidad"
+  | "createdAt"
+  | "descripcion"
+  | "moneda"
+  | "tipo"
+  | "tipoCambio"
+> & {
+  usuario: string | null;
+  cuenta: string;
+  cuentaOrigen: string | null;
+  cuentaDestino: string | null;
+  tipoCambio: string | null;
+};
