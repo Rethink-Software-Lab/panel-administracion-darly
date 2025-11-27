@@ -541,7 +541,7 @@ export async function deleteVenta({
       .where(eq(inventarioTransacciones.ventaId, venta[0].id));
 
     await db.transaction(async (tx) => {
-      retornar_saldo_de_y_hacia_cuentas({ cuentasConTransacciones, tx });
+      await retornar_saldo_de_y_hacia_cuentas({ cuentasConTransacciones, tx });
 
       await tx.delete(inventarioTransacciones).where(
         inArray(
@@ -594,7 +594,7 @@ async function validaciones_eliminar_venta({
     throw new ValidationError("Expiro el tiempo para eliminar la venta");
 }
 
-function retornar_saldo_de_y_hacia_cuentas({
+async function retornar_saldo_de_y_hacia_cuentas({
   cuentasConTransacciones,
   tx,
 }: {
@@ -612,7 +612,7 @@ function retornar_saldo_de_y_hacia_cuentas({
   }[];
   tx: DrizzleTransaction;
 }) {
-  cuentasConTransacciones.forEach(async ({ cuenta, transaccion }) => {
+  for (const { cuenta, transaccion } of cuentasConTransacciones) {
     if (
       transaccion.tipo === TipoTransferencia.VENTA &&
       Number(cuenta.saldo) < Number(transaccion.cantidad)
@@ -635,5 +635,5 @@ function retornar_saldo_de_y_hacia_cuentas({
       .update(inventarioCuentas)
       .set({ saldo: saldoADescontar() })
       .where(eq(inventarioCuentas.id, cuenta.id));
-  });
+  }
 }
