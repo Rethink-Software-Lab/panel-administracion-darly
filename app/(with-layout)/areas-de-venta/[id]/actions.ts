@@ -613,27 +613,18 @@ async function retornar_saldo_de_y_hacia_cuentas({
   tx: DrizzleTransaction;
 }) {
   for (const { cuenta, transaccion } of cuentasConTransacciones) {
-    if (
-      transaccion.tipo === TipoTransferencia.VENTA &&
-      Number(cuenta.saldo) < Number(transaccion.cantidad)
-    ) {
-      throw new ValidationError(
-        `Saldo insuficiente en ${cuenta.nombre} para eliminar la venta.`
-      );
+    if (transaccion.tipo === TipoTransferencia.VENTA) {
+      if (parseFloat(cuenta.saldo) < parseFloat(transaccion.cantidad))
+        throw new ValidationError(
+          `Saldo insuficiente en ${cuenta.nombre} para eliminar la venta.`
+        );
+
+      const saldoADescontar =
+        parseFloat(cuenta.saldo) - parseFloat(transaccion.cantidad);
+      await tx
+        .update(inventarioCuentas)
+        .set({ saldo: saldoADescontar.toString() })
+        .where(eq(inventarioCuentas.id, cuenta.id));
     }
-    const saldoADescontar = () => {
-      switch (transaccion.tipo) {
-        case TipoTransferencia.VENTA:
-          return sql<string>`${inventarioCuentas.saldo} - ${transaccion.cantidad}`;
-        case TipoTransferencia.PAGO_TRABAJADOR:
-          return sql<string>`${inventarioCuentas.saldo} + ${transaccion.cantidad}`;
-        default:
-          throw new Error("Tipo transaccion corrupto");
-      }
-    };
-    await tx
-      .update(inventarioCuentas)
-      .set({ saldo: saldoADescontar() })
-      .where(eq(inventarioCuentas.id, cuenta.id));
   }
 }
