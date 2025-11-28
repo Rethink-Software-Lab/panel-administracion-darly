@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/select";
 import { Banco, Moneda, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
 import { addCuenta } from "@/app/(with-layout)/cuentas/actions";
+import { Zelle } from "@/components/ui/icons/zelle";
 
 export default function SheetCuentas({ isError }: { isError: boolean }) {
   const [open, setOpen] = useState(false);
@@ -135,7 +136,7 @@ export default function SheetCuentas({ isError }: { isError: boolean }) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="[&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:gap-1 [&>span]:cursor-pointer">
                           <SelectValue placeholder="Seleccione un tipo de cuenta" />
                         </SelectTrigger>
                       </FormControl>
@@ -145,6 +146,13 @@ export default function SheetCuentas({ isError }: { isError: boolean }) {
                         </SelectItem>
                         <SelectItem value={TipoCuenta.BANCARIA}>
                           Bancaria
+                        </SelectItem>
+                        <SelectItem
+                          value={TipoCuenta.ZELLE}
+                          className="[&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:gap-1 [&>span]:cursor-pointer"
+                        >
+                          <Zelle />
+                          <span>Zelle</span>
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -194,31 +202,32 @@ export default function SheetCuentas({ isError }: { isError: boolean }) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="moneda"
-                render={({ field }) => (
-                  <FormItem className="w-full text-left">
-                    <Label>Moneda</Label>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una moneda" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={Moneda.CUP}>CUP</SelectItem>
-                        <SelectItem value={Moneda.USD}>USD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              {tipoWatch !== TipoCuenta.ZELLE && (
+                <FormField
+                  control={form.control}
+                  name="moneda"
+                  render={({ field }) => (
+                    <FormItem className="w-full text-left">
+                      <Label>Moneda</Label>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccione una moneda" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={Moneda.CUP}>CUP</SelectItem>
+                          <SelectItem value={Moneda.USD}>USD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <div className="flex justify-end">
                 <Button type="submit">Agregar</Button>
               </div>

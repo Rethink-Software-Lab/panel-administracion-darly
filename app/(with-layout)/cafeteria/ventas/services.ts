@@ -13,7 +13,7 @@ import {
   inventarioVentasCafeteriaProductos,
 } from "@/db/schema";
 import { Banco, TipoCuenta, TipoTransferencia } from "../../cuentas/types";
-import { desc, eq, sql, sum } from "drizzle-orm";
+import { and, desc, eq, sql, sum } from "drizzle-orm";
 import { CuentasInVentasCafeteria, Prod_Elab_Venta } from "../types";
 import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types";
 import { searchParamsCache } from "./searchParams";
@@ -224,7 +224,12 @@ export async function ventasCafeteria() {
         transaccionesAgregadas,
         eq(inventarioCuentas.id, transaccionesAgregadas.cuentaId)
       )
-      .where(eq(inventarioCuentas.tipo, TipoCuenta.BANCARIA));
+      .where(
+        and(
+          eq(inventarioCuentas.tipo, TipoCuenta.BANCARIA),
+          eq(inventarioCuentas.active, true)
+        )
+      );
 
     const productosConInventario = db
       .select({
