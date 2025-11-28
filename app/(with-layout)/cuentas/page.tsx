@@ -24,6 +24,9 @@ import { TableTransacciones } from "@/components/functionals/TableTransacciones"
 import { Suspense } from "react";
 import { SkeletonTransacciones } from "@/components/functionals/data-tables/transacciones/skeleton";
 import { searchParamsCache } from "./searchParams";
+import { PopoverSaldos } from "@/components/popover-saldos";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Zelle } from "@/components/ui/icons/zelle";
 
 const MAX_TRANF_MES = 120000;
 
@@ -35,17 +38,9 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
     <main className="flex flex-1 flex-col gap-4 py-4 lg:gap-6 lg:py-6 h-full">
       <div className="flex justify-between items-center px-6">
         <h1 className="text-lg font-semibold md:text-2xl">Cuentas</h1>
-        {data?.total_balance && (
-          <div className="flex gap-1 items-center">
-            <p className="text-sm">Saldo total:</p>
-            <p className="text-md font-semibold">
-              {Intl.NumberFormat("es-CU", {
-                style: "currency",
-                currency: "CUP",
-              }).format(data.total_balance)}
-            </p>
-          </div>
-        )}
+        <Suspense fallback={<Skeleton className="w-20 h-5" />}>
+          <PopoverSaldos />
+        </Suspense>
       </div>
       <div
         className="w-full h-[18rem] md:h-[16rem] flex overflow-x-auto p-4 scroll-p-4 gap-4 md:contain-strict"
@@ -58,21 +53,29 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
             className={cn(
               "w-80 bg-gradient-to-br  text-white aspect-video from-blue-600 to-blue-800",
               tarjeta.banco === Banco.BANDEC && "from-[#6c0207] to-[#bc1f26]",
-              tarjeta.banco === Banco.BPA && "from-[#1d6156] to-[#1d6156]"
+              tarjeta.banco === Banco.BPA && "from-[#1d6156] to-[#1d6156]",
+              tarjeta.tipo === TipoCuenta.ZELLE && "from-[#a0f] to-[#6534D1]"
             )}
           >
-            <CardHeader className="flex flex-row items-center justify-between gap-2">
-              <CardTitle className="line-clamp-1">{tarjeta.nombre}</CardTitle>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <EllipsisVertical size={18} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-40">
-                  <DropdownMenuLabel>{tarjeta.nombre}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <Delete id={tarjeta.id} />
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <CardHeader className="">
+              <div className="flex items-center justify-between">
+                {tarjeta.tipo === TipoCuenta.ZELLE ? (
+                  <Zelle size={32} withBg={false} className="-ml-2" />
+                ) : (
+                  <div />
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <EllipsisVertical size={18} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-40">
+                    <DropdownMenuLabel>{tarjeta.nombre}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <Delete id={tarjeta.id} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <CardTitle>{tarjeta.nombre}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-xl font-bold">

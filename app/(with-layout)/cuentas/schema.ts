@@ -41,6 +41,13 @@ const EfectivoSchema = object({
   banco: optional(undefined_()),
 });
 
+const ZelleSchema = object({
+  ...BaseSchema.entries,
+  tipo: literal(TipoCuenta.ZELLE),
+  banco: optional(undefined_()),
+  moneda: optional(undefined_()),
+});
+
 const BancariaSchema = object({
   ...BaseSchema.entries,
   tipo: literal(TipoCuenta.BANCARIA),
@@ -49,7 +56,7 @@ const BancariaSchema = object({
 
 export const CuentasSchema = variant(
   "tipo",
-  [EfectivoSchema, BancariaSchema],
+  [EfectivoSchema, ZelleSchema, BancariaSchema],
   "El tipo de cuenta es requerido."
 );
 

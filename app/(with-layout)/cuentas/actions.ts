@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
 import { InferInput, InferOutput } from "valibot";
-import { TipoTransferencia } from "./types";
+import { Moneda, TipoCuenta, TipoTransferencia } from "./types";
 import {
   CuentasSchema,
   TransferenciaSchema,
@@ -25,7 +25,7 @@ export async function addCuenta(
       tipo: data.tipo,
       saldo: data.saldo_inicial.toString(),
       banco: data.banco,
-      moneda: data.moneda,
+      moneda: data.tipo === TipoCuenta.ZELLE ? Moneda.USD : data.moneda,
     });
     revalidatePath("/cuentas");
     return {

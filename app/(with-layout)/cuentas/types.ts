@@ -20,6 +20,7 @@ export enum TipoTransferencia {
 export enum TipoCuenta {
   EFECTIVO = "EFECTIVO",
   BANCARIA = "BANCARIA",
+  ZELLE = "ZELLE",
 }
 
 export enum Moneda {
