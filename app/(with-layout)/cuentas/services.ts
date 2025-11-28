@@ -35,6 +35,7 @@ export async function GetTarjetas() {
           gte(inventarioTransacciones.createdAt, inicioMes.toISOString())
         )
       )
+      .where(eq(inventarioCuentas.active, true))
       .orderBy(desc(inventarioCuentas.tipo))
       .groupBy(inventarioCuentas.id);
 
@@ -149,7 +150,8 @@ export async function getTransacciones() {
         tipo: inventarioCuentas.tipo,
         banco: inventarioCuentas.banco,
       })
-      .from(inventarioCuentas);
+      .from(inventarioCuentas)
+      .where(eq(inventarioCuentas.active, true));
 
     return {
       error: null,

@@ -216,7 +216,12 @@ export async function getAreaVenta(id: number) {
         disponible: sql<boolean>`CASE WHEN COALESCE(SUM(CASE WHEN ${inventarioTransacciones.tipo} = 'INGRESO' AND EXTRACT(MONTH FROM ${inventarioTransacciones.createdAt}) = ${currentMonth} THEN ${inventarioTransacciones.cantidad} ELSE 0 END), 0) >= 120000 THEN FALSE ELSE TRUE END`,
       })
       .from(inventarioCuentas)
-      .where(eq(inventarioCuentas.tipo, "BANCARIA"))
+      .where(
+        and(
+          eq(inventarioCuentas.tipo, "BANCARIA"),
+          eq(inventarioCuentas.active, true)
+        )
+      )
       .leftJoin(
         inventarioTransacciones,
         eq(inventarioCuentas.id, inventarioTransacciones.cuentaId)

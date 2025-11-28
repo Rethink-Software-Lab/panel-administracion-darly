@@ -41,7 +41,8 @@ export async function addCuenta(
 export async function deleteCuenta(id: number) {
   try {
     const cuentaEliminada = await db
-      .delete(inventarioCuentas)
+      .update(inventarioCuentas)
+      .set({ active: false })
       .where(eq(inventarioCuentas.id, id))
       .returning({
         id: inventarioCuentas.id,

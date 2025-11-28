@@ -463,7 +463,6 @@ export const inventarioElaboracionesCantidadMerma = pgTable(
 );
 
 export const inventarioCuentas = pgTable("inventario_cuentas", {
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
     name: "inventario_cuentas_id_seq",
     startWith: 1,
@@ -479,10 +478,12 @@ export const inventarioCuentas = pgTable("inventario_cuentas", {
   moneda: varchar({ length: 3 })
     .$default(() => Moneda.CUP)
     .notNull(),
+  active: boolean()
+    .$default(() => true)
+    .notNull(),
 });
 
 export const inventarioCategorias = pgTable("inventario_categorias", {
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
     name: "inventario_categorias_id_seq",
     startWith: 1,
