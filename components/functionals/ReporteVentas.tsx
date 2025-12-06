@@ -56,7 +56,8 @@ export default async function ReporteVentas({
   desde: string;
   hasta: string;
 }) {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
 
   if (!data && !error) {
     return (
@@ -223,7 +224,7 @@ export default async function ReporteVentas({
               </TableCell>
             </TableRow>
 
-            {(userId === "1" || userId === "10") && (
+            {(userId === 1 || userId === 10) && (
               <TableRow>
                 <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
                   Ganancia

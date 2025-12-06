@@ -1,39 +1,32 @@
-'use client';
-import TableDeleteV2 from '@/components/functionals/TableDeleteV2';
-import { deleteUsuario } from '@/app/(with-layout)/users/actions';
-import ModalUser from '@/components/functionals/ModalUser';
-import { Button } from '@/components/ui/button';
-import { Edit2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Row } from '@tanstack/react-table';
-import { ROLES, Usuario } from './types';
-
-const ROLES_A: Record<ROLES, string> = {
-  ADMIN: 'Administrador',
-  ALMACENERO: 'Almacenero',
-  VENDEDOR: 'Vendedor',
-  'VENDEDOR CAFETERÍA': 'Vendedor Cafetería',
-  SUPERVISOR: 'Supervisor',
-};
+"use client";
+import TableDeleteV2 from "@/components/functionals/TableDeleteV2";
+import { deleteUsuario } from "@/app/(with-layout)/users/actions";
+import ModalUser from "@/components/functionals/ModalUser";
+import { Button } from "@/components/ui/button";
+import { Edit2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Row } from "@tanstack/react-table";
+import { Usuario } from "./types";
+import { ROLES_NORM } from "@/lib/utils";
 
 export const columns = [
   {
-    accessorKey: 'username',
-    header: 'Nombre',
+    accessorKey: "username",
+    header: "Nombre",
   },
 
   {
-    accessorKey: 'rol',
-    header: 'Rol',
+    accessorKey: "rol",
+    header: "Rol",
     cell: ({ row }: { row: Row<Usuario> }) => (
-      <Badge variant="outline">{ROLES_A[row.original.rol]}</Badge>
+      <Badge variant="outline">{ROLES_NORM[row.original.rol]}</Badge>
     ),
   },
 
   {
-    id: 'area_venta',
-    accessorKey: 'area_venta',
-    header: 'Área de venta',
+    id: "area_venta",
+    accessorKey: "area_venta",
+    header: "Área de venta",
     filterFn: (row: Row<Usuario>, _: any, rowValue: string) => {
       return row.original.area_venta?.nombre === rowValue;
     },
@@ -49,8 +42,8 @@ export const columns = [
   },
 
   {
-    accessorKey: 'almacen',
-    header: 'Almacén',
+    accessorKey: "almacen",
+    header: "Almacén",
     cell: ({ row }: { row: Row<Usuario> }) => {
       const almacen = row.original.almacen;
 
@@ -63,7 +56,7 @@ export const columns = [
   },
 
   {
-    header: ' ',
+    header: " ",
     cell: ({
       row,
       table,

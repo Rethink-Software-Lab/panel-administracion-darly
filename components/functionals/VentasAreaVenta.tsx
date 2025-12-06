@@ -28,7 +28,9 @@ export default async function VentasAreaVenta({
   productos,
   cuentasBancarias,
 }: Props) {
-  const { isStaff, userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
+  const isStaff = session?.isStaff;
 
   return (
     <main className="flex flex-1 flex-col gap-4 pb-4 lg:gap-6 lg:pb-6 px-4 h-full">
@@ -61,7 +63,7 @@ export default async function VentasAreaVenta({
           columns={columns}
           data={ventas}
           id={areaVenta.id}
-          userId={parseInt(userId!)}
+          userId={userId!}
           isStaff={isStaff}
         />
       ) : (

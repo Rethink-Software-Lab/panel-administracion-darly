@@ -1,9 +1,10 @@
 import { ROLES } from "@/app/(with-layout)/users/types";
-import { headers, type UnsafeUnwrappedHeaders } from "next/headers";
+import { headers } from "next/headers";
 
 export interface Session {
+  user: UserSession;
   rol: string | null;
-  area_venta: string | null;
+  area_venta: number | null;
   almacen: string | null;
   isAdmin: boolean;
   isAlmacenero: boolean;
@@ -13,24 +14,35 @@ export interface Session {
   isStaff: boolean;
 }
 
+interface UserSession {
+  id: number;
+  username: string;
+  rol: ROLES;
+  area_venta: number;
+  almacen: string;
+}
+
 export async function getSession() {
-  const headersList = (await headers()) as unknown as UnsafeUnwrappedHeaders;
-  const rol = decodeURIComponent(headersList.get("x-user-rol") as string);
-  const userId = headersList.get("x-user-id");
-  const area_venta = headersList.get("x-user-area-venta");
-  const almacen = headersList.get("x-user-almacen");
-  const isAdmin = rol === "ADMIN";
-  const isAlmacenero = rol === ROLES.ALMACENERO;
-  const isSupervisor = rol === ROLES.SUPERVISOR;
+  const headersList = await headers();
+  const cookieUser = headersList?.get("x-user");
+  if (!cookieUser) {
+    return null;
+  }
+  const user = JSON.parse(cookieUser) as UserSession;
+
+  const isAdmin = user.rol === ROLES.ADMIN;
+  const isAlmacenero = user.rol === ROLES.ALMACENERO;
+  const isSupervisor = user.rol === ROLES.SUPERVISOR;
   const isStaff = isAdmin || isAlmacenero;
-  const isVendedor = rol === "VENDEDOR";
-  const isVendedorCafeteria = rol === ROLES.VENDEDOR_CAFETERIA;
+  const isVendedor = user.rol === ROLES.VENDEDOR;
+  const isVendedorCafeteria = user.rol === ROLES.VENDEDOR_CAFETERIA;
 
   return {
-    userId,
-    rol,
-    area_venta,
-    almacen,
+    user,
+    userId: user.id,
+    rol: user.rol,
+    area_venta: user.area_venta,
+    almacen: user.almacen,
     isAdmin,
     isAlmacenero,
     isSupervisor,

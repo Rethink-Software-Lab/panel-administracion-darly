@@ -8,7 +8,9 @@ import { getSession } from "@/lib/getSession";
 import { redirect } from "next/navigation";
 
 export default async function Initial() {
-  const { isVendedor, area_venta } = await getSession();
+  const session = await getSession();
+  const isVendedor = session?.isVendedor;
+  const area_venta = session?.area_venta;
   const { data } = await graficas();
   if (isVendedor) return redirect(`/areas-de-venta/${area_venta}`);
 

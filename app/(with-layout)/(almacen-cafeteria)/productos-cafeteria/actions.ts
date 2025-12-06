@@ -20,7 +20,8 @@ export async function addProductoCafeteria(
   producto: InferOutput<typeof ProductosCafeteriaSchema>
 ) {
   try {
-    const { userId } = await getSession();
+    const session = await getSession();
+    const userId = session?.user.id;
     if (!userId) throw new ValidationError("No autorizado");
 
     await db.transaction(async (tx) => {
@@ -75,7 +76,8 @@ export async function editProductoCafeteria(
   id: number
 ) {
   try {
-    const { userId } = await getSession();
+    const session = await getSession();
+    const userId = session?.user.id;
     if (!userId) throw new ValidationError("No autorizado");
 
     await db.transaction(async (tx) => {

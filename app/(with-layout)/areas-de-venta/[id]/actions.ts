@@ -36,7 +36,8 @@ interface DataVenta
 }
 
 export async function addVenta(data: DataVenta) {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
 
   if (!userId) throw new Error("No autorizado");
 
@@ -48,7 +49,7 @@ export async function addVenta(data: DataVenta) {
           areaVentaId: data.areaVenta.id,
           metodoPago: data.metodoPago,
           createdAt: new Date().toISOString(),
-          usuarioId: Number(userId),
+          usuarioId: userId,
           efectivo: "0",
           transferencia: "0",
         })
@@ -343,7 +344,7 @@ async function rebajar_de_las_cuentas({
     cuenta: { id: number; nombre: string } | null;
   };
   venta: InferSelectModel<typeof inventarioVentas>[];
-  userId: string;
+  userId: number;
 }) {
   if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
 
@@ -390,7 +391,7 @@ async function rebajar_de_las_cuentas({
           ventaId: venta[0].id,
           tipo: TipoTransferencia.PAGO_TRABAJADOR,
           cantidad: String(cantidadDescuento),
-          usuarioId: Number(userId),
+          usuarioId: userId,
         });
 
         continue;
@@ -424,7 +425,7 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
   sum_pago_trabajador: number;
   tx: DrizzleTransaction;
   venta: InferSelectModel<typeof inventarioVentas>[];
-  userId: string;
+  userId: number;
   ids: number[];
   descripcion_producto: string;
   areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
@@ -449,7 +450,7 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
     ventaId: venta[0].id,
     tipo: TipoTransferencia.PAGO_TRABAJADOR,
     cantidad: sum_pago_trabajador.toString(),
-    usuarioId: Number(userId),
+    usuarioId: userId,
   });
 }
 
@@ -472,7 +473,7 @@ async function crear_transacciones_de_venta({
   tx: DrizzleTransaction;
   areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
   venta: InferSelectModel<typeof inventarioVentas>[];
-  userId: string;
+  userId: number;
 }) {
   const cuentasParaTransacciones =
     metodoPago === METODOS_PAGO.MIXTO &&
@@ -497,7 +498,7 @@ async function crear_transacciones_de_venta({
       ventaId: venta[0].id,
       tipo: TipoTransferencia.VENTA,
       cantidad: String(cuenta.cantidad),
-      usuarioId: Number(userId),
+      usuarioId: userId,
     }))
   );
 }
@@ -582,7 +583,9 @@ async function validaciones_eliminar_venta({
     "id" | "usuarioId" | "createdAt"
   >[];
 }) {
-  const { userId, isAdmin } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
+  const isAdmin = session?.isAdmin;
 
   if (venta.length < 1) throw new ValidationError("Venta no encontrada");
   if (venta[0].usuarioId !== Number(userId) && !isAdmin)

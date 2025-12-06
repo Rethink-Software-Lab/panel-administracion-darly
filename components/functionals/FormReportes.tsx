@@ -40,7 +40,7 @@ export default function FormReportes({
   session,
 }: {
   data: Props;
-  session: Session;
+  session: Session | null;
 }) {
   const [type, setType] = useQueryState("type", { shallow: false });
   const [area, setArea] = useQueryState("area", { shallow: false });
@@ -80,15 +80,15 @@ export default function FormReportes({
           </SelectTrigger>
           <SelectContent>
             <>
-              <SelectItem disabled={!session.isAdmin} value="general">
+              <SelectItem disabled={!session?.isAdmin} value="general">
                 General
               </SelectItem>
               <SelectItem
                 disabled={
-                  !session.isAdmin &&
-                  (!session.isAlmacenero ||
-                    session.almacen !== ALMACENES.CAFETERIA) &&
-                  !session.isVendedorCafeteria
+                  !session?.isAdmin &&
+                  (!session?.isAlmacenero ||
+                    session?.almacen !== ALMACENES.CAFETERIA) &&
+                  !session?.isVendedorCafeteria
                 }
                 value="cafeteria"
               >
@@ -98,10 +98,10 @@ export default function FormReportes({
                 <>
                   <SelectItem
                     disabled={
-                      !session.isAdmin &&
-                      (!session.isAlmacenero ||
-                        session.almacen !== ALMACENES.CAFETERIA) &&
-                      !session.isVendedorCafeteria
+                      !session?.isAdmin &&
+                      (!session?.isAlmacenero ||
+                        session?.almacen !== ALMACENES.CAFETERIA) &&
+                      !session?.isVendedorCafeteria
                     }
                     value="almacen-cafeteria"
                   >
@@ -109,10 +109,10 @@ export default function FormReportes({
                   </SelectItem>
                   <SelectItem
                     disabled={
-                      !session.isAdmin &&
-                      (!session.isAlmacenero ||
-                        session.almacen === ALMACENES.CAFETERIA) &&
-                      !session.isVendedor
+                      !session?.isAdmin &&
+                      (!session?.isAlmacenero ||
+                        session?.almacen === ALMACENES.CAFETERIA) &&
+                      !session?.isVendedor
                     }
                     value="almacen-principal"
                   >
@@ -120,10 +120,10 @@ export default function FormReportes({
                   </SelectItem>
                   <SelectItem
                     disabled={
-                      !session.isAdmin &&
-                      (!session.isAlmacenero ||
-                        session.almacen === ALMACENES.CAFETERIA) &&
-                      !session.isVendedor
+                      !session?.isAdmin &&
+                      (!session?.isAlmacenero ||
+                        session?.almacen === ALMACENES.CAFETERIA) &&
+                      !session?.isVendedor
                     }
                     value="almacen-revoltosa"
                   >
@@ -136,9 +136,9 @@ export default function FormReportes({
                 <SelectItem
                   disabled={
                     type === "ventas" &&
-                    !session.isAdmin &&
-                    !session.isAlmacenero &&
-                    Number(session.area_venta) !== area.id
+                    !session?.isAdmin &&
+                    !session?.isAlmacenero &&
+                    Number(session?.area_venta) !== area.id
                   }
                   key={area.id}
                   value={area.id.toString()}

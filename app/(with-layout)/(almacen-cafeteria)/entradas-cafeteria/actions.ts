@@ -28,7 +28,8 @@ import { TipoCuenta, TipoTransferencia } from "../../cuentas/types";
 export async function addEntradaCafeteria(
   entrada: InferOutput<typeof EntradaCafeteriaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
   try {
     await db.transaction(async (tx) => {
       const [entradaInsertada] = await tx
