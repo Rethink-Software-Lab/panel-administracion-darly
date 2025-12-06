@@ -2,6 +2,10 @@ import { getSaldos } from "@/app/(with-layout)/cuentas/services";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Zelle } from "./ui/icons/zelle";
 import { Separator } from "./ui/separator";
+import { Tooltip, TooltipTrigger, TooltipContent } from "./ui/tooltip";
+import { Info } from "lucide-react";
+import Image from "next/image";
+import elToque from "../public/elToque.png";
 
 export async function PopoverSaldos() {
   const { data, error } = await getSaldos();
@@ -29,6 +33,34 @@ export async function PopoverSaldos() {
         </div>
       </PopoverTrigger>
       <PopoverContent className="space-y-2">
+        <div className="text-center pb-3">
+          <p className="text-md font-semibold">
+            {Intl.NumberFormat("es-ES", {
+              style: "currency",
+              currency: "CUP",
+              currencyDisplay: "code",
+            }).format(data?.saldoTotal || 0)}
+          </p>
+          <div className="flex gap-1 justify-center items-center">
+            <p className="text-sm text-muted-foreground">Saldo total</p>
+            <Tooltip defaultOpen={false}>
+              <TooltipTrigger asChild>
+                <Info className="size-4 text-muted-foreground cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-background p-2 text-xs text-muted-foreground border rounded-lg flex items-center">
+                <span>
+                  Las conversiones se basan en la tasa de cambio de elToque
+                </span>
+                <Image
+                  src={elToque}
+                  width={20}
+                  height={20}
+                  alt="Logo elToque"
+                />
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
         <div className="flex justify-between items-center gap-2 text-sm">
           <p className="font-semibold">Inventarios</p>
           <p className="text-xs">

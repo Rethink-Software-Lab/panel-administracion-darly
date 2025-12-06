@@ -1,4 +1,4 @@
-import { Moneda, TipoCuenta, TipoTransferencia } from "./types";
+import { Moneda, TasaDeCambio, TipoCuenta, TipoTransferencia } from "./types";
 import { db } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
@@ -121,6 +121,24 @@ export async function getSaldos() {
       .filter((c) => c.tipo === TipoCuenta.ZELLE)
       .reduce((acum, cuenta) => acum + parseFloat(cuenta.saldo), 0);
 
+    const tasaDeCambio: TasaDeCambio = await fetch(
+      "https://tasas.eltoque.com/v1/trmi",
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.ELTOQUE_API_KEY}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        throw new Error("Error al obtener tasa de cambio");
+      });
+
+    const conversionUSD = saldoCuentasEfectivoUSD * tasaDeCambio.tasas.USD;
+    /* Falta el zelle en la api del toque 😑 */
+    const conversionZelle = saldoZelle * tasaDeCambio.tasas.USD - 5;
+
     return {
       data: {
         saldoInventarios,
@@ -129,7 +147,11 @@ export async function getSaldos() {
         saldoCuentasBancarias,
         saldoZelle,
         saldoTotal:
-          saldoInventarios + saldoCuentasEfectivoCUP + saldoCuentasBancarias,
+          saldoInventarios +
+          saldoCuentasEfectivoCUP +
+          saldoCuentasBancarias +
+          conversionUSD +
+          conversionZelle,
       },
       error: null,
     };
