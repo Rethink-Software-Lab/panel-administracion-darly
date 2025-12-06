@@ -232,8 +232,6 @@ export async function deleteTransaccion({ id }: { id: number }) {
       const nuevoSaldoDestino =
         parseFloat(cuentaDestino.saldo) - parseFloat(transaccion.cantidad);
 
-      console.log(nuevoSaldoOrigen, nuevoSaldoDestino);
-
       await db.transaction(async (tx) => {
         await tx
           .update(inventarioCuentas)
@@ -275,7 +273,8 @@ export async function addTransferencia(
   data: InferOutput<typeof TransferenciaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
   try {
-    const { userId } = await getSession();
+    const session = await getSession();
+    const userId = session?.user.id;
 
     const cuentas = await db
       .select({

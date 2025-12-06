@@ -19,7 +19,8 @@ import { TipoTransferencia } from "../cuentas/types";
 export async function addGasto(
   gasto: InferOutput<typeof GastosSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
   try {
     await db.transaction(async (tx) => {
       const isCafeteria = gasto.areas_venta.some(
@@ -109,7 +110,8 @@ export async function editGasto(
   id: number,
   gasto: InferOutput<typeof GastosSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
   try {
     const isCafeteria = gasto.areas_venta.some((a) => a.value === "cafeteria");
 

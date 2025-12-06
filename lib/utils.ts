@@ -1,3 +1,4 @@
+import { ROLES } from "@/app/(with-layout)/users/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -28,3 +29,11 @@ export function canDeleteVenta(
 }
 
 export const CAJA_CAFETERIA = "71";
+
+export const ROLES_NORM: Record<ROLES, string> = {
+  ADMIN: "Administrador",
+  ALMACENERO: "Almacenero",
+  VENDEDOR: "Vendedor",
+  "VENDEDOR CAFETERÍA": "Vendedor Cafetería",
+  SUPERVISOR: "Supervisor",
+};

@@ -26,7 +26,8 @@ export default async function Search(props: PageProps<"/search/[id]">) {
 
   if (!id) return forbidden();
 
-  const { isStaff } = await getSession();
+  const session = await getSession();
+  const isStaff = session?.isStaff;
   const { data, error }: { data: any | null; error: string | null } =
     await (searchParamsCacheValues.isCafeteria
       ? searchCafeteriaProducto(Number(id))

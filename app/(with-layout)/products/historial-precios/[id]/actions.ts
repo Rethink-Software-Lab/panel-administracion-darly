@@ -16,7 +16,8 @@ export async function addHistorialPrecio(
   data: InferInput<typeof HistorialPreciosSchema>,
   id: number
 ) {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
 
   const now = DateTime.now().toSQL();
 

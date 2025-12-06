@@ -32,7 +32,8 @@ import {
 export async function addVentaCafeteria(
   ventaData: InferOutput<typeof VentasCafeteriaSchema>
 ) {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
   if (!userId) return { data: null, error: "No autorizado." };
 
   try {
@@ -57,7 +58,8 @@ export async function editVentaCafeteria(
   ventaData: InferOutput<typeof VentasCafeteriaSchema>,
   ventaId: number
 ) {
-  const { userId } = await getSession();
+  const session = await getSession();
+  const userId = session?.user.id;
   if (!userId) return { data: null, error: "No autorizado." };
 
   try {
