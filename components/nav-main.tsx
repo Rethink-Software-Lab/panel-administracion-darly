@@ -2,6 +2,8 @@
 
 import {
   ChevronRight,
+  Cog,
+  FileChartColumn,
   GitCompareArrows,
   Home,
   LucideIcon,
@@ -164,6 +166,7 @@ export function NavMain({
       url: "/users",
       icon: Users,
     },
+    { title: "Reportes", icon: FileChartColumn, url: "/reportes" },
     {
       title: "Productos",
       icon: Package,
@@ -201,6 +204,12 @@ export function NavMain({
           url: `/areas-de-venta/${a.id}` as Route,
         })),
       ],
+    },
+    {
+      title: "Configuración",
+      icon: Cog,
+      isActive: pathname === "/areas-de-venta",
+      items: [{ title: "Administar areas de venta", url: "/areas-de-venta" }],
     },
   ];
   return (
