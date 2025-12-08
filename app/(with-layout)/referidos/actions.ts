@@ -6,7 +6,7 @@ import { ReferidoSchema } from "@/lib/schemas";
 import { InferInput } from "valibot";
 import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 export async function addReferido(
   data: InferInput<typeof ReferidoSchema>
@@ -45,7 +45,7 @@ export async function addReferido(
       codigoReferido,
     });
 
-    revalidateTag("referidos");
+    revalidatePath("/referidos");
     return {
       data: "Referido agregado con éxito",
       error: null,
@@ -75,7 +75,7 @@ export async function updateReferido(
       .set(data)
       .where(eq(inventarioVendedorexterno.id, id));
 
-    revalidateTag("referidos");
+    revalidatePath("/referidos");
     return { data: "Referido actualizado con éxito", error: null };
   } catch (e) {
     return {
@@ -95,7 +95,7 @@ export async function deleteReferido({
       .delete(inventarioVendedorexterno)
       .where(eq(inventarioVendedorexterno.id, id));
 
-    revalidateTag("referidos");
+    revalidatePath("/referidos");
     return { data: "Referido eliminado con éxito", error: null };
   } catch (e) {
     return {

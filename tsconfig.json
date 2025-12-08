@@ -14,7 +14,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -43,7 +43,8 @@
     "components/functionals/EspecialWarningDelete.jsx",
     "app/(with-layout)/products/page.tsx",
     "components/ui/data-table-areas.jsx",
-    "components/ui/data-table-salidas.jsx"
+    "components/ui/data-table-salidas.jsx",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

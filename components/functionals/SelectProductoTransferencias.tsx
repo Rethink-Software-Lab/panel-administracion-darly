@@ -28,7 +28,7 @@ export default function SelectProductoTransferencias({
   form: UseFormReturn<InferInput<typeof TransferenciaSchema>>;
   index: number;
   productosInfo: ProductoInfoInTransferencia[];
-  formRef: RefObject<HTMLElement>;
+  formRef: RefObject<HTMLElement | null>;
 }) {
   const [openPopover, setOpenPopover] = useState(false);
 

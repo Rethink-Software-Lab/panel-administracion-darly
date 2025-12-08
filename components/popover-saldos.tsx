@@ -32,7 +32,7 @@ export async function PopoverSaldos() {
           </p>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="space-y-2">
+      <PopoverContent align="end" className="space-y-2">
         <div className="text-center pb-3">
           <p className="text-md font-semibold">
             {Intl.NumberFormat("es-ES", {
@@ -47,16 +47,20 @@ export async function PopoverSaldos() {
               <TooltipTrigger asChild>
                 <Info className="size-4 text-muted-foreground cursor-pointer" />
               </TooltipTrigger>
-              <TooltipContent className="bg-background p-2 text-xs text-muted-foreground border rounded-lg flex items-center">
-                <span>
-                  Las conversiones se basan en la tasa de cambio de elToque
-                </span>
-                <Image
-                  src={elToque}
-                  width={20}
-                  height={20}
-                  alt="Logo elToque"
-                />
+              <TooltipContent
+                side="bottom"
+                className="bg-background p-2 text-xs text-muted-foreground border rounded-lg flex flex-col items-center"
+              >
+                <span>Las conversiones se basan en</span>
+                <div className="flex gap-1 items-center">
+                  <span>la tasa de cambio de elToque</span>
+                  <Image
+                    src={elToque}
+                    width={20}
+                    height={20}
+                    alt="Logo elToque"
+                  />
+                </div>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -111,7 +115,7 @@ export async function PopoverSaldos() {
           <p className="text-xs">
             {Intl.NumberFormat("es-ES", {
               style: "currency",
-              currency: "USD",
+              currency: "CUP",
               currencyDisplay: "code",
             }).format(data?.saldoZelle || 0)}
           </p>

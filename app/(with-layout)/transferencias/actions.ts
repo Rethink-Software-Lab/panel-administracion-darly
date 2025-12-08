@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import { TransferenciaSchema } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
-import { InferInput } from 'valibot';
+import { TransferenciaSchema } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { InferInput } from "valibot";
 
 export async function addTransferencia(
   transferencia: InferInput<typeof TransferenciaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/transferencias/', {
-    method: 'POST',
+  const token = (await cookies()).get("session")?.value || null;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/transferencias/", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,12 +20,12 @@ export async function addTransferencia(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -36,12 +36,12 @@ export async function addTransferencia(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('transferencias');
+  revalidatePath("/transferencias");
   return {
-    data: 'Transferencia realizada con éxito.',
+    data: "Transferencia realizada con éxito.",
     error: null,
   };
 }
@@ -51,11 +51,11 @@ export async function deleteTransferencia({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/transferencias/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/transferencias/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -65,12 +65,12 @@ export async function deleteTransferencia({
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Transferencia no encontrada.',
+        error: "Transferencia no encontrada.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -81,12 +81,12 @@ export async function deleteTransferencia({
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('transferencias');
+  revalidatePath("/transferencias");
   return {
-    data: 'Transferencia eliminada con éxito.',
+    data: "Transferencia eliminada con éxito.",
     error: null,
   };
 }

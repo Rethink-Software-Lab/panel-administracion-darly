@@ -13,6 +13,7 @@ import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { searchParamsCache } from "./searchParams";
 import { alias } from "drizzle-orm/pg-core";
 import { createSubqueryUltimoPrecioVentaProducto } from "@/db/subquerys";
+import { cacheLife } from "next/cache";
 
 export async function GetTarjetas() {
   try {
@@ -60,6 +61,24 @@ export async function GetTarjetas() {
       error: "Error al conectar con el servidor.",
     };
   }
+}
+
+async function getTasasDeCambio() {
+  /*  "use cache";
+  cacheLife({ revalidate: 4 * 60 * 60, expire: 24 * 60 * 60 }); // 4 horas */
+
+  const tasaDeCambio: TasaDeCambio = await fetch(process.env.ELTOQUE_API_URL!, {
+    headers: {
+      Authorization: `Bearer ${process.env.ELTOQUE_API_KEY}`,
+    },
+  })
+    .then((res) => res.json())
+    .catch((e) => {
+      console.error(`Error al obtener tasa de cambio`, e);
+      throw new Error("Error al obtener tasa de cambio");
+    });
+
+  return tasaDeCambio;
 }
 
 export async function getSaldos() {
@@ -121,23 +140,8 @@ export async function getSaldos() {
       .filter((c) => c.tipo === TipoCuenta.ZELLE)
       .reduce((acum, cuenta) => acum + parseFloat(cuenta.saldo), 0);
 
-    const tasaDeCambio: TasaDeCambio = await fetch(
-      "https://tasas.eltoque.com/v1/trmi",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.ELTOQUE_API_KEY}`,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .catch((e) => {
-        console.error(e);
-        throw new Error("Error al obtener tasa de cambio");
-      });
-
-    const conversionUSD = saldoCuentasEfectivoUSD * tasaDeCambio.tasas.USD;
-    /* Falta el zelle en la api del toque 😑 */
-    const conversionZelle = saldoZelle * tasaDeCambio.tasas.USD - 5;
+    const tasasDeCambio = await getTasasDeCambio();
+    const conversionUSD = saldoCuentasEfectivoUSD * tasasDeCambio.tasas.USD;
 
     return {
       data: {
@@ -151,7 +155,7 @@ export async function getSaldos() {
           saldoCuentasEfectivoCUP +
           saldoCuentasBancarias +
           conversionUSD +
-          conversionZelle,
+          saldoZelle,
       },
       error: null,
     };

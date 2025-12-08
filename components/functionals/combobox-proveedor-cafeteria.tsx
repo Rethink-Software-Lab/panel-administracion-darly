@@ -29,7 +29,7 @@ export default function ComboboxProveedorCafeteria({
 }: {
   form: UseFormReturn<InferInput<typeof EntradaCafeteriaSchema>>;
   proveedores: Pick<Proveedor, "id" | "nombre">[];
-  formRef: RefObject<HTMLElement>;
+  formRef: RefObject<HTMLElement | null>;
   isManual: boolean;
   setIsManual: Dispatch<SetStateAction<boolean>>;
 }) {

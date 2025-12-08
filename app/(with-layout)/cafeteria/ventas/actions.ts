@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { InferOutput } from "valibot";
 import { VentasCafeteriaSchema } from "./schema";
 import { getSession } from "@/lib/getSession";
@@ -72,8 +72,7 @@ export async function editVentaCafeteria(
       await createVentaCafeteriaLogic(tx, ventaData, Number(userId));
     });
 
-    revalidateTag("ventas-cafeteria");
-    revalidatePath("/cafeteria");
+    revalidatePath("/cafeteria/ventas");
     return { data: "Venta actualizada con éxito.", error: null };
   } catch (e) {
     console.error("Error al editar la venta de cafetería:", e);
@@ -101,7 +100,7 @@ export async function deleteVentaCafeteria({
         .where(eq(inventarioVentasCafeteria.id, id));
     });
 
-    revalidateTag("ventas-cafeteria");
+    revalidatePath("/cafeteria/ventas");
     return { data: "Venta eliminada con éxito.", error: null };
   } catch (e) {
     console.error(e);

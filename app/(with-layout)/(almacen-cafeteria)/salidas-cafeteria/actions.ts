@@ -1,18 +1,18 @@
-'use server';
+"use server";
 
-import { SalidaAlmacenCafeteriaSchema } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
-import { InferInput } from 'valibot';
+import { SalidaAlmacenCafeteriaSchema } from "@/lib/schemas";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { InferInput } from "valibot";
 
 export async function addSalidaCafeteria(
   salida: InferInput<typeof SalidaAlmacenCafeteriaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/almacen-cafeteria/salidas/',
+    process.env.BACKEND_URL_V2 + "/almacen-cafeteria/salidas/",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -23,12 +23,12 @@ export async function addSalidaCafeteria(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -39,13 +39,12 @@ export async function addSalidaCafeteria(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('salidas-cafeteria');
-  revalidateTag('inventario-cafeteria');
+  revalidatePath("/salidas-cafeteria");
   return {
-    data: 'Salida agregada con éxito.',
+    data: "Salida agregada con éxito.",
     error: null,
   };
 }
@@ -53,11 +52,11 @@ export async function addSalidaCafeteria(
 export async function deleteSalidaCafeteria(
   id: number
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/almacen-cafeteria/salidas/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/almacen-cafeteria/salidas/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -67,23 +66,21 @@ export async function deleteSalidaCafeteria(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Salida no encontrada',
+        error: "Salida no encontrada",
       };
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('salidas-cafeteria');
-  revalidateTag('inventario-cafeteria');
-  revalidateTag('area-cafeteria');
+  revalidatePath("/salidas-cafeteria");
   return {
-    data: 'Salida eliminada con éxito.',
+    data: "Salida eliminada con éxito.",
     error: null,
   };
 }
