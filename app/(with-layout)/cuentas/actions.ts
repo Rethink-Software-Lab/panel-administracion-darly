@@ -1,7 +1,7 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
-import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 import { InferInput, InferOutput } from "valibot";
 import { Moneda, TipoCuenta, TipoTransferencia } from "./types";
@@ -75,9 +75,7 @@ export async function deleteCuenta(id: number) {
 export async function addTransferenciaTarjeta(
   data: InferInput<typeof TransferenciasTarjetas>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + "/tarjetas/add/transferencia/",
     {
@@ -108,7 +106,7 @@ export async function addTransferenciaTarjeta(
       error: "Algo salió mal.",
     };
   }
-  revalidateTag("tarjetas");
+  revalidatePath("/cuentas");
   return {
     error: null,
     data: "Transferencia agregada con éxito.",

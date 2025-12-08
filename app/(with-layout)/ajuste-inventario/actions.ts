@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import { AjusteSchema } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
-import { InferInput } from 'valibot';
+import { AjusteSchema } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { InferInput } from "valibot";
 
 export async function addAjuste(
   ajuste: InferInput<typeof AjusteSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/ajuste-inventario/', {
-    method: 'POST',
+  const token = (await cookies()).get("session")?.value || null;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/ajuste-inventario/", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,12 +20,12 @@ export async function addAjuste(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -36,12 +36,12 @@ export async function addAjuste(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('ajuste-inventario');
+  revalidatePath("/ajuste-inventario");
   return {
-    data: 'Ajuste agregado con éxito.',
+    data: "Ajuste agregado con éxito.",
     error: null,
   };
 }
@@ -51,11 +51,11 @@ export async function deleteAjuste({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/ajuste-inventario/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/ajuste-inventario/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -65,12 +65,12 @@ export async function deleteAjuste({
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Ajuste no encontrado.',
+        error: "Ajuste no encontrado.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -81,12 +81,12 @@ export async function deleteAjuste({
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('ajuste-inventario');
+  revalidatePath("/ajuste-inventario");
   return {
-    data: 'Ajuste eliminado con éxito.',
+    data: "Ajuste eliminado con éxito.",
     error: null,
   };
 }

@@ -28,7 +28,7 @@ export default function SelectProductoVentaCafeteria({
   form: UseFormReturn<InferOutput<typeof VentasCafeteriaSchema>>;
   index: number;
   productos: Productos_Elaboraciones[];
-  formRef: RefObject<HTMLElement>;
+  formRef: RefObject<HTMLElement | null>;
 }) {
   const [openPopover, setOpenPopover] = useState(false);
 

@@ -24,11 +24,14 @@ interface UserSession {
 
 export async function getSession() {
   const headersList = await headers();
-  const cookieUser = headersList?.get("x-user");
-  if (!cookieUser) {
+  const cookieB64 = headersList?.get("x-user");
+
+  if (!cookieB64) {
     return null;
   }
-  const user = JSON.parse(cookieUser) as UserSession;
+
+  const jsonString = Buffer.from(cookieB64, "base64").toString("utf-8");
+  const user = JSON.parse(jsonString) as UserSession;
 
   const isAdmin = user.rol === ROLES.ADMIN;
   const isAlmacenero = user.rol === ROLES.ALMACENERO;

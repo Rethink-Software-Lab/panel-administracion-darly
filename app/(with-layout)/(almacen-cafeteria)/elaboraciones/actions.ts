@@ -1,18 +1,18 @@
-'use server';
+"use server";
 
-import { ElaboracionesSchema } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
-import { InferInput } from 'valibot';
+import { ElaboracionesSchema } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { InferInput } from "valibot";
 
 export async function addElaboracion(
   elaboracion: InferInput<typeof ElaboracionesSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/cafeteria/elaboraciones/',
+    process.env.BACKEND_URL_V2 + "/cafeteria/elaboraciones/",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -23,12 +23,12 @@ export async function addElaboracion(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -39,12 +39,12 @@ export async function addElaboracion(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('elaboraciones');
+  revalidatePath("/elaboraciones");
   return {
-    data: 'Elaboración agregada con éxito.',
+    data: "Elaboración agregada con éxito.",
     error: null,
   };
 }
@@ -53,11 +53,11 @@ export async function editElaboracion(
   elaboracion: InferInput<typeof ElaboracionesSchema>,
   id: number
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/cafeteria/elaboraciones/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/cafeteria/elaboraciones/" + id + "/",
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -68,12 +68,12 @@ export async function editElaboracion(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -84,12 +84,12 @@ export async function editElaboracion(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('elaboraciones');
+  revalidatePath("/elaboraciones");
   return {
-    data: 'Elaboración editada con éxito.',
+    data: "Elaboración editada con éxito.",
     error: null,
   };
 }
@@ -99,11 +99,11 @@ export async function deleteElaboracion({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
+  const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
-    process.env.BACKEND_URL_V2 + '/cafeteria/elaboraciones/' + id + '/',
+    process.env.BACKEND_URL_V2 + "/cafeteria/elaboraciones/" + id + "/",
     {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -113,12 +113,12 @@ export async function deleteElaboracion({
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Elaboración no encontrada.',
+        error: "Elaboración no encontrada.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -129,12 +129,12 @@ export async function deleteElaboracion({
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('elaboraciones');
+  revalidatePath("/elaboraciones");
   return {
-    data: 'Elaboración eliminada con éxito.',
+    data: "Elaboración eliminada con éxito.",
     error: null,
   };
 }

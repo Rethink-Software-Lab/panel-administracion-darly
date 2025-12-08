@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import { MermaCafeteriaSchema } from '@/lib/schemas';
-import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
-import { InferInput } from 'valibot';
+import { MermaCafeteriaSchema } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { InferInput } from "valibot";
 
 export async function addMerma(
   merma: InferInput<typeof MermaCafeteriaSchema>
 ): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/merma/', {
-    method: 'POST',
+  const token = (await cookies()).get("session")?.value || null;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/merma/", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,12 +20,12 @@ export async function addMerma(
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Error al introducir los datos.',
+        error: "Error al introducir los datos.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -36,12 +36,12 @@ export async function addMerma(
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('merma');
+  revalidatePath("/merma");
   return {
-    data: 'Merma agregada con éxito.',
+    data: "Merma agregada con éxito.",
     error: null,
   };
 }
@@ -51,9 +51,9 @@ export async function deleteMerma({
 }: {
   id: number;
 }): Promise<{ data: string | null; error: string | null }> {
-  const token = (await cookies()).get('session')?.value || null;
-  const res = await fetch(process.env.BACKEND_URL_V2 + '/merma/' + id + '/', {
-    method: 'DELETE',
+  const token = (await cookies()).get("session")?.value || null;
+  const res = await fetch(process.env.BACKEND_URL_V2 + "/merma/" + id + "/", {
+    method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -62,12 +62,12 @@ export async function deleteMerma({
     if (res.status === 401)
       return {
         data: null,
-        error: 'No autorizado',
+        error: "No autorizado",
       };
     if (res.status === 404)
       return {
         data: null,
-        error: 'Merma no encontrada.',
+        error: "Merma no encontrada.",
       };
     if (res.status === 400) {
       const data = await res.json();
@@ -78,12 +78,12 @@ export async function deleteMerma({
     }
     return {
       data: null,
-      error: 'Algo salió mal.',
+      error: "Algo salió mal.",
     };
   }
-  revalidateTag('merma');
+  revalidatePath("/merma");
   return {
-    data: 'Merma eliminada con éxito.',
+    data: "Merma eliminada con éxito.",
     error: null,
   };
 }

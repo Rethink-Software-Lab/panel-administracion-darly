@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormMessage } from '../ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { CheckIcon, ChevronDown } from 'lucide-react';
+import { UseFormReturn } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { CheckIcon, ChevronDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -13,11 +13,11 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command';
-import { InferInput } from 'valibot';
-import { SalidaAlmacenCafeteriaSchema } from '@/lib/schemas';
-import { RefObject, useState } from 'react';
-import { Productos_Elaboraciones } from '@/app/(with-layout)/cafeteria/types';
+} from "../ui/command";
+import { InferInput } from "valibot";
+import { SalidaAlmacenCafeteriaSchema } from "@/lib/schemas";
+import { RefObject, useState } from "react";
+import { Productos_Elaboraciones } from "@/app/(with-layout)/cafeteria/types";
 
 export default function SelectProductoSalidaCafeteria({
   form,
@@ -28,7 +28,7 @@ export default function SelectProductoSalidaCafeteria({
   form: UseFormReturn<InferInput<typeof SalidaAlmacenCafeteriaSchema>>;
   index: number;
   productos: Productos_Elaboraciones[];
-  formRef: RefObject<HTMLElement>;
+  formRef: RefObject<HTMLElement | null>;
 }) {
   const [openPopover, setOpenPopover] = useState(false);
 
@@ -45,8 +45,8 @@ export default function SelectProductoSalidaCafeteria({
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    'justify-between',
-                    !field.value && 'text-muted-foreground'
+                    "justify-between",
+                    !field.value && "text-muted-foreground"
                   )}
                 >
                   {field.value
@@ -56,7 +56,7 @@ export default function SelectProductoSalidaCafeteria({
                           producto.isElaboracion ===
                             form.getValues(`productos.${index}.isElaboracion`)
                       )?.nombre
-                    : 'Seleccione un producto'}
+                    : "Seleccione un producto"}
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
@@ -73,9 +73,9 @@ export default function SelectProductoSalidaCafeteria({
                         value={`${producto.id}-${producto.nombre}-${producto.isElaboracion}`}
                         keywords={[producto.nombre]}
                         onSelect={(currentValue: string) => {
-                          const splits = currentValue.split('-');
+                          const splits = currentValue.split("-");
                           const id = splits[0];
-                          const isElaboracion = splits[2] === 'true';
+                          const isElaboracion = splits[2] === "true";
 
                           form.setValue(`productos.${index}.producto`, id);
                           form.setValue(
@@ -88,10 +88,10 @@ export default function SelectProductoSalidaCafeteria({
                         {producto.nombre}
                         <CheckIcon
                           className={cn(
-                            'ml-auto h-4 w-4',
+                            "ml-auto h-4 w-4",
                             producto.id.toString() === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0'
+                              ? "opacity-100"
+                              : "opacity-0"
                           )}
                         />
                       </CommandItem>

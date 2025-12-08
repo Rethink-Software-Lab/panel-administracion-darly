@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     authInterrupts: true,
+    turbopackFileSystemCacheForDev: true,
   },
 };
 

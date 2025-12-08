@@ -28,7 +28,7 @@ export default function SelectProductoAjuste({
   form: UseFormReturn<InferInput<typeof AjusteSchema>>;
   index: number;
   productosInfo: ProductoInfoParaAjuste[];
-  formRef: RefObject<HTMLElement>;
+  formRef: RefObject<HTMLElement | null>;
 }) {
   const [openPopover, setOpenPopover] = useState(false);
 

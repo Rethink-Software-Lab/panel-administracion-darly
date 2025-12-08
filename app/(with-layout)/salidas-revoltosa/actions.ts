@@ -1,14 +1,12 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 import { CreateSalidaRevoltosa } from "./types";
 
 export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
+  const token = (await cookies()).get("session")?.value;
   const res = await fetch(process.env.BACKEND_URL_V2 + "/salidas-revoltosa/", {
     method: "POST",
     headers: {
@@ -36,7 +34,7 @@ export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
       error: "Algo salió mal.",
     };
   }
-  revalidateTag("salidas-revoltosa");
+  revalidatePath("/salidas-revoltosa");
   const response = await res.json();
   return {
     error: null,
@@ -45,9 +43,7 @@ export async function addSalidaRevoltosa(data: CreateSalidaRevoltosa) {
 }
 
 export async function deleteSalidaRevoltosa({ id }: { id: number }) {
-  const token = (cookies() as unknown as UnsafeUnwrappedCookies).get(
-    "session"
-  )?.value;
+  const token = (await cookies()).get("session")?.value;
   const res = await fetch(
     process.env.BACKEND_URL_V2 + "/salidas-revoltosa/" + id + "/",
     {
@@ -78,7 +74,7 @@ export async function deleteSalidaRevoltosa({ id }: { id: number }) {
       error: "Algo salió mal.",
     };
   }
-  revalidateTag("salidas-revoltosa");
+  revalidatePath("/salidas-revoltosa");
   return {
     data: "Salida eliminada con éxito.",
     error: null,

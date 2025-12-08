@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
 import { ALMACENES, ROLES } from "@/app/(with-layout)/users/types";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
 
   const verifyToken =
@@ -16,16 +16,15 @@ export async function middleware(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(
-    "x-user",
-    JSON.stringify({
-      id: verifyToken?.id,
-      username: verifyToken?.username,
-      rol: verifyToken?.rol,
-      area_venta: verifyToken?.area_venta,
-      almacen: verifyToken?.almacen,
-    })
-  );
+  const jsonString = JSON.stringify({
+    id: verifyToken?.id,
+    username: verifyToken?.username,
+    rol: verifyToken?.rol,
+    area_venta: verifyToken?.area_venta,
+    almacen: verifyToken?.almacen,
+  });
+  const b64 = Buffer.from(jsonString).toString("base64");
+  requestHeaders.set("x-user", b64);
 
   if (verifyToken?.rol !== ROLES.ADMIN && request.nextUrl.pathname == "/") {
     if (verifyToken?.rol === ROLES.SUPERVISOR) {
