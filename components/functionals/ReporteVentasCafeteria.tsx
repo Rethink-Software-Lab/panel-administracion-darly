@@ -53,6 +53,7 @@ interface Params {
   gastos_fijos: GastosReporteVenta[];
   mano_obra: number;
   mano_obra_cuenta_casa: number;
+  costo_productos: number;
   ganancia: number;
 }
 
@@ -69,6 +70,7 @@ export default async function ReporteVentasCafeteria({
 }) {
   const session = await getSession();
   const userId = session?.user.id;
+
   if (!data && !error) {
     return (
       <div className="bg-muted h-full">
@@ -107,14 +109,14 @@ export default async function ReporteVentasCafeteria({
                       DateTime.DATE_FULL,
                       {
                         locale: "es",
-                      },
+                      }
                     )} - ${DateTime.fromISO(hasta).toLocaleString(
                       DateTime.DATE_FULL,
-                      { locale: "es" },
+                      { locale: "es" }
                     )}`
                 : DateTime.fromISO(new Date().toISOString()).toLocaleString(
                     DateTime.DATE_FULL,
-                    { locale: "es" },
+                    { locale: "es" }
                   )}
             </p>
           </div>
@@ -231,8 +233,8 @@ export default async function ReporteVentasCafeteria({
                 }).format(
                   data.gastos_fijos.reduce(
                     (acc, curr) => acc + curr.cantidad,
-                    0,
-                  ),
+                    0
+                  )
                 )}
               </TableCell>
             </TableRow>
@@ -249,10 +251,10 @@ export default async function ReporteVentasCafeteria({
                 }).format(
                   data.gastos_variables.reduce(
                     (acc, curr) => acc + curr.cantidad,
-                    0,
+                    0
                   ) +
                     Number(data?.mano_obra ?? 0) +
-                    Number(data?.mano_obra_cuenta_casa ?? 0),
+                    Number(data?.mano_obra_cuenta_casa ?? 0)
                 )}
               </TableCell>
             </TableRow>
@@ -270,18 +272,32 @@ export default async function ReporteVentasCafeteria({
               </TableCell>
             </TableRow>
             {(userId === 1 || userId === 10) && (
-              <TableRow>
-                <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
-                  Ganancia
-                </TableCell>
-                <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
-                  {Intl.NumberFormat("es-ES", {
-                    style: "currency",
-                    currency: "CUP",
-                    currencyDisplay: "code",
-                  }).format(data.ganancia)}
-                </TableCell>
-              </TableRow>
+              <>
+                <TableRow>
+                  <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
+                    Costo Productos
+                  </TableCell>
+                  <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
+                    {Intl.NumberFormat("es-ES", {
+                      style: "currency",
+                      currency: "CUP",
+                      currencyDisplay: "code",
+                    }).format(data.costo_productos)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-bold px-4 border-t border-gray-300 print:px-0">
+                    Ganancia
+                  </TableCell>
+                  <TableCell className="text-right font-bold px-4 border-t border-gray-300 print:px-0">
+                    {Intl.NumberFormat("es-ES", {
+                      style: "currency",
+                      currency: "CUP",
+                      currencyDisplay: "code",
+                    }).format(data.ganancia)}
+                  </TableCell>
+                </TableRow>
+              </>
             )}
           </TableBody>
         </Table>
