@@ -12,8 +12,7 @@ import { ValidationError } from "@/lib/errors";
 import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { searchParamsCache } from "./searchParams";
 import { alias } from "drizzle-orm/pg-core";
-import { createSubqueryUltimoPrecioVentaProducto } from "@/db/subquerys";
-import { cacheLife } from "next/cache";
+import { createSubqueryUltimoPrecioCostoProducto } from "@/db/subquerys";
 
 export async function GetTarjetas() {
   try {
@@ -67,10 +66,13 @@ async function getTasasDeCambio() {
   /*  "use cache";
   cacheLife({ revalidate: 4 * 60 * 60, expire: 24 * 60 * 60 }); // 4 horas */
 
+  if (process.env.NODE_ENV === "development") return { tasas: { USD: 450 } };
+
   const tasaDeCambio: TasaDeCambio = await fetch(process.env.ELTOQUE_API_URL!, {
     headers: {
       Authorization: `Bearer ${process.env.ELTOQUE_API_KEY}`,
     },
+    next: { revalidate: 4 * 60 * 60 },
   })
     .then((res) => res.json())
     .catch((e) => {
@@ -83,19 +85,19 @@ async function getTasasDeCambio() {
 
 export async function getSaldos() {
   try {
-    const subQueryUltimoPrecioVentaSalon =
-      createSubqueryUltimoPrecioVentaProducto(inventarioProductoinfo.id);
+    const subQueryUltimoPrecioCostoSalon =
+      createSubqueryUltimoPrecioCostoProducto(inventarioProductoinfo.id);
 
     const saldoInventariosDb = await db
       .select({
-        precioVenta: subQueryUltimoPrecioVentaSalon.precio,
+        precioVenta: subQueryUltimoPrecioCostoSalon.precio,
       })
       .from(inventarioProducto)
       .innerJoin(
         inventarioProductoinfo,
         eq(inventarioProducto.infoId, inventarioProductoinfo.id)
       )
-      .innerJoinLateral(subQueryUltimoPrecioVentaSalon, sql`true`)
+      .innerJoinLateral(subQueryUltimoPrecioCostoSalon, sql`true`)
       .leftJoin(
         inventarioAjusteinventarioProductos,
         eq(

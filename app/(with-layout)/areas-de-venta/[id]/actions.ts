@@ -100,18 +100,6 @@ export async function addVenta(data: DataVenta) {
         userId,
       });
 
-      if (sum_pago_trabajador > 0) {
-        await rebajar_pago_trabajador_de_caja_y_crear_transaccion({
-          areaVenta: data.areaVenta,
-          tx,
-          venta,
-          userId,
-          ids,
-          descripcion_producto,
-          sum_pago_trabajador,
-        });
-      }
-
       await crear_transacciones_de_venta({
         areaVenta: data.areaVenta,
         venta,
@@ -123,6 +111,18 @@ export async function addVenta(data: DataVenta) {
         ids,
         descripcion_producto,
       });
+
+      if (sum_pago_trabajador > 0) {
+        await rebajar_pago_trabajador_de_caja_y_crear_transaccion({
+          areaVenta: data.areaVenta,
+          tx,
+          venta,
+          userId,
+          ids,
+          descripcion_producto,
+          sum_pago_trabajador,
+        });
+      }
     });
 
     revalidatePath(`/area-de-venta/${data.areaVenta.id}`);
@@ -350,9 +350,6 @@ async function rebajar_de_las_cuentas({
 
   for (let index = 0; index < cuentas.length; index++) {
     const cuenta = cuentas[index];
-    let deltaCents =
-      (cuenta.cantidad ?? 0) * 100 -
-      (metodoPago === METODOS_PAGO.EFECTIVO ? sum_pago_trabajador * 100 : 0);
 
     if (metodoPago === METODOS_PAGO.MIXTO && index === 0) {
       const cantidadAsignada = cuenta?.cantidad ?? 0;
@@ -396,18 +393,12 @@ async function rebajar_de_las_cuentas({
 
         continue;
       }
-
-      if (cantidadAsignada > sum_pago_trabajador) {
-        deltaCents -= sum_pago_trabajador * 100;
-      }
     }
 
     await tx
       .update(inventarioCuentas)
       .set({
-        saldo: sql`${inventarioCuentas.saldo} + ${sql.raw(
-          `(${deltaCents}::numeric / 100.0)`
-        )}`,
+        saldo: sql`${inventarioCuentas.saldo} + ${cuenta.cantidad}`,
       })
       .where(eq(inventarioCuentas.id, Number(cuenta.cuenta)));
   }
@@ -432,14 +423,27 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 }) {
   if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
 
-  if (venta[0].metodoPago === METODOS_PAGO.TRANSFERENCIA) {
-    await tx
-      .update(inventarioCuentas)
-      .set({
-        saldo: sql`${inventarioCuentas.saldo} - ${sum_pago_trabajador}`,
-      })
-      .where(eq(inventarioCuentas.id, areaVenta.cuenta?.id));
-  }
+  const [cuentaDb] = await tx
+    .select({
+      id: inventarioCuentas.id,
+      saldo: inventarioCuentas.saldo,
+      nombre: inventarioCuentas.nombre,
+    })
+    .from(inventarioCuentas)
+    .where(eq(inventarioCuentas.id, areaVenta.cuenta?.id))
+    .limit(1);
+
+  if (parseFloat(cuentaDb.saldo) < sum_pago_trabajador)
+    throw new ValidationError(
+      `El saldo de la cuenta ${cuentaDb.nombre} es insuficiente para descontar el pago al trabajador.`
+    );
+
+  await tx
+    .update(inventarioCuentas)
+    .set({
+      saldo: sql`${inventarioCuentas.saldo} - ${sum_pago_trabajador}`,
+    })
+    .where(eq(inventarioCuentas.id, cuentaDb.id));
 
   await tx.insert(inventarioTransacciones).values({
     createdAt: new Date().toISOString(),
@@ -479,13 +483,9 @@ async function crear_transacciones_de_venta({
     metodoPago === METODOS_PAGO.MIXTO &&
     (cuentas[0].cantidad ?? 0) <= sum_pago_trabajador
       ? cuentas.filter((_, index) => index !== 0)
-      : cuentas.map((c, index) => ({
+      : cuentas.map((c) => ({
           ...c,
-          cantidad:
-            metodoPago === METODOS_PAGO.EFECTIVO ||
-            (metodoPago === METODOS_PAGO.MIXTO && index === 0)
-              ? (c.cantidad ?? 0) - sum_pago_trabajador
-              : c.cantidad ?? 0,
+          cantidad: c.cantidad ?? 0,
         }));
 
   await tx.insert(inventarioTransacciones).values(
@@ -509,7 +509,7 @@ export async function deleteVenta({
   id: number;
 }): Promise<ResultPattern> {
   try {
-    const venta = await db
+    const [venta] = await db
       .select({
         id: inventarioVentas.id,
         usuarioId: inventarioVentas.usuarioId,
@@ -521,25 +521,45 @@ export async function deleteVenta({
 
     await validaciones_eliminar_venta({ venta });
 
+    const subQueryTransacciones = db
+      .select({
+        id: inventarioTransacciones.id,
+        cantidad: inventarioTransacciones.cantidad,
+        tipo: inventarioTransacciones.tipo,
+      })
+      .from(inventarioTransacciones)
+      .where(
+        and(
+          eq(inventarioTransacciones.cuentaId, inventarioCuentas.id),
+          eq(inventarioTransacciones.ventaId, venta.id)
+        )
+      )
+      .as("transacciones");
+
     const cuentasConTransacciones = await db
       .select({
-        cuenta: {
-          id: inventarioCuentas.id,
-          saldo: inventarioCuentas.saldo,
-          nombre: inventarioCuentas.nombre,
-        },
-        transaccion: {
-          id: inventarioTransacciones.id,
-          cantidad: inventarioTransacciones.cantidad,
-          tipo: inventarioTransacciones.tipo,
-        },
+        id: inventarioCuentas.id,
+        saldo: inventarioCuentas.saldo,
+        nombre: inventarioCuentas.nombre,
+        transacciones: sql<
+          {
+            id: number;
+            cantidad: string;
+            tipo: string;
+          }[]
+        >`COALESCE(
+            json_agg(
+              json_build_object(
+                'id', ${subQueryTransacciones.id}, 
+                'cantidad', ${subQueryTransacciones.cantidad}, 
+                'tipo', ${subQueryTransacciones.tipo}
+              )
+            ) FILTER (WHERE ${subQueryTransacciones.id} IS NOT NULL), 
+          '[]')`,
       })
       .from(inventarioCuentas)
-      .innerJoin(
-        inventarioTransacciones,
-        eq(inventarioCuentas.id, inventarioTransacciones.cuentaId)
-      )
-      .where(eq(inventarioTransacciones.ventaId, venta[0].id));
+      .leftJoinLateral(subQueryTransacciones, sql`true`)
+      .groupBy(inventarioCuentas.id);
 
     await db.transaction(async (tx) => {
       await retornar_saldo_de_y_hacia_cuentas({ cuentasConTransacciones, tx });
@@ -547,12 +567,14 @@ export async function deleteVenta({
       await tx.delete(inventarioTransacciones).where(
         inArray(
           inventarioTransacciones.id,
-          cuentasConTransacciones.map((c) => c.transaccion.id)
+          cuentasConTransacciones.flatMap((c) =>
+            c.transacciones.map((t) => t.id)
+          )
         )
       );
       await tx
         .delete(inventarioVentas)
-        .where(eq(inventarioVentas.id, venta[0].id));
+        .where(eq(inventarioVentas.id, venta.id));
     });
 
     revalidatePath(`/area-de-venta/${id}`);
@@ -581,19 +603,18 @@ async function validaciones_eliminar_venta({
   venta: Pick<
     InferSelectModel<typeof inventarioVentas>,
     "id" | "usuarioId" | "createdAt"
-  >[];
+  >;
 }) {
   const session = await getSession();
   const userId = session?.user.id;
   const isAdmin = session?.isAdmin;
 
-  if (venta.length < 1) throw new ValidationError("Venta no encontrada");
-  if (venta[0].usuarioId !== Number(userId) && !isAdmin)
-    throw new AuthorizationError();
+  if (!venta) throw new ValidationError("Venta no encontrada");
+  if (venta.usuarioId !== userId && !isAdmin) throw new AuthorizationError();
 
   const HOY = new Date();
   HOY.setHours(0, 0, 0, 0);
-  if (new Date(venta[0].createdAt) < HOY && !isAdmin)
+  if (new Date(venta.createdAt) < HOY && !isAdmin)
     throw new ValidationError("Expiro el tiempo para eliminar la venta");
 }
 
@@ -602,32 +623,37 @@ async function retornar_saldo_de_y_hacia_cuentas({
   tx,
 }: {
   cuentasConTransacciones: {
-    cuenta: {
-      id: number;
-      saldo: string;
-      nombre: string;
-    };
-    transaccion: {
+    id: number;
+    saldo: string;
+    nombre: string;
+    transacciones: {
       id: number;
       cantidad: string;
       tipo: string;
-    };
+    }[];
   }[];
   tx: DrizzleTransaction;
 }) {
-  for (const { cuenta, transaccion } of cuentasConTransacciones) {
-    if (transaccion.tipo === TipoTransferencia.VENTA) {
-      if (parseFloat(cuenta.saldo) < parseFloat(transaccion.cantidad))
-        throw new ValidationError(
-          `Saldo insuficiente en ${cuenta.nombre} para eliminar la venta.`
-        );
+  for (const cuenta of cuentasConTransacciones) {
+    const cantidadVenta = cuenta.transacciones
+      .filter((t) => t.tipo === TipoTransferencia.VENTA)
+      .reduce((acum, cuenta) => acum + parseFloat(cuenta.cantidad), 0);
 
-      const saldoADescontar =
-        parseFloat(cuenta.saldo) - parseFloat(transaccion.cantidad);
-      await tx
-        .update(inventarioCuentas)
-        .set({ saldo: saldoADescontar.toString() })
-        .where(eq(inventarioCuentas.id, cuenta.id));
-    }
+    const cantidadPagoTrabajador = cuenta.transacciones
+      .filter((t) => t.tipo === TipoTransferencia.PAGO_TRABAJADOR)
+      .reduce((acum, cuenta) => acum + parseFloat(cuenta.cantidad), 0);
+
+    const nuevoSaldo =
+      parseFloat(cuenta.saldo) - cantidadVenta + cantidadPagoTrabajador;
+
+    if (nuevoSaldo < 0)
+      throw new ValidationError(
+        `Saldo insuficiente en ${cuenta.nombre} para eliminar la venta.`
+      );
+
+    await tx
+      .update(inventarioCuentas)
+      .set({ saldo: nuevoSaldo.toString() })
+      .where(eq(inventarioCuentas.id, cuenta.id));
   }
 }

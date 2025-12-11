@@ -43,21 +43,21 @@ export default async function Tarjetas(props: PageProps<"/cuentas">) {
         </Suspense>
       </div>
       <div
-        className="w-full h-[18rem] md:h-[16rem] flex overflow-x-auto p-4 scroll-p-4 gap-4 md:contain-strict"
+        className="w-full h-[250px] flex overflow-x-auto contain-strict overflow-y-hidden px-4 scroll-p-4 gap-4"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {data?.tarjetas?.map((tarjeta) => (
           <Card
             key={tarjeta.id}
-            style={{ flex: "0 0 auto", scrollSnapAlign: "start" }}
+            style={{ scrollSnapAlign: "start" }}
             className={cn(
-              "w-80 bg-gradient-to-br  text-white aspect-video from-blue-600 to-blue-800",
+              "flex flex-col aspect-video h-full bg-gradient-to-br  text-white from-blue-600 to-blue-800",
               tarjeta.banco === Banco.BANDEC && "from-[#6c0207] to-[#bc1f26]",
               tarjeta.banco === Banco.BPA && "from-[#1d6156] to-[#1d6156]",
               tarjeta.tipo === TipoCuenta.ZELLE && "from-[#a0f] to-[#6534D1]"
             )}
           >
-            <CardHeader className="">
+            <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 {tarjeta.tipo === TipoCuenta.ZELLE ? (
                   <Zelle size={32} withBg={false} className="-ml-2" />

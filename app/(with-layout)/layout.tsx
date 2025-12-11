@@ -18,7 +18,7 @@ export default async function RootLayout(props: LayoutProps<"/">) {
   if (session?.user.rol === ROLES.VENDEDOR_CAFETERIA)
     return (
       <NuqsAdapter>
-        <main>{props.children}</main>
+        <main className="h-full">{props.children}</main>
       </NuqsAdapter>
     );
 
@@ -26,14 +26,10 @@ export default async function RootLayout(props: LayoutProps<"/">) {
     <>
       <SidebarProvider>
         <AppSidebar areas={data?.areas || []} />
-        <SidebarInset>
-          <div className="relative flex flex-col w-full ">
-            <TopBar />
+        <SidebarInset className="flex flex-col min-h-max">
+          <TopBar />
 
-            <NuqsAdapter>
-              <main>{props.children}</main>
-            </NuqsAdapter>
-          </div>
+          <NuqsAdapter>{props.children}</NuqsAdapter>
           <Footer />
         </SidebarInset>
       </SidebarProvider>

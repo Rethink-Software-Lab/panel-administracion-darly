@@ -59,7 +59,9 @@ export const createSubqueryUltimoPrecioVentaProducto = (
     .limit(1)
     .as("precioVenta");
 
-export const createSubqueryUltimoPrecioCostoProducto = (productoId: number) =>
+export const createSubqueryUltimoPrecioCostoProducto = (
+  productoId: number | PgColumn
+) =>
   db
     .select({
       precio: inventarioHistorialpreciocostosalon.precio,

@@ -293,7 +293,6 @@ async function revertSaleStateLogic(tx: DrizzleTransaction, ventaId: number) {
     }
   }
 
-  // Ejecutamos una actualización por cada producto/ingrediente afectado
   for (const [productoId, cantidadTotal] of cambiosEnInventario.entries()) {
     await tx
       .update(inventarioInventarioAreaCafeteria)

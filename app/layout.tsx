@@ -22,7 +22,7 @@ export default function LoginLayout(props: LayoutProps<"/">) {
       <ReactScan />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased w-full m-0 p-0",
+          "min-h-dvh h-max bg-background font-sans antialiased w-full m-0 p-0",
           fontSans.variable
         )}
       >
