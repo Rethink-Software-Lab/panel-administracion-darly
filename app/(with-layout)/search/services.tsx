@@ -56,7 +56,7 @@ export async function searchProduct() {
   } catch (e) {
     console.error(e);
     return {
-      data: null,
+      data: [],
       error: "Error al conectar con el servidor.",
     };
   }
