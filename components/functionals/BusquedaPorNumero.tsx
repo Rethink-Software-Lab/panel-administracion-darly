@@ -88,7 +88,10 @@ export function BusquedaPorNumero() {
                         setTags(newTags);
                         setValue("numeros", newTags as [Tag, ...Tag[]]);
                       }}
-                      validateTag={(tag) => !!Number(tag)}
+                      validateTag={(tag) => {
+                        const num = Number(tag);
+                        return num > 0 && num <= 48;
+                      }}
                       activeTagIndex={activeTagIndex}
                       setActiveTagIndex={setActiveTagIndex}
                     />

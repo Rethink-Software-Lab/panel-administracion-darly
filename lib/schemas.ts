@@ -465,7 +465,14 @@ export const searchByNumberSchema = object({
     array(
       object({
         id: pipe(string(), nonEmpty()),
-        text: pipe(string(), nonEmpty()),
+        text: pipe(
+          string(),
+          nonEmpty(),
+          custom((value) => {
+            const num = Number(value);
+            return !isNaN(num) && num > 0 && num <= 48;
+          }, "El número de zapato debe estar entre 1 y 48")
+        ),
       })
     ),
     minLength(1, "Ingrese al menos un número")

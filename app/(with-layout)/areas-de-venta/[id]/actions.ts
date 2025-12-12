@@ -29,8 +29,10 @@ import { AuthorizationError, ValidationError } from "@/lib/errors";
 import { ResultPattern } from "@/lib/types";
 import { AreaVenta } from "../types";
 
-interface DataVenta
-  extends Omit<InferInput<typeof VentasSchema>, "zapatos_id"> {
+interface DataVenta extends Omit<
+  InferInput<typeof VentasSchema>,
+  "zapatos_id"
+> {
   zapatos_id?: number[];
   areaVenta: Pick<AreaVenta, "id" | "nombre" | "cuenta">;
 }
@@ -92,12 +94,6 @@ export async function addVenta(data: DataVenta) {
         areaVenta: data.areaVenta,
         cuentas: data.cuentas,
         tx,
-        ids,
-        descripcion_producto,
-        metodoPago: data.metodoPago,
-        sum_pago_trabajador,
-        venta,
-        userId,
       });
 
       await crear_transacciones_de_venta({
@@ -105,9 +101,7 @@ export async function addVenta(data: DataVenta) {
         venta,
         userId,
         tx,
-        metodoPago: data.metodoPago,
         cuentas: data.cuentas,
-        sum_pago_trabajador,
         ids,
         descripcion_producto,
       });
@@ -234,7 +228,7 @@ async function validar_existencia_productos_y_sumatorias_necesarias(
 
   const cantidad_a_vendida = producto_info.isZapato
     ? productos_en_area.length
-    : cantidad ?? 0;
+    : (cantidad ?? 0);
 
   return {
     sum_precio_venta: Number(producto_db[0].precio_venta) * cantidad_a_vendida,
@@ -323,77 +317,21 @@ async function validar_cuentas_para_pago(
 
 async function rebajar_de_las_cuentas({
   cuentas,
-  metodoPago,
-  sum_pago_trabajador,
   tx,
-  ids,
-  descripcion_producto,
   areaVenta,
-  venta,
-  userId,
 }: {
   cuentas: InferOutput<typeof VentasSchema.entries.cuentas>;
-  metodoPago: METODOS_PAGO;
-  sum_pago_trabajador: number;
   tx: DrizzleTransaction;
-  ids: number[];
-  descripcion_producto: string;
   areaVenta: {
     id: number;
     nombre: string;
     cuenta: { id: number; nombre: string } | null;
   };
-  venta: InferSelectModel<typeof inventarioVentas>[];
-  userId: number;
 }) {
   if (!areaVenta.cuenta) throw new Error("La cuenta es requerida.");
 
   for (let index = 0; index < cuentas.length; index++) {
     const cuenta = cuentas[index];
-
-    if (metodoPago === METODOS_PAGO.MIXTO && index === 0) {
-      const cantidadAsignada = cuenta?.cantidad ?? 0;
-
-      if (cantidadAsignada === sum_pago_trabajador) {
-        continue;
-      }
-
-      if (cantidadAsignada < sum_pago_trabajador) {
-        const cuentaDB = await db
-          .select()
-          .from(inventarioCuentas)
-          .where(eq(inventarioCuentas.id, Number(cuenta.cuenta)));
-
-        const saldoActual = Number(cuentaDB[0].saldo);
-
-        if (saldoActual < sum_pago_trabajador) {
-          throw new ValidationError(
-            "No hay suficiente saldo en la cuenta para realizar el pago al trabajador"
-          );
-        }
-
-        const cantidadDescuento = sum_pago_trabajador - cantidadAsignada;
-
-        await tx
-          .update(inventarioCuentas)
-          .set({
-            saldo: sql`${inventarioCuentas.saldo} - ${cantidadDescuento}`,
-          })
-          .where(eq(inventarioCuentas.id, Number(cuenta.cuenta)));
-
-        await tx.insert(inventarioTransacciones).values({
-          createdAt: new Date().toISOString(),
-          descripcion: `${ids.length}x ${descripcion_producto.slice(0, 20)}`,
-          cuentaId: areaVenta.cuenta?.id,
-          ventaId: venta[0].id,
-          tipo: TipoTransferencia.PAGO_TRABAJADOR,
-          cantidad: String(cantidadDescuento),
-          usuarioId: userId,
-        });
-
-        continue;
-      }
-    }
 
     await tx
       .update(inventarioCuentas)
@@ -459,9 +397,7 @@ async function rebajar_pago_trabajador_de_caja_y_crear_transaccion({
 }
 
 async function crear_transacciones_de_venta({
-  metodoPago,
   cuentas,
-  sum_pago_trabajador,
   ids,
   descripcion_producto,
   tx,
@@ -469,9 +405,7 @@ async function crear_transacciones_de_venta({
   venta,
   userId,
 }: {
-  metodoPago: METODOS_PAGO;
   cuentas: InferOutput<typeof VentasSchema.entries.cuentas>;
-  sum_pago_trabajador: number;
   ids: number[];
   descripcion_producto: string;
   tx: DrizzleTransaction;
@@ -479,14 +413,10 @@ async function crear_transacciones_de_venta({
   venta: InferSelectModel<typeof inventarioVentas>[];
   userId: number;
 }) {
-  const cuentasParaTransacciones =
-    metodoPago === METODOS_PAGO.MIXTO &&
-    (cuentas[0].cantidad ?? 0) <= sum_pago_trabajador
-      ? cuentas.filter((_, index) => index !== 0)
-      : cuentas.map((c) => ({
-          ...c,
-          cantidad: c.cantidad ?? 0,
-        }));
+  const cuentasParaTransacciones = cuentas.map((c) => ({
+    ...c,
+    cantidad: c.cantidad ?? 0,
+  }));
 
   await tx.insert(inventarioTransacciones).values(
     cuentasParaTransacciones.map((cuenta) => ({

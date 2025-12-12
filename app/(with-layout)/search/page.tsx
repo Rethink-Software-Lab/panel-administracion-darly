@@ -1,4 +1,4 @@
-import { CloudOff } from "lucide-react";
+import { CloudOff, SearchX } from "lucide-react";
 import { forbidden } from "next/navigation";
 
 import {
@@ -12,6 +12,13 @@ import {
 
 import { searchProduct } from "@/app/(with-layout)/search/services";
 import { searchParamsCache } from "@/app/(with-layout)/search/searchParams";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 export default async function Search(props: PageProps<"/search">) {
   const searchParamsCacheValues = await searchParamsCache.parse(
@@ -24,7 +31,7 @@ export default async function Search(props: PageProps<"/search">) {
 
   const { data: productos, error } = await searchProduct();
 
-  if (error || !productos) {
+  if (error) {
     return (
       <main className="flex flex-1 flex-col gap-4 lg:gap-6">
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
@@ -39,6 +46,22 @@ export default async function Search(props: PageProps<"/search">) {
           </div>
         </div>
       </main>
+    );
+  }
+
+  if (productos?.length === 0) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon" className="size-16">
+            <SearchX className="size-10" />
+          </EmptyMedia>
+          <EmptyTitle>Sin resultados para esta búsqueda.</EmptyTitle>
+          <EmptyDescription>
+            Los números que estás intentando buscar no están disponibles.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
