@@ -99,7 +99,6 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
                   style: "currency",
                   currency: "CUP",
                   currencyDisplay: "code",
-                  maximumFractionDigits: 10,
                 }).format(parseFloat(producto.producto.precio_costo))}
               </TableCell>
               <TableCell className="text-right">
@@ -107,7 +106,6 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
                   style: "currency",
                   currency: "CUP",
                   currencyDisplay: "code",
-                  maximumFractionDigits: 10,
                 }).format(
                   producto.cantidad * parseFloat(producto.producto.precio_costo)
                 )}
@@ -123,7 +121,6 @@ export function DocumentToPrint({ data }: { data: EntradaCafeteria }) {
                 style: "currency",
                 currency: "CUP",
                 currencyDisplay: "code",
-                maximumFractionDigits: 10,
               }).format(
                 data?.productos.reduce(
                   (total, producto) =>
