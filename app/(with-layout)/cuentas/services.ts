@@ -9,7 +9,7 @@ import {
   inventarioUser,
 } from "@/db/schema";
 import { ValidationError } from "@/lib/errors";
-import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNull, lte, sql, or } from "drizzle-orm";
 import { searchParamsCache } from "./searchParams";
 import { alias } from "drizzle-orm/pg-core";
 import { createSubqueryUltimoPrecioCostoProducto } from "@/db/subquerys";
@@ -194,9 +194,19 @@ export async function getTransacciones() {
 
     if (accounts) {
       filterConditions.push(
-        inArray(
-          inventarioTransacciones.cuentaId,
-          accounts.map((account) => account)
+        or(
+          inArray(
+            inventarioTransacciones.cuentaId,
+            accounts.map((account) => account)
+          ),
+          inArray(
+            inventarioTransacciones.cuentaOrigenId,
+            accounts.map((account) => account)
+          ),
+          inArray(
+            inventarioTransacciones.cuentaDestinoId,
+            accounts.map((account) => account)
+          )
         )
       );
     }

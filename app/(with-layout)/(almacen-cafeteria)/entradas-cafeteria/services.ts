@@ -13,10 +13,7 @@ import {
 } from "@/db/schema";
 import { and, desc, eq, getTableColumns, lte, sql } from "drizzle-orm";
 
-export async function getEntradasCafeteria(): Promise<{
-  data: EndpointEntradasCafeteria | null;
-  error: string | null;
-}> {
+export async function getEntradasCafeteria() {
   try {
     const subqueryHistoricoPrecioVenta = db
       .select({
@@ -94,7 +91,13 @@ export async function getEntradasCafeteria(): Promise<{
         })
         .from(inventarioProductosCafeteria)
         .innerJoinLateral(subqueryHistoricoPrecioVenta, sql`true`)
-        .innerJoinLateral(subqueryHistoricoPrecioCosto, sql`true`),
+        .innerJoinLateral(subqueryHistoricoPrecioCosto, sql`true`)
+        .then((r) =>
+          r.map((p) => ({
+            ...p,
+            precio_venta: parseFloat(p.precio_venta),
+          }))
+        ),
       db
         .select({
           id: inventarioCuentas.id,
