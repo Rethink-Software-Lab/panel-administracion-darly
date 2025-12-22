@@ -47,11 +47,13 @@ export type NestedNavItem =
   | {
       title: string;
       url: Route;
+      isActive?: boolean;
       items?: never;
     }
   | {
       title: string;
       url?: never;
+      isActive?: boolean;
       items: { title: string; url: Route }[];
     };
 
@@ -194,14 +196,15 @@ export function NavMain({
       icon: Store,
       isActive: !!areas.find(
         (i) =>
-          `/areas-de-venta/${i.id}` === pathname ||
+          pathname.startsWith(`/areas-de-venta/${i.id}`) ||
           "/cafeteria/inventario" === pathname
       ),
       items: [
         { title: "Cafeteria", url: "/cafeteria/inventario" },
         ...areas.map((a) => ({
           title: a.nombre,
-          url: `/areas-de-venta/${a.id}` as Route,
+          url: `/areas-de-venta/${a.id}/inventario` as Route,
+          isActive: pathname.startsWith(`/areas-de-venta/${a.id}`),
         })),
       ],
     },

@@ -1,12 +1,12 @@
-import { columns } from '../inventario/columns';
-import { columns as columnsNew } from '@/app/(with-layout)/areas-de-venta/[id]/columns';
-import DataTableZapatos from '@/components/functionals/data-tables/data-table-zapatos';
-import { DataTable as DataTableNew } from '@/components/ui/data-table-inventario-almacen-2';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { columns } from "../inventario/columns";
+import { columns as columnsNew } from "@/app/(with-layout)/areas-de-venta/[id]/inventario/columns";
+import DataTableZapatos from "@/components/functionals/data-tables/data-table-zapatos";
+import { DataTable as DataTableNew } from "@/components/ui/data-table-inventario-almacen-2";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { inventarioAlmacenRevoltosa } from '@/lib/services';
-import { CloudOff } from 'lucide-react';
-import { Zapatos } from '../inventario/types';
+import { inventarioAlmacenRevoltosa } from "@/lib/services";
+import { CloudOff } from "lucide-react";
+import { Zapatos } from "../inventario/types";
 
 export default async function Inventario() {
   const { data } = await inventarioAlmacenRevoltosa();
