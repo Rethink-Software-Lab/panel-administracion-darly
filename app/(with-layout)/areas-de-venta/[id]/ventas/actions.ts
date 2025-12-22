@@ -1,6 +1,6 @@
 "use server";
 
-import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/schema";
+import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/ventas/schema";
 import { db, DrizzleTransaction } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
@@ -22,12 +22,12 @@ import {
 } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { InferInput, InferOutput } from "valibot";
-import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types";
-import { TipoCuenta, TipoTransferencia } from "../../cuentas/types";
+import { METODOS_PAGO } from "../../../(almacen-cafeteria)/entradas-cafeteria/types";
+import { TipoCuenta, TipoTransferencia } from "../../../cuentas/types";
 import { getSession } from "@/lib/getSession";
 import { AuthorizationError, ValidationError } from "@/lib/errors";
 import { ResultPattern } from "@/lib/types";
-import { AreaVenta } from "../types";
+import { AreaVenta } from "../../types";
 
 interface DataVenta extends Omit<
   InferInput<typeof VentasSchema>,

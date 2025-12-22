@@ -111,12 +111,12 @@ export function NavVendedor({
       icon: Store,
       isActive: !!areas
         .filter((a) => a.id !== userAreaVenta)
-        .find((i) => `/areas-de-venta/${i.id}` === pathname),
+        .find((i) => pathname.startsWith(`/areas-de-venta/${i.id}`)),
       items: areas
         .filter((a) => a.id !== userAreaVenta)
         .map((a) => ({
           title: a.nombre,
-          url: `/areas-de-venta/${a.id}` as Route,
+          url: `/areas-de-venta/${a.id}/inventario` as Route,
         })),
     },
   ];
@@ -126,10 +126,10 @@ export function NavVendedor({
         <SidebarGroupLabel>Tú área</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href={`/areas-de-venta/${tuArea?.id}`}>
+            <Link href={`/areas-de-venta/${tuArea?.id}/inventario`}>
               <SidebarMenuButton
                 tooltip={tuArea?.nombre}
-                isActive={`/areas-de-venta/${tuArea?.id}` === pathname}
+                isActive={pathname.startsWith(`/areas-de-venta/${tuArea?.id}`)}
               >
                 {tuArea?.nombre}
               </SidebarMenuButton>

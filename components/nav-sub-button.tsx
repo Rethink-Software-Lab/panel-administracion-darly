@@ -6,12 +6,12 @@ import { Route } from "next";
 import { usePathname } from "next/navigation";
 
 interface NavSubButtonProps {
-  item: { title: string; url: Route; items?: never };
+  item: { title: string; url: Route; items?: never; isActive?: boolean };
 }
 
 export function NavSubButton({ item }: NavSubButtonProps) {
   const pathname = usePathname();
-  const isActive = item.url === pathname;
+  const isActive = item.isActive ?? item.url === pathname;
 
   return (
     <SidebarMenuSubButton asChild isActive={isActive}>

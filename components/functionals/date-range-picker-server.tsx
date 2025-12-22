@@ -14,14 +14,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TransaccionesSelect } from "@/app/(with-layout)/cuentas/types";
 import { useEffect, useState } from "react";
 
-interface DateRangePickerProps {
-  table: Table<TransaccionesSelect>;
+interface DateRangePickerProps<TData> {
+  table: Table<TData>;
 }
 
-export function DateRangePickerFilter({ table }: DateRangePickerProps) {
+export function DateRangePickerFilter<TData>({
+  table,
+}: DateRangePickerProps<TData>) {
   const globalDateRange = table.getColumn("createdAt")?.getFilterValue() as
     | DateRange
     | undefined;

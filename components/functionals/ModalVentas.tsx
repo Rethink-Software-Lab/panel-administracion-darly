@@ -53,7 +53,7 @@ import {
 
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/schema";
+import { VentasSchema } from "@/app/(with-layout)/areas-de-venta/[id]/ventas/schema";
 import { InferOutput } from "valibot";
 
 import { toast } from "sonner";
@@ -68,7 +68,7 @@ import {
   AllProductos,
   CuentasBancarias,
 } from "@/app/(with-layout)/areas-de-venta/[id]/types";
-import { addVenta } from "@/app/(with-layout)/areas-de-venta/[id]/actions";
+import { addVenta } from "@/app/(with-layout)/areas-de-venta/[id]/ventas/actions";
 import { Tag, TagInput } from "emblor";
 import { AreaVenta } from "@/app/(with-layout)/areas-de-venta/types";
 
@@ -162,8 +162,8 @@ export default function ModalVentas({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button className="gap-1 items-center">
-          <PackagePlus size={18} />
+        <Button className="max-md:fixed max-md:bottom-5 max-md:right-5 max-md:z-50 gap-1 items-center max-md:rounded-full max-md:size-14 max-md:shadow-md">
+          <PackagePlus className="size-8 md:size-5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Agregar
           </span>
@@ -446,7 +446,7 @@ export default function ModalVentas({
                           {index > 0 && (
                             <Button
                               onClick={() => {
-                                form.getValues("cuentas").length === 2 &&
+                                (form.getValues("cuentas").length === 2 &&
                                   form.setValue("cuentas", [
                                     {
                                       cuenta:
@@ -456,7 +456,7 @@ export default function ModalVentas({
                                         ?.tipo,
                                     },
                                   ]),
-                                  removeCuenta(index);
+                                  removeCuenta(index));
                               }}
                               size="icon"
                               variant="ghost"
@@ -474,7 +474,7 @@ export default function ModalVentas({
                 <div className="col-span-2 text-center">
                   <Button
                     onClick={() => {
-                      form.getValues("cuentas").length === 1 &&
+                      (form.getValues("cuentas").length === 1 &&
                         form.setValue("cuentas", [
                           {
                             cuenta: form.getValues("cuentas")?.[0]?.cuenta,
@@ -486,7 +486,7 @@ export default function ModalVentas({
                           cuenta: "",
                           cantidad: 0,
                           tipo: "",
-                        });
+                        }));
                     }}
                     size="sm"
                     variant="ghost"
