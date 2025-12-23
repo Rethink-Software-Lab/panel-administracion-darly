@@ -98,16 +98,19 @@ export async function getVentasAreaVenta(id: number) {
         descripcion: inventarioProductoinfo.descripcion,
         precioVenta: subqueryHistoricoPrecioVenta.precio,
         isZapato: sql<boolean>`CASE WHEN ${inventarioCategorias.nombre} = 'Zapatos' THEN TRUE ELSE FALSE END`,
-        disponible: sql<boolean>`CASE WHEN COUNT(CASE WHEN ${inventarioProducto.ventaId} IS NOT NULL THEN 1 END) = 0 AND COUNT(CASE WHEN ${inventarioAjusteinventarioProductos.ajusteinventarioId} IS NOT NULL THEN 1 END) = 0 THEN TRUE ELSE FALSE END`,
+        disponible: sql<boolean>`CASE WHEN COUNT(CASE WHEN ${inventarioProducto.ventaId} IS NULL AND ${inventarioAjusteinventarioProductos.productoId} IS NULL THEN 1 END) > 0 THEN TRUE ELSE FALSE END`,
       })
       .from(inventarioProductoinfo)
       .innerJoin(
         inventarioCategorias,
         eq(inventarioProductoinfo.categoriaId, inventarioCategorias.id)
       )
-      .innerJoin(
+      .leftJoin(
         inventarioProducto,
-        eq(inventarioProductoinfo.id, inventarioProducto.infoId)
+        and(
+          eq(inventarioProductoinfo.id, inventarioProducto.infoId),
+          eq(inventarioProducto.areaVentaId, id)
+        )
       )
       .leftJoin(
         inventarioAjusteinventarioProductos,
@@ -117,7 +120,15 @@ export async function getVentasAreaVenta(id: number) {
         )
       )
       .innerJoinLateral(subqueryHistoricoPrecioVenta, sql`true`)
-      .where(eq(inventarioProducto.areaVentaId, id))
+      .where(
+        inArray(
+          inventarioProductoinfo.id,
+          db
+            .selectDistinct({ id: inventarioProducto.infoId })
+            .from(inventarioProducto)
+            .where(eq(inventarioProducto.areaVentaId, id))
+        )
+      )
       .groupBy(
         inventarioProductoinfo.id,
         inventarioProductoinfo.descripcion,
