@@ -1,7 +1,7 @@
 import { db } from "@/db/initial";
 import { inventarioAreaventa, inventarioCuentas } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { TipoCuenta } from "../cuentas/types";
+import { TipoCuenta } from "../finanzas/types";
 
 export async function getAreasVentas() {
   try {
