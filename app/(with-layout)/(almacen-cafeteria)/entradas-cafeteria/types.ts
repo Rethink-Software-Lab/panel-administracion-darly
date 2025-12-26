@@ -1,4 +1,4 @@
-import { Tarjetas } from "../../cuentas/types";
+import { Tarjetas } from "../../finanzas/types";
 import { Proveedor } from "../../proveedores/types";
 
 export enum METODOS_PAGO {

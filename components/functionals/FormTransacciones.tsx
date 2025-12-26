@@ -12,10 +12,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { TransferenciasTarjetas } from "@/app/(with-layout)/cuentas/schema";
+import { TransferenciasTarjetas } from "@/app/(with-layout)/finanzas/schema";
 
 import { Input } from "@/components/ui/input";
-import { InferInput } from "valibot";
+import { InferInput, InferOutput } from "valibot";
 import { toast } from "sonner";
 import { useRef, useState } from "react";
 
@@ -33,8 +33,8 @@ import {
   CuentasInTransaccionesCompanent,
   TipoCuenta,
   TipoTransferencia,
-} from "@/app/(with-layout)/cuentas/types";
-import { addTransferenciaTarjeta } from "@/app/(with-layout)/cuentas/actions";
+} from "@/app/(with-layout)/finanzas/types";
+import { addTransferenciaTarjeta } from "@/app/(with-layout)/finanzas/actions";
 import { cn } from "@/lib/utils";
 
 export function FormTransacciones({
@@ -59,7 +59,7 @@ export function FormTransacciones({
   });
 
   const onSubmit = async (
-    dataForm: InferInput<typeof TransferenciasTarjetas>
+    dataForm: InferOutput<typeof TransferenciasTarjetas>
   ): Promise<void> => {
     setLoading(true);
     setError("");
@@ -87,7 +87,7 @@ export function FormTransacciones({
       <Form {...form}>
         <form
           ref={formRef}
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit as any)}
           className="space-y-4"
         >
           <FormField
@@ -154,7 +154,9 @@ export function FormTransacciones({
                               tarjeta.banco === Banco.BPA &&
                                 "from-[#1d6156] to-[#1d6156]",
                               tarjeta.tipo === TipoCuenta.EFECTIVO &&
-                                "from-blue-500 to-blue-700"
+                                "from-blue-500 to-blue-700",
+                              tarjeta.tipo === TipoCuenta.ZELLE &&
+                                "from-[#a0f] to-[#6534D1]"
                             )}
                           ></div>
                           <p>{tarjeta.nombre}</p>
@@ -188,7 +190,12 @@ export function FormTransacciones({
               <FormItem className="w-full text-left">
                 <Label>Valor</Label>
                 <FormControl>
-                  <Input {...field} type="number" step={0.01} min={1} />
+                  <Input
+                    {...field}
+                    type="number"
+                    step={0.01}
+                    onChange={(e) => field.onChange(e.target.value)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

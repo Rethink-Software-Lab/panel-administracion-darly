@@ -23,7 +23,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { InferInput, InferOutput } from "valibot";
 import { METODOS_PAGO } from "../../../(almacen-cafeteria)/entradas-cafeteria/types";
-import { TipoCuenta, TipoTransferencia } from "../../../cuentas/types";
+import { TipoCuenta, TipoTransferencia } from "../../../finanzas/types";
 import { getSession } from "@/lib/getSession";
 import { AuthorizationError, ValidationError } from "@/lib/errors";
 import { ResultPattern } from "@/lib/types";

@@ -11,6 +11,7 @@ export default async function LayoutAreaVenta(
     { href: `/areas-de-venta/${params.id}/inventario`, name: "Inventario" },
     { href: `/areas-de-venta/${params.id}/zapatos`, name: "Zapatos" },
     { href: `/areas-de-venta/${params.id}/ventas`, name: "Ventas" },
+    { href: `/areas-de-venta/${params.id}/reporte`, name: "Reporte" },
   ];
   return (
     <div>

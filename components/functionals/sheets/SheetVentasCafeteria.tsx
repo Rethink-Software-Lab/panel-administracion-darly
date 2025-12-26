@@ -55,7 +55,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CAJA_CAFETERIA, cn } from "@/lib/utils";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
 import SelectProductoVentaCafeteria from "../SelectProductoVentasCafeteria";
 import {
   addVentaCafeteria,
@@ -499,7 +499,7 @@ export default function SheetVentasCafeteria({
                             {index > 0 && (
                               <Button
                                 onClick={() => {
-                                  form.getValues("cuentas").length === 2 &&
+                                  (form.getValues("cuentas").length === 2 &&
                                     form.setValue("cuentas", [
                                       {
                                         cuenta:
@@ -510,7 +510,7 @@ export default function SheetVentasCafeteria({
                                           ?.tipo,
                                       },
                                     ]),
-                                    removeCuenta(index);
+                                    removeCuenta(index));
                                 }}
                                 size="icon"
                                 variant="ghost"
@@ -528,7 +528,7 @@ export default function SheetVentasCafeteria({
                   <div className="col-span-2 text-center">
                     <Button
                       onClick={() => {
-                        form.getValues("cuentas").length === 1 &&
+                        (form.getValues("cuentas").length === 1 &&
                           form.setValue("cuentas", [
                             {
                               cuenta: form.getValues("cuentas")?.[0]?.cuenta,
@@ -540,7 +540,7 @@ export default function SheetVentasCafeteria({
                             cuenta: "",
                             cantidad: 0,
                             tipo: "",
-                          });
+                          }));
                       }}
                       size="sm"
                       variant="ghost"

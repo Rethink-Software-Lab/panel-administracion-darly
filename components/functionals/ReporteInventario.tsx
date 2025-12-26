@@ -14,6 +14,7 @@ interface Producto {
   id: number;
   descripcion: string;
   cantidad: string;
+  precio_costo: string;
   precio_venta: string;
 }
 
@@ -54,6 +55,9 @@ export default async function ReporteInventario({
                 Descripción
               </TableHead>
               <TableHead className="border-b border-gray-300 px-4 print:px-0">
+                Precio de costo
+              </TableHead>
+              <TableHead className="border-b border-gray-300 px-4 print:px-0">
                 Precio de venta
               </TableHead>
               <TableHead className="text-right border-b border-gray-300 px-4 print:px-0">
@@ -71,10 +75,16 @@ export default async function ReporteInventario({
                   {Intl.NumberFormat("es-CU", {
                     style: "currency",
                     currency: "CUP",
+                  }).format(Number(p.precio_costo))}
+                </TableCell>
+                <TableCell className="font-medium border-b border-gray-300 px-4 print:px-0">
+                  {Intl.NumberFormat("es-CU", {
+                    style: "currency",
+                    currency: "CUP",
                   }).format(Number(p.precio_venta))}
                 </TableCell>
                 <TableCell className="text-right font-medium border-b border-gray-300 px-4 print:px-0">
-                  {p.cantidad}
+                  {Intl.NumberFormat().format(parseFloat(p.cantidad))}
                 </TableCell>
               </TableRow>
             ))}

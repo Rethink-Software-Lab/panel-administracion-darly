@@ -18,7 +18,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { createTransferenciaSchema } from "@/app/(with-layout)/cuentas/schema";
+import { createTransferenciaSchema } from "@/app/(with-layout)/finanzas/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput, InferOutput } from "valibot";
@@ -27,8 +27,12 @@ import { useMemo, useRef, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import { Banco, Tarjetas, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
-import { addTransferencia } from "@/app/(with-layout)/cuentas/actions";
+import {
+  Banco,
+  Tarjetas,
+  TipoCuenta,
+} from "@/app/(with-layout)/finanzas/types";
+import { addTransferencia } from "@/app/(with-layout)/finanzas/actions";
 import { cn } from "@/lib/utils";
 import {
   Command,

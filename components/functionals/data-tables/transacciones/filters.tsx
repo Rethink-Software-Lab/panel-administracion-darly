@@ -12,7 +12,7 @@ import {
 import {
   TipoTransferencia,
   TransaccionesSelect,
-} from "@/app/(with-layout)/cuentas/types";
+} from "@/app/(with-layout)/finanzas/types";
 import {
   ArrowDownLeft,
   ArrowRightLeft,
