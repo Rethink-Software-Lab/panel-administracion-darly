@@ -20,7 +20,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { CuentasSchema } from "@/app/(with-layout)/cuentas/schema";
+import { CuentasSchema } from "@/app/(with-layout)/finanzas/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput, InferOutput } from "valibot";
@@ -36,8 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Banco, Moneda, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
-import { addCuenta } from "@/app/(with-layout)/cuentas/actions";
+import { Banco, Moneda, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
+import { addCuenta } from "@/app/(with-layout)/finanzas/actions";
 import { Zelle } from "@/components/ui/icons/zelle";
 
 export default function SheetCuentas({ isError }: { isError: boolean }) {

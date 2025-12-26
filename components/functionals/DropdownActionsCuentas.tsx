@@ -17,7 +17,7 @@ import {
 } from "../ui/sheet";
 import { FormTransacciones } from "./FormTransacciones";
 import { useState } from "react";
-import { Tarjetas } from "@/app/(with-layout)/cuentas/types";
+import { Tarjetas } from "@/app/(with-layout)/finanzas/types";
 import { FormTransferencia } from "./FormTransferencia";
 export function DropdownActionCuentas({
   cuentas,

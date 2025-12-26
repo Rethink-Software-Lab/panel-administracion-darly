@@ -24,7 +24,7 @@ import {
   Tarjetas,
   TransaccionesSelect,
 } from "@/app/(with-layout)/finanzas/types";
-import { FiltersTransacciones } from "./filters";
+/* import { FiltersTransacciones } from "./filters"; */
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -35,26 +35,16 @@ import {
 import { useMemo } from "react";
 import { DateRange } from "react-day-picker";
 
-export interface TransaccionesTableMeta extends TableMeta<TransaccionesSelect> {
+export interface TransaccionesTableMeta extends TableMeta<Tarjetas> {
   cuentas: Tarjetas[];
 }
 
-interface DataTableProps<TData> {
-  columns: ColumnDef<TData>[];
-  data: TData[];
-  meta: {
-    totalCount: number;
-    pageCount: number;
-  };
-  cuentas: Tarjetas[];
+interface DataTableProps {
+  columns: ColumnDef<Tarjetas>[];
+  data: Tarjetas[];
 }
 
-export default function DataTableTransacciones<TData>({
-  columns,
-  data,
-  meta,
-  cuentas,
-}: DataTableProps<TData>) {
+export default function DataTableCuentas({ columns, data }: DataTableProps) {
   const [queryState, setQueryState] = useQueryStates(
     {
       p: parseAsInteger.withDefault(1),
@@ -90,13 +80,6 @@ export default function DataTableTransacciones<TData>({
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualFiltering: true,
-    pageCount: meta.pageCount,
-    rowCount: meta.totalCount,
-
-    meta: {
-      cuentas,
-    } as TransaccionesTableMeta,
-
     state: {
       pagination: {
         pageIndex: queryState.p - 1,
@@ -156,11 +139,11 @@ export default function DataTableTransacciones<TData>({
     defaultColumn: {
       minSize: 5,
     },
-  } as TableOptions<TransaccionesSelect>);
+  } as TableOptions<Tarjetas>);
 
   return (
     <div className="">
-      <FiltersTransacciones table={table} />
+      {/*  <FiltersTransacciones table={table} /> */}
       <div className="rounded-md border">
         <Table className="bg-white rounded-lg">
           <TableHeader>

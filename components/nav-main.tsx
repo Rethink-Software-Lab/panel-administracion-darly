@@ -144,8 +144,8 @@ export function NavMain({
       url: "/cuenta-casa",
     },
     {
-      title: "Cuentas",
-      url: "/cuentas",
+      title: "Finanzas",
+      url: "/finanzas/cuentas",
     },
     {
       title: "Transferencias",

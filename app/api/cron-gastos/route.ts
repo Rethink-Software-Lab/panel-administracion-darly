@@ -1,4 +1,4 @@
-import { TipoTransferencia } from "@/app/(with-layout)/cuentas/types";
+import { TipoTransferencia } from "@/app/(with-layout)/finanzas/types";
 import {
   FrecuenciasGastos,
   TiposGastos,

@@ -71,8 +71,10 @@ export default async function areaVentaReporte(
       <div className="bg-white rounded border px-2">
         <Table>
           <TableHeader>
-            <TableHead>Producto</TableHead>
-            <TableHead className="text-end">Cantidad</TableHead>
+            <TableRow>
+              <TableHead>Producto</TableHead>
+              <TableHead className="text-end">Cantidad</TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {data?.productos.map((p) => (

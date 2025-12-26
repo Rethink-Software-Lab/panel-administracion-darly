@@ -14,7 +14,7 @@ import {
   string,
 } from "valibot";
 import { METODOS_PAGO } from "../(almacen-cafeteria)/entradas-cafeteria/types";
-import { TipoCuenta } from "../cuentas/types";
+import { TipoCuenta } from "../finanzas/types";
 
 export const EntradaSchema = pipe(
   object({

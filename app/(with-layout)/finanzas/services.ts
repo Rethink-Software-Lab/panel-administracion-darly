@@ -14,54 +14,6 @@ import { searchParamsCache } from "./searchParams";
 import { alias } from "drizzle-orm/pg-core";
 import { createSubqueryUltimoPrecioCostoProducto } from "@/db/subquerys";
 
-export async function GetTarjetas() {
-  try {
-    const hoy = new Date();
-    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    inicioMes.setHours(0, 0, 0, 0);
-
-    const cuentas = await db
-      .select({
-        id: inventarioCuentas.id,
-        nombre: inventarioCuentas.nombre,
-        tipo: inventarioCuentas.tipo,
-        banco: inventarioCuentas.banco,
-        saldo: inventarioCuentas.saldo,
-        moneda: inventarioCuentas.moneda,
-        total_transferencias_mes: sql<number>`coalesce(sum(${inventarioTransacciones.cantidad}), 0)`,
-      })
-      .from(inventarioCuentas)
-      .leftJoin(
-        inventarioTransacciones,
-        and(
-          eq(inventarioCuentas.id, inventarioTransacciones.cuentaId),
-          eq(inventarioTransacciones.tipo, TipoTransferencia.INGRESO),
-          gte(inventarioTransacciones.createdAt, inicioMes.toISOString())
-        )
-      )
-      .where(eq(inventarioCuentas.active, true))
-      .orderBy(desc(inventarioCuentas.tipo))
-      .groupBy(inventarioCuentas.id);
-
-    return {
-      error: null,
-      data: {
-        tarjetas: cuentas,
-        total_balance: cuentas.reduce(
-          (acum, cuenta) => acum + Number(cuenta.saldo),
-          0
-        ),
-      },
-    };
-  } catch (e) {
-    console.error(e);
-    return {
-      data: null,
-      error: "Error al conectar con el servidor.",
-    };
-  }
-}
-
 async function getTasasDeCambio() {
   /*  "use cache";
   cacheLife({ revalidate: 4 * 60 * 60, expire: 24 * 60 * 60 }); // 4 horas */

@@ -25,7 +25,7 @@ export async function addCuenta(
       tipo: data.tipo,
       saldo: data.saldo_inicial.toString(),
       banco: data.banco,
-      moneda: data.tipo === TipoCuenta.ZELLE ? Moneda.USD : data.moneda,
+      moneda: data.tipo === TipoCuenta.ZELLE ? Moneda.CUP : data.moneda,
     });
     revalidatePath("/cuentas");
     return {
@@ -73,7 +73,7 @@ export async function deleteCuenta(id: number) {
 
 /* Esto son las transacciones [ingreso y egreso] */
 export async function addTransferenciaTarjeta(
-  data: InferInput<typeof TransferenciasTarjetas>
+  data: InferOutput<typeof TransferenciasTarjetas>
 ): Promise<{ data: string | null; error: string | null }> {
   const token = (await cookies()).get("session")?.value || null;
   const res = await fetch(
@@ -82,6 +82,7 @@ export async function addTransferenciaTarjeta(
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     }

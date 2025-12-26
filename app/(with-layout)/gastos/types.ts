@@ -1,5 +1,5 @@
 import { AreaVenta } from "../areas-de-venta/types";
-import { Tarjetas } from "../cuentas/types";
+import { Tarjetas } from "../finanzas/types";
 
 export enum TiposGastos {
   FIJO = "FIJO",

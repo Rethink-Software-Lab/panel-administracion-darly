@@ -1,9 +1,9 @@
 import { CloudOff } from "lucide-react";
 
-import { getTransacciones } from "@/app/(with-layout)/cuentas/services";
-import { columns } from "@/app/(with-layout)/cuentas/columns";
+import { getTransacciones } from "@/app/(with-layout)/finanzas/services";
+import { columns } from "@/app/(with-layout)/finanzas/columns";
 import DataTableTransacciones from "./data-tables/transacciones/data-table-transacciones";
-import { Tarjetas } from "@/app/(with-layout)/cuentas/types";
+import { Tarjetas } from "@/app/(with-layout)/finanzas/types";
 
 import { DropdownActionCuentas } from "./DropdownActionsCuentas";
 

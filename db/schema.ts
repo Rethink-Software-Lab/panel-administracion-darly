@@ -14,7 +14,7 @@ import {
   numeric,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { Moneda } from "@/app/(with-layout)/cuentas/types";
+import { Moneda } from "@/app/(with-layout)/finanzas/types";
 
 export const inventarioAjusteinventario = pgTable(
   "inventario_ajusteinventario",

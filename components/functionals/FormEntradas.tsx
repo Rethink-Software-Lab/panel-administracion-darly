@@ -83,7 +83,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
+import { Banco, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { METODOS_PAGO } from "@/app/(with-layout)/(almacen-cafeteria)/entradas-cafeteria/types";
 import {
@@ -398,6 +398,9 @@ export default function FormEntradas({
           return "from-[#1d6156] to-[#1d6156]";
       }
     }
+    if (tipo === TipoCuenta.ZELLE) {
+      return "from-[#a0f] to-[#6534D1]";
+    }
   };
 
   return (
@@ -655,11 +658,11 @@ export default function FormEntradas({
                                     )}
 
                                     {field.value
-                                      ? cuentas?.find(
+                                      ? (cuentas?.find(
                                           (cuenta) =>
                                             cuenta?.id.toString() ===
                                             field.value
-                                        )?.nombre ?? "Cuenta no encontrada"
+                                        )?.nombre ?? "Cuenta no encontrada")
                                       : "Selecciona una cuenta"}
                                   </div>
 
@@ -700,9 +703,15 @@ export default function FormEntradas({
                                         if (
                                           metodoWatch === METODOS_PAGO.EFECTIVO
                                         ) {
-                                          return !c.banco;
+                                          return (
+                                            !c.banco &&
+                                            c.tipo !== TipoCuenta.ZELLE
+                                          );
                                         }
-                                        return !!c.banco;
+                                        return (
+                                          !!c.banco ||
+                                          c.tipo === TipoCuenta.ZELLE
+                                        );
                                       })
                                       .map((cuenta) => (
                                         <CommandItem
@@ -783,7 +792,7 @@ export default function FormEntradas({
                         {index > 0 && (
                           <Button
                             onClick={() => {
-                              form.getValues("cuentas").length === 2 &&
+                              (form.getValues("cuentas").length === 2 &&
                                 form.setValue("cuentas", [
                                   {
                                     cuenta:
@@ -792,7 +801,7 @@ export default function FormEntradas({
                                     tipo: form.getValues("cuentas")?.[0]?.tipo,
                                   },
                                 ]),
-                                removeCuenta(index);
+                                removeCuenta(index));
                             }}
                             size="icon"
                             variant="ghost"
@@ -809,7 +818,7 @@ export default function FormEntradas({
                 <div className="col-span-2 text-center">
                   <Button
                     onClick={() => {
-                      form.getValues("cuentas").length === 1 &&
+                      (form.getValues("cuentas").length === 1 &&
                         form.setValue("cuentas", [
                           {
                             cuenta: form.getValues("cuentas")?.[0]?.cuenta,
@@ -821,7 +830,7 @@ export default function FormEntradas({
                           cuenta: "",
                           cantidad: 0,
                           tipo: "",
-                        });
+                        }));
                     }}
                     size="sm"
                     variant="ghost"

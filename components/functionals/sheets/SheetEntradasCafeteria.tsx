@@ -57,7 +57,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import SelectProductoEntradaCafeteria from "../SelectProductoEntradaCafeteria";
-import { Banco, Tarjetas, TipoCuenta } from "@/app/(with-layout)/cuentas/types";
+import {
+  Banco,
+  Tarjetas,
+  TipoCuenta,
+} from "@/app/(with-layout)/finanzas/types";
 import { cn } from "@/lib/utils";
 import ComboboxProveedorCafeteria from "../combobox-proveedor-cafeteria";
 import { Proveedor } from "@/app/(with-layout)/proveedores/types";
@@ -569,7 +573,7 @@ export default function SheetEntradasCafeteria({
                             {index > 0 && (
                               <Button
                                 onClick={() => {
-                                  form.getValues("cuentas").length === 2 &&
+                                  (form.getValues("cuentas").length === 2 &&
                                     form.setValue("cuentas", [
                                       {
                                         cuenta:
@@ -580,7 +584,7 @@ export default function SheetEntradasCafeteria({
                                           ?.tipo,
                                       },
                                     ]),
-                                    removeCuenta(index);
+                                    removeCuenta(index));
                                 }}
                                 size="icon"
                                 variant="ghost"
@@ -598,7 +602,7 @@ export default function SheetEntradasCafeteria({
                   <div className="col-span-2 text-center">
                     <Button
                       onClick={() => {
-                        form.getValues("cuentas").length === 1 &&
+                        (form.getValues("cuentas").length === 1 &&
                           form.setValue("cuentas", [
                             {
                               cuenta: form.getValues("cuentas")?.[0]?.cuenta,
@@ -610,7 +614,7 @@ export default function SheetEntradasCafeteria({
                             cuenta: "",
                             cantidad: 0,
                             tipo: "",
-                          });
+                          }));
                       }}
                       size="sm"
                       variant="ghost"

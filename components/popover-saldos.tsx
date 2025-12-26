@@ -1,4 +1,4 @@
-import { getSaldos } from "@/app/(with-layout)/cuentas/services";
+import { getSaldos } from "@/app/(with-layout)/finanzas/services";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Zelle } from "./ui/icons/zelle";
 import { Separator } from "./ui/separator";
