@@ -1,13 +1,13 @@
 import { CloudOff } from "lucide-react";
 
-import { getTransacciones } from "@/app/(with-layout)/finanzas/services";
-import { columns } from "@/app/(with-layout)/finanzas/columns";
-import DataTableTransacciones from "./data-tables/transacciones/data-table-transacciones";
-import { Tarjetas } from "@/app/(with-layout)/finanzas/types";
+import { getTransacciones } from "@/app/(with-layout)/finanzas/transacciones/services";
+import { columns } from "@/app/(with-layout)/finanzas/transacciones/columns";
+import DataTableTransacciones from "../../app/(with-layout)/finanzas/transacciones/data-table";
 
 import { DropdownActionCuentas } from "./DropdownActionsCuentas";
+import { Cuenta } from "@/app/(with-layout)/finanzas/cuentas/types";
 
-export async function TableTransacciones({ cuentas }: { cuentas: Tarjetas[] }) {
+export async function TableTransacciones({ cuentas }: { cuentas: Cuenta[] }) {
   const { data, error, meta } = await getTransacciones();
   return (
     <div className="p-4 m-0 bg-muted/40 h-full border-t-2 border-muted">

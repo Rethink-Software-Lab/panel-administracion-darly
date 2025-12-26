@@ -14,7 +14,7 @@ import { InferOutput } from "valibot";
 import { GastosSchema } from "./schema";
 import { and, eq } from "drizzle-orm";
 import { TiposGastos } from "./types";
-import { TipoTransferencia } from "../finanzas/types";
+import { TipoTransferencia } from "../finanzas/transacciones/types";
 
 export async function addGasto(
   gasto: InferOutput<typeof GastosSchema>

@@ -12,7 +12,11 @@ import {
   inventarioVentasCafeteriaElaboraciones,
   inventarioVentasCafeteriaProductos,
 } from "@/db/schema";
-import { Banco, TipoCuenta, TipoTransferencia } from "../../finanzas/types";
+import {
+  Banco,
+  TipoCuenta,
+  TipoTransferencia,
+} from "../../finanzas/transacciones/types";
 import { and, desc, eq, sql, sum } from "drizzle-orm";
 import { CuentasInVentasCafeteria, Prod_Elab_Venta } from "../types";
 import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types";

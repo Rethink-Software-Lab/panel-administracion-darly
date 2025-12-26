@@ -1,5 +1,5 @@
 import { METODOS_PAGO } from "../(almacen-cafeteria)/entradas-cafeteria/types";
-import { Banco, TipoCuenta } from "../finanzas/types";
+import { Banco, TipoCuenta } from "../finanzas/transacciones/types";
 
 export interface ProductoCafeteria {
   id: number;

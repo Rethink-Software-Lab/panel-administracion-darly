@@ -33,8 +33,8 @@ import {
   CuentasInTransaccionesCompanent,
   TipoCuenta,
   TipoTransferencia,
-} from "@/app/(with-layout)/finanzas/types";
-import { addTransferenciaTarjeta } from "@/app/(with-layout)/finanzas/actions";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
+import { addTransferenciaTarjeta } from "@/app/(with-layout)/finanzas/transacciones/actions";
 import { cn } from "@/lib/utils";
 
 export function FormTransacciones({

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { DateRangePickerFilter } from "../../date-range-picker-server";
+import { DateRangePickerFilter } from "@/components/functionals/date-range-picker-server";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
 import {
   TipoTransferencia,
   TransaccionesSelect,
-} from "@/app/(with-layout)/finanzas/types";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import {
   ArrowDownLeft,
   ArrowRightLeft,
@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import MultipleSelector from "@/components/ui/multiselect";
 import { type Option } from "@/components/ui/multiselect";
 import { Table } from "@tanstack/react-table";
-import { TransaccionesTableMeta } from "./data-table-transacciones";
+import { TransaccionesTableMeta } from "../../../../app/(with-layout)/finanzas/transacciones/data-table";
 
 const tipoConfig = {
   [TipoTransferencia.INGRESO]: {

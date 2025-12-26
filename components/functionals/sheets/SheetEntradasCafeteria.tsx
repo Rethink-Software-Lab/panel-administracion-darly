@@ -59,9 +59,8 @@ import {
 import SelectProductoEntradaCafeteria from "../SelectProductoEntradaCafeteria";
 import {
   Banco,
-  Tarjetas,
   TipoCuenta,
-} from "@/app/(with-layout)/finanzas/types";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import { cn } from "@/lib/utils";
 import ComboboxProveedorCafeteria from "../combobox-proveedor-cafeteria";
 import { Proveedor } from "@/app/(with-layout)/proveedores/types";
@@ -79,6 +78,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Cuenta } from "@/app/(with-layout)/finanzas/cuentas/types";
 
 export default function SheetEntradasCafeteria({
   productos,
@@ -86,7 +86,7 @@ export default function SheetEntradasCafeteria({
   proveedores,
 }: {
   productos: ProductoEntrada[];
-  cuentas: Omit<Tarjetas, "total_transferencias_mes" | "moneda">[];
+  cuentas: Omit<Cuenta, "total_transferencias_mes" | "moneda">[];
   proveedores: Pick<Proveedor, "id" | "nombre">[];
 }) {
   const [open, setOpen] = useState(false);

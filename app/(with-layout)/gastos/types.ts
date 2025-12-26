@@ -1,5 +1,5 @@
 import { AreaVenta } from "../areas-de-venta/types";
-import { Tarjetas } from "../finanzas/types";
+import { Cuenta } from "../finanzas/cuentas/types";
 
 export enum TiposGastos {
   FIJO = "FIJO",
@@ -41,7 +41,7 @@ export interface Gasto {
 export type AreaVentaForSelectGasto = Pick<AreaVenta, "id" | "nombre">;
 
 export type CuentaForSelectGasto = Omit<
-  Tarjetas,
+  Cuenta,
   "saldo" | "total_transferencias_mes" | "moneda"
 >;
 
