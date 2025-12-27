@@ -18,22 +18,16 @@ import {
 import { FormTransacciones } from "./FormTransacciones";
 import { useState } from "react";
 import { FormTransferencia } from "./FormTransferencia";
-import { Cuenta } from "@/app/(with-layout)/finanzas/cuentas/types";
-export function DropdownActionCuentas({
-  cuentas,
-  isError,
-}: {
-  cuentas: Cuenta[];
-  isError: boolean;
-}) {
+import { Cuenta } from "@/app/(with-layout)/finanzas/transacciones/types";
+export function DropdownActionCuentas({ cuentas }: { cuentas: Cuenta[] }) {
   const [openTransacciones, setOpenTransacciones] = useState(false);
   const [openTransferencia, setOpenTransferencia] = useState(false);
   return (
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button disabled={isError} className="gap-1 items-center">
-            <PlusCircle size={18} />
+          <Button className="gap-1 items-center max-md:fixed max-md:bottom-5 max-md:right-5 max-md:z-50 max-md:rounded-full max-md:size-14 max-md:shadow-md">
+            <PlusCircle className="size-8 md:size-5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Agregar
             </span>

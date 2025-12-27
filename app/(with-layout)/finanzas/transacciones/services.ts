@@ -8,6 +8,7 @@ import {
 import { db } from "@/db/initial";
 import { ValidationError } from "@/lib/errors";
 import { alias } from "drizzle-orm/pg-core";
+import { Banco, Moneda, TipoCuenta } from "./types";
 
 export async function getTransacciones() {
   const {
@@ -108,6 +109,9 @@ export async function getTransacciones() {
       .select({
         id: inventarioCuentas.id,
         nombre: inventarioCuentas.nombre,
+        tipo: sql<TipoCuenta>`${inventarioCuentas.tipo}`,
+        banco: sql<Banco>`${inventarioCuentas.banco}`,
+        moneda: sql<Moneda>`${inventarioCuentas.moneda}`,
       })
       .from(inventarioCuentas)
       .where(eq(inventarioCuentas.active, true));

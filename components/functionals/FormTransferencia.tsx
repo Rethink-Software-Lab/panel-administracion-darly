@@ -18,7 +18,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm, useWatch } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { createTransferenciaSchema } from "@/app/(with-layout)/finanzas/schema";
+import { createTransferenciaSchema } from "@/app/(with-layout)/finanzas/transacciones/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput, InferOutput } from "valibot";
@@ -46,7 +46,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Cuenta } from "@/app/(with-layout)/finanzas/cuentas/types";
+import { Cuenta } from "@/app/(with-layout)/finanzas/transacciones/types";
 
 export function FormTransferencia({
   cuentas,

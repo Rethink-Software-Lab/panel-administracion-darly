@@ -1,7 +1,12 @@
 import { db } from "@/db/initial";
 import { inventarioCuentas, inventarioTransacciones } from "@/db/schema";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
-import { TipoTransferencia } from "../transacciones/types";
+import {
+  Banco,
+  Moneda,
+  TipoCuenta,
+  TipoTransferencia,
+} from "../transacciones/types";
 
 export async function getCuentas() {
   try {
@@ -13,10 +18,10 @@ export async function getCuentas() {
       .select({
         id: inventarioCuentas.id,
         nombre: inventarioCuentas.nombre,
-        tipo: inventarioCuentas.tipo,
-        banco: inventarioCuentas.banco,
+        tipo: sql<TipoCuenta>`${inventarioCuentas.tipo}`,
+        banco: sql<Banco | null>`${inventarioCuentas.banco}`,
         saldo: inventarioCuentas.saldo,
-        moneda: inventarioCuentas.moneda,
+        moneda: sql<Moneda>`${inventarioCuentas.moneda}`,
         total_transferencias_mes: sql<number>`coalesce(sum(${inventarioTransacciones.cantidad}), 0)`,
       })
       .from(inventarioCuentas)
@@ -29,7 +34,7 @@ export async function getCuentas() {
         )
       )
       .where(eq(inventarioCuentas.active, true))
-      .orderBy(desc(inventarioCuentas.tipo))
+      .orderBy(desc(inventarioCuentas.saldo))
       .groupBy(inventarioCuentas.id);
 
     return {

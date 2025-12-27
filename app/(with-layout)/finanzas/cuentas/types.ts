@@ -1,9 +1,11 @@
+import { Banco, Moneda, TipoCuenta } from "../transacciones/types";
+
 export interface Cuenta {
   id: number;
   nombre: string;
-  tipo: string;
-  banco: string | null;
+  tipo: TipoCuenta;
+  banco: Banco | null;
   saldo: string;
-  moneda: string;
+  moneda: Moneda;
   total_transferencias_mes: number;
 }

@@ -28,13 +28,16 @@ export enum Moneda {
   USD = "USD",
 }
 
-export interface Cuentas {
+export interface Cuenta {
   id: number;
   nombre: string;
+  tipo: TipoCuenta;
+  banco: Banco | null;
+  moneda: Moneda;
 }
 
 export interface ResponseTarjetas {
-  tarjetas: Cuentas[];
+  tarjetas: Cuenta[];
   total_balance: number;
 }
 

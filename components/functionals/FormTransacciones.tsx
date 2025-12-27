@@ -12,7 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { TransferenciasTarjetas } from "@/app/(with-layout)/finanzas/schema";
+import { TransferenciasTarjetas } from "@/app/(with-layout)/finanzas/transacciones/schema";
 
 import { Input } from "@/components/ui/input";
 import { InferInput, InferOutput } from "valibot";
