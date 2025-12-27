@@ -9,6 +9,7 @@ import {
 import { Gasto, TiposGastos } from "./types";
 import { desc, eq, sql } from "drizzle-orm";
 import { ValidationError } from "@/lib/errors";
+import { Banco, TipoCuenta } from "../finanzas/transacciones/types";
 
 export async function getGastos() {
   try {
@@ -24,8 +25,8 @@ export async function getGastos() {
       .select({
         id: inventarioCuentas.id,
         nombre: inventarioCuentas.nombre,
-        tipo: inventarioCuentas.tipo,
-        banco: inventarioCuentas.banco,
+        tipo: sql<TipoCuenta>`${inventarioCuentas.tipo}`,
+        banco: sql<Banco | null>`${inventarioCuentas.banco}`,
       })
       .from(inventarioCuentas);
 

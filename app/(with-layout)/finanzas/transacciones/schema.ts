@@ -11,7 +11,7 @@ import {
   optional,
 } from "valibot";
 import { TipoTransferencia } from "@/app/(with-layout)/finanzas/transacciones/types";
-import { Cuenta } from "../cuentas/types";
+import { Cuenta } from "../transacciones/types";
 
 export const TransferenciasTarjetas = object({
   cuenta: pipe(

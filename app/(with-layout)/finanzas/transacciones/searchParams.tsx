@@ -9,7 +9,7 @@ import { TipoTransferencia } from "./types";
 
 export const cuentasSearchParams = {
   p: parseAsInteger.withDefault(1),
-  l: parseAsInteger.withDefault(10),
+  l: parseAsInteger.withDefault(50),
   from: parseAsIsoDateTime,
   to: parseAsIsoDateTime,
   type: parseAsStringLiteral([...Object.values(TipoTransferencia)]),

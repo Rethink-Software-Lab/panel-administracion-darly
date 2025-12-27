@@ -1,4 +1,4 @@
-import { EndpointEntradasCafeteria, ProductosInEntrada } from "./types";
+import { ProductosInEntrada } from "./types";
 import { db } from "@/db/initial";
 import {
   inventarioCuentas,
@@ -12,6 +12,7 @@ import {
   inventarioUser,
 } from "@/db/schema";
 import { and, desc, eq, getTableColumns, lte, sql } from "drizzle-orm";
+import { Banco, TipoCuenta } from "../../finanzas/transacciones/types";
 
 export async function getEntradasCafeteria() {
   try {
@@ -102,8 +103,8 @@ export async function getEntradasCafeteria() {
         .select({
           id: inventarioCuentas.id,
           nombre: inventarioCuentas.nombre,
-          tipo: inventarioCuentas.tipo,
-          banco: inventarioCuentas.banco,
+          tipo: sql<TipoCuenta>`${inventarioCuentas.tipo}`,
+          banco: sql<Banco | null>`${inventarioCuentas.banco}`,
           saldo: inventarioCuentas.saldo,
         })
         .from(inventarioCuentas),
