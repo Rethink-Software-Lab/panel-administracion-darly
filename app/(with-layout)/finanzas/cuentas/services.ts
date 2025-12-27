@@ -1,7 +1,7 @@
 import { db } from "@/db/initial";
 import { inventarioCuentas, inventarioTransacciones } from "@/db/schema";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
-import { TipoTransferencia } from "../types";
+import { TipoTransferencia } from "../transacciones/types";
 
 export async function getCuentas() {
   try {

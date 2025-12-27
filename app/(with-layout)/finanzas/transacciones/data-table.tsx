@@ -21,9 +21,9 @@ import {
 
 import { DataTablePagination } from "@/components/functionals/data-table-pagination-server-cursor";
 import {
-  Tarjetas,
+  Cuentas,
   TransaccionesSelect,
-} from "@/app/(with-layout)/finanzas/types";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import { FiltersTransacciones } from "./filters";
 import {
   parseAsArrayOf,
@@ -36,7 +36,7 @@ import { useMemo } from "react";
 import { DateRange } from "react-day-picker";
 
 export interface TransaccionesTableMeta extends TableMeta<TransaccionesSelect> {
-  cuentas: Tarjetas[];
+  cuentas: Cuentas[];
 }
 
 interface DataTableProps<TData> {
@@ -46,7 +46,7 @@ interface DataTableProps<TData> {
     totalCount: number;
     pageCount: number;
   };
-  cuentas: Tarjetas[];
+  cuentas: Cuentas[];
 }
 
 export default function DataTableTransacciones<TData>({

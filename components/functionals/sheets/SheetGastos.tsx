@@ -48,7 +48,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
+import {
+  Banco,
+  TipoCuenta,
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import {
   Command,
   CommandEmpty,

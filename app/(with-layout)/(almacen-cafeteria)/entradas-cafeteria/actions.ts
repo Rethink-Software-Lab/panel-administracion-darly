@@ -23,7 +23,10 @@ import { eq, inArray, sql } from "drizzle-orm";
 import { getSession } from "@/lib/getSession";
 import { METODOS_PAGO } from "./types";
 import { ValidationError } from "@/lib/errors";
-import { TipoCuenta, TipoTransferencia } from "../../finanzas/types";
+import {
+  TipoCuenta,
+  TipoTransferencia,
+} from "../../finanzas/transacciones/types";
 
 export async function addEntradaCafeteria(
   entrada: InferOutput<typeof EntradaCafeteriaSchema>

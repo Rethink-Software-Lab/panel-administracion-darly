@@ -36,8 +36,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Banco, Moneda, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
-import { addCuenta } from "@/app/(with-layout)/finanzas/actions";
+import {
+  Banco,
+  Moneda,
+  TipoCuenta,
+} from "@/app/(with-layout)/finanzas/transacciones/types";
+import { addCuenta } from "@/app/(with-layout)/finanzas/cuentas/actions";
 import { Zelle } from "@/components/ui/icons/zelle";
 
 export default function SheetCuentas({ isError }: { isError: boolean }) {

@@ -1,4 +1,4 @@
-import { Tarjetas } from "../../finanzas/types";
+import { Cuenta } from "../../finanzas/cuentas/types";
 import { Proveedor } from "../../proveedores/types";
 
 export enum METODOS_PAGO {
@@ -39,6 +39,6 @@ export interface EntradaCafeteria {
 export interface EndpointEntradasCafeteria {
   productos: ProductoEntrada[];
   entradas: EntradaCafeteria[];
-  cuentas: Omit<Tarjetas, "total_transferencias_mes" | "moneda">[];
+  cuentas: Omit<Cuenta, "total_transferencias_mes" | "moneda">[];
   proveedores: Pick<Proveedor, "id" | "nombre">[];
 }

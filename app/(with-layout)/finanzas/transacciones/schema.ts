@@ -8,57 +8,10 @@ import {
   string,
   forward,
   partialCheck,
-  variant,
-  literal,
   optional,
-  undefined_,
 } from "valibot";
-import {
-  Banco,
-  Moneda,
-  Tarjetas,
-  TipoCuenta,
-  TipoTransferencia,
-} from "@/app/(with-layout)/finanzas/types";
-
-const BaseSchema = object({
-  nombre: pipe(
-    string("El nombre es requerido"),
-    nonEmpty("El nombre es requerido")
-  ),
-  saldo_inicial: pipe(
-    string("El saldo inicial es requerido"),
-    nonEmpty("El saldo inicial es requerido"),
-    transform((value: string) => parseFloat(value)),
-    minValue(0, "El saldo inicial debe ser mayor que 0")
-  ),
-  moneda: enum_(Moneda, "Moneda requerida."),
-});
-
-const EfectivoSchema = object({
-  ...BaseSchema.entries,
-  tipo: literal(TipoCuenta.EFECTIVO),
-  banco: optional(undefined_()),
-});
-
-const ZelleSchema = object({
-  ...BaseSchema.entries,
-  tipo: literal(TipoCuenta.ZELLE),
-  banco: optional(undefined_()),
-  moneda: optional(undefined_()),
-});
-
-const BancariaSchema = object({
-  ...BaseSchema.entries,
-  tipo: literal(TipoCuenta.BANCARIA),
-  banco: enum_(Banco, "Banco requerido."),
-});
-
-export const CuentasSchema = variant(
-  "tipo",
-  [EfectivoSchema, ZelleSchema, BancariaSchema],
-  "El tipo de cuenta es requerido."
-);
+import { TipoTransferencia } from "@/app/(with-layout)/finanzas/transacciones/types";
+import { Cuenta } from "../cuentas/types";
 
 export const TransferenciasTarjetas = object({
   cuenta: pipe(
@@ -138,7 +91,7 @@ export const TransferenciaSchema = pipe(
   )
 );
 
-export const createTransferenciaSchema = (cuentas: Tarjetas[]) =>
+export const createTransferenciaSchema = (cuentas: Cuenta[]) =>
   pipe(
     object({
       cuentaOrigen: pipe(

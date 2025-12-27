@@ -55,7 +55,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CAJA_CAFETERIA, cn } from "@/lib/utils";
-import { Banco, TipoCuenta } from "@/app/(with-layout)/finanzas/types";
+import {
+  Banco,
+  TipoCuenta,
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import SelectProductoVentaCafeteria from "../SelectProductoVentasCafeteria";
 import {
   addVentaCafeteria,

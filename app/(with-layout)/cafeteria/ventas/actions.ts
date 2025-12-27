@@ -22,7 +22,10 @@ import {
 import { eq, sql, inArray } from "drizzle-orm";
 import { METODOS_PAGO } from "../../(almacen-cafeteria)/entradas-cafeteria/types";
 import { CAJA_CAFETERIA } from "@/lib/utils";
-import { TipoCuenta, TipoTransferencia } from "../../finanzas/types";
+import {
+  TipoCuenta,
+  TipoTransferencia,
+} from "../../finanzas/transacciones/types";
 import { ValidationError } from "@/lib/errors";
 import {
   createSubqueryUltimoPrecioElaboracion,

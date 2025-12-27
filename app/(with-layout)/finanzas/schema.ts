@@ -16,10 +16,10 @@ import {
 import {
   Banco,
   Moneda,
-  Tarjetas,
   TipoCuenta,
   TipoTransferencia,
-} from "@/app/(with-layout)/finanzas/types";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
+import { Cuenta } from "./cuentas/types";
 
 const BaseSchema = object({
   nombre: pipe(
@@ -138,7 +138,7 @@ export const TransferenciaSchema = pipe(
   )
 );
 
-export const createTransferenciaSchema = (cuentas: Tarjetas[]) =>
+export const createTransferenciaSchema = (cuentas: Cuenta[]) =>
   pipe(
     object({
       cuentaOrigen: pipe(

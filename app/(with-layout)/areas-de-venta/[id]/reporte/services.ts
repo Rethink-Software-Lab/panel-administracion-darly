@@ -1,7 +1,7 @@
 import {
   TipoCuenta,
   TipoTransferencia,
-} from "@/app/(with-layout)/finanzas/types";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
 import { db } from "@/db/initial";
 import {
   inventarioCuentas,

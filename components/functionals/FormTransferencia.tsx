@@ -29,10 +29,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import {
   Banco,
-  Tarjetas,
   TipoCuenta,
-} from "@/app/(with-layout)/finanzas/types";
-import { addTransferencia } from "@/app/(with-layout)/finanzas/actions";
+} from "@/app/(with-layout)/finanzas/transacciones/types";
+import { addTransferencia } from "@/app/(with-layout)/finanzas/transacciones/actions";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -47,12 +46,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Cuenta } from "@/app/(with-layout)/finanzas/cuentas/types";
 
 export function FormTransferencia({
   cuentas,
   setOpen,
 }: {
-  cuentas: Tarjetas[];
+  cuentas: Cuenta[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [loading, setLoading] = useState(false);

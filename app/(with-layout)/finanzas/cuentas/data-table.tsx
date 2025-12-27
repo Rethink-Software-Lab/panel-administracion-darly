@@ -20,11 +20,7 @@ import {
 } from "@/components/ui/table";
 
 import { DataTablePagination } from "@/components/functionals/data-table-pagination-server-cursor";
-import {
-  Tarjetas,
-  TransaccionesSelect,
-} from "@/app/(with-layout)/finanzas/types";
-/* import { FiltersTransacciones } from "./filters"; */
+
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -34,14 +30,15 @@ import {
 } from "nuqs";
 import { useMemo } from "react";
 import { DateRange } from "react-day-picker";
+import { Cuenta } from "./types";
 
-export interface TransaccionesTableMeta extends TableMeta<Tarjetas> {
-  cuentas: Tarjetas[];
+export interface TransaccionesTableMeta extends TableMeta<Cuenta> {
+  cuentas: Cuenta[];
 }
 
 interface DataTableProps {
-  columns: ColumnDef<Tarjetas>[];
-  data: Tarjetas[];
+  columns: ColumnDef<Cuenta>[];
+  data: Cuenta[];
 }
 
 export default function DataTableCuentas({ columns, data }: DataTableProps) {
@@ -139,11 +136,10 @@ export default function DataTableCuentas({ columns, data }: DataTableProps) {
     defaultColumn: {
       minSize: 5,
     },
-  } as TableOptions<Tarjetas>);
+  } as TableOptions<Cuenta>);
 
   return (
     <div className="">
-      {/*  <FiltersTransacciones table={table} /> */}
       <div className="rounded-md border">
         <Table className="bg-white rounded-lg">
           <TableHeader>
