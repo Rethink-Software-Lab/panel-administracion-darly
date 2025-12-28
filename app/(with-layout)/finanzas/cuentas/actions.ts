@@ -1,3 +1,4 @@
+"use server";
 import { InferOutput } from "valibot";
 import { CuentasSchema } from "./schema";
 import { inventarioCuentas } from "@/db/schema";

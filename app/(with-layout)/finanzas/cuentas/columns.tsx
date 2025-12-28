@@ -41,17 +41,32 @@ export const columns: ColumnDef<Cuenta>[] = [
   },
   {
     header: "Transferencias realizadas",
-    cell: ({ row }) => (
-      <Progress
-        className={cn(
-          (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES >= 60 &&
-            "[&>div]:bg-yellow-400",
-          (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES >= 80 &&
-            "[&>div]:bg-red-600"
-        )}
-        value={(row.original.total_transferencias_mes * 100) / MAX_TRANF_MES}
-      />
-    ),
+    cell: ({ row }) => {
+      if (row.original.tipo === TipoCuenta.BANCARIA) {
+        return (
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground">
+              {Intl.NumberFormat("es-ES", {
+                style: "percent",
+              }).format(
+                (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES
+              )}
+            </span>
+            <Progress
+              className={cn(
+                (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES >=
+                  60 && "[&>div]:bg-yellow-400",
+                (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES >=
+                  80 && "[&>div]:bg-red-600"
+              )}
+              value={
+                (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES
+              }
+            />
+          </div>
+        );
+      }
+    },
   },
   {
     accessorKey: "saldo",

@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { CircleX, PlusSquare } from "lucide-react";
+import { CirclePlus, CircleX, PlusSquare } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -44,7 +44,7 @@ import {
 import { addCuenta } from "@/app/(with-layout)/finanzas/cuentas/actions";
 import { Zelle } from "@/components/ui/icons/zelle";
 
-export default function SheetCuentas({ isError }: { isError: boolean }) {
+export default function SheetCuentas() {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
@@ -78,16 +78,11 @@ export default function SheetCuentas({ isError }: { isError: boolean }) {
   };
   return (
     <Sheet open={open} onOpenChange={setOpen} modal={true}>
-      <SheetTrigger disabled={isError}>
-        <Card
-          style={{ flex: "0 0 auto", scrollSnapAlign: "start" }}
-          className="aspect-video h-full cursor-pointer"
-        >
-          <CardContent className="text-black/40 h-full p-8 flex flex-col gap-2 justify-center items-center">
-            <PlusSquare size={24} />
-            <p className="text-xl font-bold">Agregar Tarjeta</p>
-          </CardContent>
-        </Card>
+      <SheetTrigger asChild>
+        <Button className="space-x-1">
+          <CirclePlus className="size-5" />
+          <span>Agregar</span>
+        </Button>
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[600px] overflow-y-scroll">
         <SheetHeader>
