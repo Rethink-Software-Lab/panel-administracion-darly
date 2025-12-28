@@ -11,16 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { TipoCuenta } from "../transacciones/types";
-
-const Tipos = [
-  {
-    EFECTIVO: "Efectivo",
-  },
-];
+import SheetCuentas from "@/components/functionals/sheets/SheetTarjetas";
 
 export function FiltersCuentas({ table }: { table: Table<Cuenta> }) {
   return (
-    <div className="flex items-center justify-between pt-2 pb-4 gap-4">
+    <div className="flex items-center justify-between pb-4">
       <div className="flex gap-2">
         <Input
           className="max-w-60"
@@ -47,19 +42,18 @@ export function FiltersCuentas({ table }: { table: Table<Cuenta> }) {
           }
           placeholder="Filtrar por nombre"
         />
-      </div>
-      <div className="flex items-center gap-2">
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="ml-auto flex gap-1">
+            <Button variant="outline" className="text-muted-foreground">
               {table.getState().columnFilters.find((f) => f.id === "tipo") ? (
-                <>
+                <span className="text-black flex items-center gap-1">
                   <Check size={16} />
                   {TipoCuenta[
                     table.getState().columnFilters.find((f) => f.id === "tipo")
                       ?.value as TipoCuenta
                   ] || "Tipo"}
-                </>
+                </span>
               ) : (
                 "Tipo"
               )}
@@ -96,6 +90,7 @@ export function FiltersCuentas({ table }: { table: Table<Cuenta> }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <SheetCuentas />
     </div>
   );
 }
