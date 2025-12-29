@@ -29,7 +29,7 @@ export async function getCuentas() {
         inventarioTransacciones,
         and(
           eq(inventarioCuentas.id, inventarioTransacciones.cuentaId),
-          eq(inventarioTransacciones.tipo, TipoTransferencia.INGRESO),
+          eq(inventarioTransacciones.tipo, TipoTransferencia.VENTA),
           gte(inventarioTransacciones.createdAt, inicioMes.toISOString())
         )
       )

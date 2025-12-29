@@ -47,10 +47,11 @@ export const columns: ColumnDef<Cuenta>[] = [
           <div className="flex items-center gap-1">
             <span className="text-muted-foreground">
               {Intl.NumberFormat("es-ES", {
-                style: "percent",
+                maximumFractionDigits: 0,
               }).format(
                 (row.original.total_transferencias_mes * 100) / MAX_TRANF_MES
-              )}
+              )}{" "}
+              %
             </span>
             <Progress
               className={cn(

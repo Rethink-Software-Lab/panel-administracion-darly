@@ -19,15 +19,6 @@ export default async function LayoutFinanzas(props: LayoutProps<"/finanzas">) {
       </div>
       <TabsLink items={items} />
       {props.children}
-      {/* <div
-        className="w-full h-[250px] flex overflow-x-auto contain-strict overflow-y-hidden px-4 scroll-p-4 gap-4"
-        style={{ scrollSnapType: "x mandatory" }}
-      >
-        <SheetTarjetas isError={!!error} />
-      </div> */}
-      {/*  <Suspense fallback={<SkeletonTransacciones />}>
-        <TableTransacciones cuentas={data?.tarjetas || []} />
-      </Suspense> */}
     </main>
   );
 }

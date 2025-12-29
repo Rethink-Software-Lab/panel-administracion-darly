@@ -80,18 +80,3 @@ export type TransaccionesSelect = Pick<
   cuentaDestino: string | null;
   tipoCambio: string | null;
 };
-
-export type TasaDeCambio = {
-  tasas: {
-    ECU: number;
-    USD: number;
-    BTC: number;
-    USDT_TRC20: number;
-    TRC: number;
-    MLC: number;
-  };
-  date: string;
-  hour: number;
-  minute: number;
-  second: number;
-};

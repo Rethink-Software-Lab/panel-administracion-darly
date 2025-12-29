@@ -1,4 +1,4 @@
-import { Moneda, TasaDeCambio, TipoCuenta } from "./transacciones/types";
+import { Moneda, TipoCuenta } from "./transacciones/types";
 import { db } from "@/db/initial";
 import {
   inventarioAjusteinventarioProductos,
@@ -8,27 +8,6 @@ import {
 } from "@/db/schema";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { createSubqueryUltimoPrecioCostoProducto } from "@/db/subquerys";
-
-async function getTasasDeCambio() {
-  /*  "use cache";
-  cacheLife({ revalidate: 4 * 60 * 60, expire: 24 * 60 * 60 }); // 4 horas */
-
-  if (process.env.NODE_ENV === "development") return { tasas: { USD: 450 } };
-
-  const tasaDeCambio: TasaDeCambio = await fetch(process.env.ELTOQUE_API_URL!, {
-    headers: {
-      Authorization: `Bearer ${process.env.ELTOQUE_API_KEY}`,
-    },
-    next: { revalidate: 4 * 60 * 60 },
-  })
-    .then((res) => res.json())
-    .catch((e) => {
-      console.error(`Error al obtener tasa de cambio`, e);
-      throw new Error("Error al obtener tasa de cambio");
-    });
-
-  return tasaDeCambio;
-}
 
 export async function getSaldos() {
   try {
@@ -89,9 +68,6 @@ export async function getSaldos() {
       .filter((c) => c.tipo === TipoCuenta.ZELLE)
       .reduce((acum, cuenta) => acum + parseFloat(cuenta.saldo), 0);
 
-    const tasasDeCambio = await getTasasDeCambio();
-    const conversionUSD = saldoCuentasEfectivoUSD * tasasDeCambio.tasas.USD;
-
     return {
       data: {
         saldoInventarios,
@@ -99,12 +75,14 @@ export async function getSaldos() {
         saldoCuentasEfectivoUSD,
         saldoCuentasBancarias,
         saldoZelle,
-        saldoTotal:
-          saldoInventarios +
-          saldoCuentasEfectivoCUP +
-          saldoCuentasBancarias +
-          conversionUSD +
-          saldoZelle,
+        saldoTotal: {
+          CUP:
+            saldoInventarios +
+            saldoCuentasEfectivoCUP +
+            saldoCuentasBancarias +
+            saldoZelle,
+          USD: saldoCuentasEfectivoUSD,
+        },
       },
       error: null,
     };
