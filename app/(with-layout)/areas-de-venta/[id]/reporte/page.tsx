@@ -7,6 +7,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getReporteVentasAreaVenta } from "./services";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { ClipboardX, CloudOff } from "lucide-react";
 
 export default async function areaVentaReporte(
   props: PageProps<"/areas-de-venta/[id]/reporte">
@@ -18,7 +26,33 @@ export default async function areaVentaReporte(
 
   const { data, error } = await getReporteVentasAreaVenta(areaVentaId);
 
-  if (!data) return;
+  if (error)
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon" className="bg-white border">
+            <CloudOff />
+          </EmptyMedia>
+          <EmptyTitle>Ha ocurrido un error.</EmptyTitle>
+          <EmptyDescription>{error}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+
+  if (!data || data.productos.length === 0)
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon" className="bg-white border">
+            <ClipboardX />
+          </EmptyMedia>
+          <EmptyTitle>Sin ventas que mostrar.</EmptyTitle>
+          <EmptyDescription>
+            Cuando agregues ventas aparecerá el reporte aquí.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
 
   return (
     <div className="space-y-4">

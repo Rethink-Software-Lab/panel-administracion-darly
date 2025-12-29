@@ -10,11 +10,16 @@ import {
   inventarioTransacciones,
   inventarioVentas,
 } from "@/db/schema";
+import { getSession } from "@/lib/getSession";
 import { and, count, eq, gte } from "drizzle-orm";
 
 export async function getReporteVentasAreaVenta(areaVentaId: number) {
   const fechaInicioDia = new Date();
   fechaInicioDia.setHours(0, 0, 0, 0);
+
+  const session = await getSession();
+  const userId = session?.user.id;
+
   try {
     const p = await db
       .select({
@@ -87,7 +92,8 @@ export async function getReporteVentasAreaVenta(areaVentaId: number) {
           [
             TipoTransferencia.PAGO_TRABAJADOR,
             TipoTransferencia.EGRESO,
-          ].includes(tipoTransaccion)
+          ].includes(tipoTransaccion) &&
+          row.inventario_transacciones.usuarioId === userId
         ) {
           acc.pagos += cantidad;
         }
