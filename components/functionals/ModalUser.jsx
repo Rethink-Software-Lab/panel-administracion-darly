@@ -1,13 +1,13 @@
-'use client';
+"use client";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   DialogFooter,
   DialogClose,
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTrigger,
   DialogDescription,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 import {
   Form,
@@ -25,19 +25,19 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+} from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import { useForm, useWatch } from 'react-hook-form';
-import { valibotResolver } from '@hookform/resolvers/valibot';
-import { UserSchema } from '@/lib/schemas';
+import { useForm, useWatch } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { UserSchema } from "@/lib/schemas";
 
-import { addUsuario, updateUsuario } from '@/app/(with-layout)/users/actions';
-import { toast } from 'sonner';
-import { CircleX, LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
-import { Label } from '@/components/ui/label';
-import { ALMACENES, ROLES } from '@/app/(with-layout)/users/types';
+import { addUsuario, updateUsuario } from "@/app/(with-layout)/users/actions";
+import { toast } from "sonner";
+import { CircleX, LoaderCircle } from "lucide-react";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { ALMACENES, ROLES } from "@/app/(with-layout)/users/types";
 
 export default function ModalUser({ data = null, trigger, areas }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,9 +47,9 @@ export default function ModalUser({ data = null, trigger, areas }) {
   const form = useForm({
     resolver: valibotResolver(UserSchema),
     defaultValues: {
-      username: data?.username || '',
-      rol: data?.rol || '',
-      password: '',
+      username: data?.username || "",
+      rol: data?.rol || "",
+      password: "",
       area_venta: data?.area_venta?.id?.toString(),
       almacen: data?.almacen || undefined,
     },
@@ -57,7 +57,7 @@ export default function ModalUser({ data = null, trigger, areas }) {
 
   const rol = useWatch({
     control: form.control,
-    name: 'rol',
+    name: "rol",
   });
 
   const onSubmit = async (dataForm) => {
@@ -90,7 +90,7 @@ export default function ModalUser({ data = null, trigger, areas }) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{data ? 'Editar' : 'Agregar'} Usuario</DialogTitle>
+          <DialogTitle>{data ? "Editar" : "Agregar"} Usuario</DialogTitle>
         </DialogHeader>
         <DialogDescription>Todos los campos son requeridos</DialogDescription>
         {error && (
@@ -123,9 +123,9 @@ export default function ModalUser({ data = null, trigger, areas }) {
                   <Label>Rol</Label>
                   <Select
                     onValueChange={(value) => {
-                      form.getValues('rol') !== 'VENDEDOR' &&
-                        form.setValue('areaVenta', undefined);
-                      form.setValue('rol', value);
+                      form.getValues("rol") !== "VENDEDOR" &&
+                        form.setValue("areaVenta", undefined);
+                      form.setValue("rol", value);
                     }}
                     defaultValue={field.value}
                   >
@@ -140,9 +140,9 @@ export default function ModalUser({ data = null, trigger, areas }) {
                         Almacenero
                       </SelectItem>
                       <SelectItem value={ROLES.VENDEDOR}>Vendedor</SelectItem>
-                      <SelectItem value={ROLES.VENDEDOR_CAFETERIA}>
+                      {/*  <SelectItem value={ROLES.VENDEDOR_CAFETERIA}>
                         Vendedor Cafetería
-                      </SelectItem>
+                      </SelectItem> */}
                       <SelectItem value={ROLES.SUPERVISOR}>
                         Supervisor
                       </SelectItem>
@@ -202,12 +202,12 @@ export default function ModalUser({ data = null, trigger, areas }) {
                         <SelectItem value={ALMACENES.PRINCIPAL}>
                           Principal
                         </SelectItem>
-                        <SelectItem value={ALMACENES.CAFETERIA}>
+                        {/* <SelectItem value={ALMACENES.CAFETERIA}>
                           Cafetería
                         </SelectItem>
                         <SelectItem value={ALMACENES.REVOLTOSA}>
                           Revoltosa
-                        </SelectItem>
+                        </SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -241,10 +241,10 @@ export default function ModalUser({ data = null, trigger, areas }) {
                   {isLoading ? (
                     <>
                       <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                      {data ? 'Editando...' : 'Agregando...'}
+                      {data ? "Editando..." : "Agregando..."}
                     </>
                   ) : (
-                    <>{data ? 'Editar' : 'Agregar'}</>
+                    <>{data ? "Editar" : "Agregar"}</>
                   )}
                 </Button>
               </DialogFooter>
