@@ -83,7 +83,7 @@ export default function FormReportes({
               <SelectItem disabled={!session?.isAdmin} value="general">
                 General
               </SelectItem>
-              <SelectItem
+              {/* <SelectItem
                 disabled={
                   !session?.isAdmin &&
                   (!session?.isAlmacenero ||
@@ -93,10 +93,10 @@ export default function FormReportes({
                 value="cafeteria"
               >
                 Cafetería
-              </SelectItem>
+              </SelectItem> */}
               {type === "inventario" && (
                 <>
-                  <SelectItem
+                  {/* <SelectItem
                     disabled={
                       !session?.isAdmin &&
                       (!session?.isAlmacenero ||
@@ -106,7 +106,7 @@ export default function FormReportes({
                     value="almacen-cafeteria"
                   >
                     Almacén Cafetería
-                  </SelectItem>
+                  </SelectItem> */}
                   <SelectItem
                     disabled={
                       !session?.isAdmin &&
@@ -118,7 +118,7 @@ export default function FormReportes({
                   >
                     Almacén Principal
                   </SelectItem>
-                  <SelectItem
+                  {/*  <SelectItem
                     disabled={
                       !session?.isAdmin &&
                       (!session?.isAlmacenero ||
@@ -128,7 +128,7 @@ export default function FormReportes({
                     value="almacen-revoltosa"
                   >
                     Almacén Revoltosa
-                  </SelectItem>
+                  </SelectItem> */}
                 </>
               )}
 

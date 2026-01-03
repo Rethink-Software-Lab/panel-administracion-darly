@@ -292,7 +292,7 @@ export default function SheetGastos({
                         {...field}
                         defaultOptions={
                           [
-                            { nombre: "Cafeteria", id: "cafeteria" },
+                            /*  { nombre: "Cafeteria", id: "cafeteria" }, */
                             ...areas,
                           ].map((area) => ({
                             label: area?.nombre,

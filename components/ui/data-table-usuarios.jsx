@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   getPaginationRowModel,
@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
   getFilteredRowModel,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -16,21 +16,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 
-import { useState } from 'react';
-import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import { useState } from "react";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from './dropdown-menu';
-import { Button } from './button';
-import { Check } from 'lucide-react';
+} from "./dropdown-menu";
+import { Button } from "./button";
+import { Check } from "lucide-react";
 
 export function DataTable({ columns, data, areas }) {
   const [sorting, setSorting] = useState([]);
@@ -60,11 +60,11 @@ export function DataTable({ columns, data, areas }) {
   });
 
   const ROLES = {
-    ADMIN: 'Administrador',
-    ALMACENERO: 'Almacenero',
-    VENDEDOR: 'Vendedor',
-    'VENDEDOR CAFETERÍA': 'Vendedor Cafetería',
-    SUPERVISOR: 'Supervisor',
+    ADMIN: "Administrador",
+    ALMACENERO: "Almacenero",
+    VENDEDOR: "Vendedor",
+    /*   'VENDEDOR CAFETERÍA': 'Vendedor Cafetería', */
+    SUPERVISOR: "Supervisor",
   };
 
   return (
@@ -74,21 +74,21 @@ export function DataTable({ columns, data, areas }) {
           <Input
             className="max-w-60"
             value={
-              columnFilters?.find((el) => el.id === 'username')?.value || ''
+              columnFilters?.find((el) => el.id === "username")?.value || ""
             }
             onChange={(e) =>
               setColumnFilters((prevState) => {
-                const has = prevState?.find((el) => el.id === 'username');
+                const has = prevState?.find((el) => el.id === "username");
                 if (!has) {
                   return prevState.concat({
-                    id: 'username',
+                    id: "username",
                     value: e.target.value,
                   });
                 }
                 return prevState
-                  .filter((f) => f.id !== 'username')
+                  .filter((f) => f.id !== "username")
                   .concat({
-                    id: 'username',
+                    id: "username",
                     value: e.target.value,
                   });
               })
@@ -104,34 +104,34 @@ export function DataTable({ columns, data, areas }) {
                 size="sm"
                 className="ml-auto flex gap-1"
               >
-                {columnFilters.find((f) => f.id === 'rol') ? (
+                {columnFilters.find((f) => f.id === "rol") ? (
                   <>
                     <Check size={16} />
-                    {ROLES[columnFilters.find((f) => f.id === 'rol')?.value] ||
-                      'Rol'}
+                    {ROLES[columnFilters.find((f) => f.id === "rol")?.value] ||
+                      "Rol"}
                   </>
                 ) : (
-                  'Rol'
+                  "Rol"
                 )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="max-h-[300px]">
               <DropdownMenuRadioGroup
                 value={
-                  columnFilters?.find((el) => el.id === 'rol')?.value || ''
+                  columnFilters?.find((el) => el.id === "rol")?.value || ""
                 }
                 onValueChange={(value) =>
                   setColumnFilters((prevState) => {
-                    const has = prevState?.find((el) => el.id === 'rol');
+                    const has = prevState?.find((el) => el.id === "rol");
                     if (!has) {
-                      return prevState.concat({ id: 'rol', value });
+                      return prevState.concat({ id: "rol", value });
                     }
                     if (has.value === value) {
-                      return prevState.filter((f) => f.id !== 'rol');
+                      return prevState.filter((f) => f.id !== "rol");
                     } else {
                       return prevState
-                        .filter((f) => f.id !== 'rol')
-                        .concat({ id: 'rol', value });
+                        .filter((f) => f.id !== "rol")
+                        .concat({ id: "rol", value });
                     }
                   })
                 }
@@ -151,34 +151,34 @@ export function DataTable({ columns, data, areas }) {
                 size="sm"
                 className="ml-auto flex gap-1"
               >
-                {columnFilters.find((f) => f.id === 'area_venta') ? (
+                {columnFilters.find((f) => f.id === "area_venta") ? (
                   <>
                     <Check size={16} />
-                    {columnFilters.find((f) => f.id === 'area_venta')?.value}
+                    {columnFilters.find((f) => f.id === "area_venta")?.value}
                   </>
                 ) : (
-                  'Área de venta'
+                  "Área de venta"
                 )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="max-h-[300px]">
               <DropdownMenuRadioGroup
                 value={
-                  columnFilters?.find((el) => el.id === 'area_venta')?.value ||
-                  ''
+                  columnFilters?.find((el) => el.id === "area_venta")?.value ||
+                  ""
                 }
                 onValueChange={(value) =>
                   setColumnFilters((prevState) => {
-                    const has = prevState?.find((el) => el.id === 'area_venta');
+                    const has = prevState?.find((el) => el.id === "area_venta");
                     if (!has) {
-                      return prevState.concat({ id: 'area_venta', value });
+                      return prevState.concat({ id: "area_venta", value });
                     }
                     if (has.value === value) {
-                      return prevState.filter((f) => f.id !== 'area_venta');
+                      return prevState.filter((f) => f.id !== "area_venta");
                     } else {
                       return prevState
-                        .filter((f) => f.id !== 'area_venta')
-                        .concat({ id: 'area_venta', value });
+                        .filter((f) => f.id !== "area_venta")
+                        .concat({ id: "area_venta", value });
                     }
                   })
                 }
@@ -221,7 +221,7 @@ export function DataTable({ columns, data, areas }) {
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell

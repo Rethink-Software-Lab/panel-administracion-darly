@@ -83,51 +83,51 @@ export function NavMain({
 
   const productosItems: NestedNavItem[] = [
     {
-      title: "Productos Salon y Mesas",
+      title: "Productos",
       url: "/products",
     },
-    {
+    /*    {
       title: "Productos Cafetería",
       url: "/productos-cafeteria",
-    },
-    {
+    }, */
+    /*  {
       title: "Elaboraciones",
       url: "/elaboraciones",
-    },
+    }, */
     {
       title: "Categorías",
       url: "/categorias",
     },
-    {
+    /* {
       title: "Merma",
       url: "/merma",
-    },
+    }, */
   ];
 
   const almacenesItems: NestedNavItem[] = [
     {
-      title: "Almacen Salon",
+      title: "Almacen Principal",
       items: [
         { title: "Inventario", url: "/inventario" },
         { title: "Entradas", url: "/entradas" },
         { title: "Salidas", url: "/salidas" },
       ],
     },
-    {
+    /*     {
       title: "Almacen Revoltosa",
       items: [
         { title: "Inventario", url: "/inventario-revoltosa" },
         { title: "Salidas", url: "/salidas-revoltosa" },
       ],
-    },
-    {
+    }, */
+    /*     {
       title: "Almacen Cafeteria",
       items: [
         { title: "Inventario", url: "/inventario-cafeteria" },
         { title: "Entradas", url: "/entradas-cafeteria" },
         { title: "Salidas", url: "/salidas-cafeteria" },
       ],
-    },
+    }, */
   ];
 
   const operacionesItems: NestedNavItem[] = [
@@ -139,10 +139,10 @@ export function NavMain({
       title: "Gastos",
       url: "/gastos",
     },
-    {
+    /*  {
       title: "Cuenta Casa",
       url: "/cuenta-casa",
-    },
+    }, */
     {
       title: "Finanzas",
       url: "/finanzas/cuentas",
@@ -200,7 +200,7 @@ export function NavMain({
           "/cafeteria/inventario" === pathname
       ),
       items: [
-        { title: "Cafeteria", url: "/cafeteria/inventario" },
+        /*  { title: "Cafeteria", url: "/cafeteria/inventario" }, */
         ...areas.map((a) => ({
           title: a.nombre,
           url: `/areas-de-venta/${a.id}/inventario` as Route,
